@@ -20,12 +20,6 @@ export type Environment = {
   SENDGRID: {
     API_KEY: string;
   };
-  STRIPE: {
-    SECRET_KEY: string;
-    WEBHOOK_SECRET: string;
-    BASIC_PRODUCT_ID: string;
-    ESSENTIAL_PRODUCT_ID: string;
-  };
   SECURITY: {
     ENCRYPT_ALGORITHM: CipherGCMTypes;
     ENCRYPT_PASSWORD: string;

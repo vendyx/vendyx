@@ -10,7 +10,6 @@ export const modelHasDeletedAtProperty = (model: string) => {
     model !== 'VariantOptionValue' &&
     model !== 'ProductOption' &&
     model !== 'ProductAsset' &&
-    model !== 'StateZone' &&
-    model !== 'Otp'
+    model !== 'StateZone'
   );
 };

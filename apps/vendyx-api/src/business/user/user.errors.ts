@@ -1,6 +1,6 @@
-import { UserErrorCode } from '@/api/shared/types/gql.types';
-
 import { ErrorResult } from '../shared/utils/error-result.utils';
+
+import { UserErrorCode } from '@/api/shared/types/gql.types';
 
 export class EmailAlreadyExists extends ErrorResult<UserErrorCode> {
   constructor() {
@@ -23,17 +23,5 @@ export class PasswordInvalidLength extends ErrorResult<UserErrorCode> {
 export class InvalidEmail extends ErrorResult<UserErrorCode> {
   constructor() {
     super(UserErrorCode.INVALID_EMAIL, 'Invalid email');
-  }
-}
-
-export class InvalidOtp extends ErrorResult<UserErrorCode> {
-  constructor() {
-    super(UserErrorCode.INVALID_OTP, `Invalid OTP`);
-  }
-}
-
-export class OtpExpired extends ErrorResult<UserErrorCode> {
-  constructor() {
-    super(UserErrorCode.OTP_EXPIRED, 'OTP expired');
   }
 }

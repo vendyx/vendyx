@@ -5,7 +5,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { ThemeProvider } from '@/shared/components/theme-provider';
 import { Notification } from '@/shared/notifications/notification';
 
-import '../globals.css';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 

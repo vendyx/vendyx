@@ -8,8 +8,7 @@ import {
   CreateUserInput,
   GenerateUserAccessTokenInput,
   ListInput,
-  UpdateUserInput,
-  ValidateOtpInput
+  UpdateUserInput
 } from '@/api/shared/types/gql.types';
 import { ListResponse } from '@/api/shared/utils/list-response';
 import { clean } from '@/business/shared/utils/clean.utils';
@@ -61,14 +60,6 @@ export class UserResolver {
     return isErrorResult(result) ? { apiErrors: [result] } : { accessToken: result, apiErrors: [] };
   }
 
-  @UseGuards(UserJwtAuthGuard)
-  @Mutation('validateOtp')
-  async validateOtp(@CurrentUser() user: TCurrentUser, @Args('input') input: ValidateOtpInput) {
-    const result = await this.userService.validateOtp(user.id, input);
-
-    return isErrorResult(result) ? { apiErrors: [result] } : { apiErrors: [], user: result };
-  }
-
   @ResolveField('shops')
   async owner(@Parent() user: User, @Args('input') input?: ListInput) {
     const query = {
@@ -81,10 +72,5 @@ export class UserResolver {
     ]);
 
     return new ListResponse(result, result?.length, { total });
-  }
-
-  @ResolveField('subscription')
-  async subscription(@Parent() user: User) {
-    return this.prisma.subscription.findUnique({ where: { userId: user.id } });
   }
 }

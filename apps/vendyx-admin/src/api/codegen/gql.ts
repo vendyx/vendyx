@@ -124,21 +124,13 @@ const documents = {
     types.UpdateShopDocument,
   '\n  mutation GenerateShopApiKey {\n    generateShopApiKey {\n      shop {\n        id\n        slug\n      }\n    }\n  }\n':
     types.GenerateShopApiKeyDocument,
-  '\n  mutation CreateCheckoutSession($input: CreateCheckoutSessionInput!) {\n    createCheckoutSession(input: $input) {\n      sessionUrl\n    }\n  }\n':
-    types.CreateCheckoutSessionDocument,
   '\n  fragment CommonUser on User {\n    id\n    email\n    emailVerified\n  }\n':
     types.CommonUserFragmentDoc,
   '\n  query Whoami {\n    whoami {\n      ...CommonUser\n    }\n  }\n': types.WhoamiDocument,
-  '\n  mutation CreateUser($input: CreateUserInput!) {\n    createUser(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      user {\n        id\n      }\n    }\n  }\n':
-    types.CreateUserDocument,
   '\n  mutation GenerateAccessToken($input: GenerateUserAccessTokenInput!) {\n    generateUserAccessToken(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      accessToken\n    }\n  }\n':
     types.GenerateAccessTokenDocument,
   '\n  query ValidateAccessToken {\n    validateAccessToken\n  }\n':
     types.ValidateAccessTokenDocument,
-  '\n  mutation ValidateOtp($input: ValidateOtpInput!) {\n    validateOtp(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      user {\n        id\n      }\n    }\n  }\n':
-    types.ValidateOtpDocument,
-  '\n  query UserHasSubscription {\n    whoami {\n      subscription {\n        id\n      }\n    }\n  }\n':
-    types.UserHasSubscriptionDocument,
   '\n  mutation CreateVariant($productId: ID!, $input: CreateVariantInput!) {\n    createVariant(productId: $productId, input: $input) {\n      id\n    }\n  }\n':
     types.CreateVariantDocument,
   '\n  mutation UpdateVariant($id: ID!, $input: UpdateVariantInput!) {\n    updateVariant(id: $id, input: $input) {\n      id\n    }\n  }\n':
@@ -498,12 +490,6 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation CreateCheckoutSession($input: CreateCheckoutSessionInput!) {\n    createCheckoutSession(input: $input) {\n      sessionUrl\n    }\n  }\n'
-): typeof import('./graphql').CreateCheckoutSessionDocument;
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(
   source: '\n  fragment CommonUser on User {\n    id\n    email\n    emailVerified\n  }\n'
 ): typeof import('./graphql').CommonUserFragmentDoc;
 /**
@@ -516,12 +502,6 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation CreateUser($input: CreateUserInput!) {\n    createUser(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      user {\n        id\n      }\n    }\n  }\n'
-): typeof import('./graphql').CreateUserDocument;
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(
   source: '\n  mutation GenerateAccessToken($input: GenerateUserAccessTokenInput!) {\n    generateUserAccessToken(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      accessToken\n    }\n  }\n'
 ): typeof import('./graphql').GenerateAccessTokenDocument;
 /**
@@ -530,18 +510,6 @@ export function graphql(
 export function graphql(
   source: '\n  query ValidateAccessToken {\n    validateAccessToken\n  }\n'
 ): typeof import('./graphql').ValidateAccessTokenDocument;
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(
-  source: '\n  mutation ValidateOtp($input: ValidateOtpInput!) {\n    validateOtp(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      user {\n        id\n      }\n    }\n  }\n'
-): typeof import('./graphql').ValidateOtpDocument;
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(
-  source: '\n  query UserHasSubscription {\n    whoami {\n      subscription {\n        id\n      }\n    }\n  }\n'
-): typeof import('./graphql').UserHasSubscriptionDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -98,11 +98,6 @@ export type BooleanFilter = {
   equals?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type CheckoutSession = {
-  __typename?: 'CheckoutSession';
-  sessionUrl: Scalars['String']['output'];
-};
-
 /** A collection is a group of products that are displayed together in the storefront. */
 export type Collection = Node & {
   __typename?: 'Collection';
@@ -181,10 +176,6 @@ export type CreateAddressInput = {
   references?: InputMaybe<Scalars['String']['input']>;
   streetLine1: Scalars['String']['input'];
   streetLine2?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type CreateCheckoutSessionInput = {
-  lookupKey: Scalars['String']['input'];
 };
 
 export type CreateCollectionInput = {
@@ -366,7 +357,6 @@ export type MetricsResult = {
 export type Mutation = {
   __typename?: 'Mutation';
   cancelOrder: OrderResult;
-  createCheckoutSession: CheckoutSession;
   createCollection: Collection;
   createCustomerAddress: Address;
   createOption: Option;
@@ -401,15 +391,10 @@ export type Mutation = {
   updateUser: UserResult;
   updateVariant: Variant;
   updateZone: Zone;
-  validateOtp: UserResult;
 };
 
 export type MutationCancelOrderArgs = {
   id: Scalars['ID']['input'];
-};
-
-export type MutationCreateCheckoutSessionArgs = {
-  input: CreateCheckoutSessionInput;
 };
 
 export type MutationCreateCollectionArgs = {
@@ -556,10 +541,6 @@ export type MutationUpdateVariantArgs = {
 export type MutationUpdateZoneArgs = {
   id: Scalars['ID']['input'];
   input: UpdateZoneInput;
-};
-
-export type MutationValidateOtpArgs = {
-  input: ValidateOtpInput;
 };
 
 /** A node, each type that represents a entity should implement this interface */
@@ -1052,38 +1033,6 @@ export type StringFilter = {
   equals?: InputMaybe<Scalars['String']['input']>;
 };
 
-export enum SubscriptionPlan {
-  Basic = 'BASIC',
-  Enterprise = 'ENTERPRISE',
-  Essential = 'ESSENTIAL'
-}
-
-/**
- * The subscription status enum values are directly from the Stripe API
- * https://stripe.com/docs/api/subscriptions/object#subscription_object-status
- */
-export enum SubscriptionStatus {
-  /** Indicates that the current invoice has been paid */
-  Active = 'ACTIVE',
-  /** Indicates that the subscription has been canceled */
-  Canceled = 'CANCELED',
-  /** Indicates that the initial payment attempt fails */
-  Incomplete = 'INCOMPLETE',
-  /** Indicates the first invoice has not been paid within 23 hours */
-  IncompleteExpired = 'INCOMPLETE_EXPIRED',
-  /**
-   * Indicates that the subscription requires payment but cannot be paid (due to failed payment or awaiting additional user actions)
-   * Once Stripe has exhausted all payment retry attempts, the subscription will become canceled or unpaid
-   */
-  PastDue = 'PAST_DUE',
-  /** Indicates that the trial period has ended without a payment method to make the first payment */
-  Paused = 'PAUSED',
-  /** Indicate that the subscription is currently in a trial period and moves to active when the trial period is over */
-  Trialing = 'TRIALING',
-  /** Indicates that the subscription has been unpaid */
-  Unpaid = 'UNPAID'
-}
-
 export type UpdateAddressInput = {
   city?: InputMaybe<Scalars['String']['input']>;
   country?: InputMaybe<Scalars['String']['input']>;
@@ -1196,8 +1145,6 @@ export type User = Node & {
   id: Scalars['ID']['output'];
   /** The user's shops */
   shops: ShopList;
-  /** The user's subscription */
-  subscription?: Maybe<UserSubscription>;
   updatedAt: Scalars['Date']['output'];
 };
 
@@ -1211,8 +1158,6 @@ export enum UserErrorCode {
   EmailAlreadyExists = 'EMAIL_ALREADY_EXISTS',
   InvalidCredentials = 'INVALID_CREDENTIALS',
   InvalidEmail = 'INVALID_EMAIL',
-  InvalidOtp = 'INVALID_OTP',
-  OtpExpired = 'OTP_EXPIRED',
   PasswordInvalidLength = 'PASSWORD_INVALID_LENGTH'
 }
 
@@ -1233,25 +1178,6 @@ export type UserResult = {
   __typename?: 'UserResult';
   apiErrors: Array<UserErrorResult>;
   user?: Maybe<User>;
-};
-
-export type UserSubscription = Node & {
-  __typename?: 'UserSubscription';
-  createdAt: Scalars['Date']['output'];
-  /** End of the current period that the subscription has been invoiced for. */
-  currentPeriodEnd: Scalars['Date']['output'];
-  /** Start of the current period that the subscription has been invoiced for. */
-  currentPeriodStart: Scalars['Date']['output'];
-  id: Scalars['ID']['output'];
-  /** The plan that the subscription was created with */
-  plan: SubscriptionPlan;
-  /** The status of the subscription */
-  status: SubscriptionStatus;
-  updatedAt: Scalars['Date']['output'];
-};
-
-export type ValidateOtpInput = {
-  otp: Scalars['String']['input'];
 };
 
 /**
@@ -2101,15 +2027,6 @@ export type GenerateShopApiKeyMutation = {
   };
 };
 
-export type CreateCheckoutSessionMutationVariables = Exact<{
-  input: CreateCheckoutSessionInput;
-}>;
-
-export type CreateCheckoutSessionMutation = {
-  __typename?: 'Mutation';
-  createCheckoutSession: { __typename?: 'CheckoutSession'; sessionUrl: string };
-};
-
 export type CommonUserFragment = {
   __typename?: 'User';
   id: string;
@@ -2124,19 +2041,6 @@ export type WhoamiQuery = {
   whoami?:
     | ({ __typename?: 'User' } & { ' $fragmentRefs'?: { CommonUserFragment: CommonUserFragment } })
     | null;
-};
-
-export type CreateUserMutationVariables = Exact<{
-  input: CreateUserInput;
-}>;
-
-export type CreateUserMutation = {
-  __typename?: 'Mutation';
-  createUser: {
-    __typename?: 'UserResult';
-    apiErrors: Array<{ __typename?: 'UserErrorResult'; code: UserErrorCode; message: string }>;
-    user?: { __typename?: 'User'; id: string } | null;
-  };
 };
 
 export type GenerateAccessTokenMutationVariables = Exact<{
@@ -2157,29 +2061,6 @@ export type ValidateAccessTokenQueryVariables = Exact<{ [key: string]: never }>;
 export type ValidateAccessTokenQuery = {
   __typename?: 'Query';
   validateAccessToken?: boolean | null;
-};
-
-export type ValidateOtpMutationVariables = Exact<{
-  input: ValidateOtpInput;
-}>;
-
-export type ValidateOtpMutation = {
-  __typename?: 'Mutation';
-  validateOtp: {
-    __typename?: 'UserResult';
-    apiErrors: Array<{ __typename?: 'UserErrorResult'; code: UserErrorCode; message: string }>;
-    user?: { __typename?: 'User'; id: string } | null;
-  };
-};
-
-export type UserHasSubscriptionQueryVariables = Exact<{ [key: string]: never }>;
-
-export type UserHasSubscriptionQuery = {
-  __typename?: 'Query';
-  whoami?: {
-    __typename?: 'User';
-    subscription?: { __typename?: 'UserSubscription'; id: string } | null;
-  } | null;
 };
 
 export type CreateVariantMutationVariables = Exact<{
@@ -3314,16 +3195,6 @@ export const GenerateShopApiKeyDocument = new TypedDocumentString(`
   GenerateShopApiKeyMutation,
   GenerateShopApiKeyMutationVariables
 >;
-export const CreateCheckoutSessionDocument = new TypedDocumentString(`
-    mutation CreateCheckoutSession($input: CreateCheckoutSessionInput!) {
-  createCheckoutSession(input: $input) {
-    sessionUrl
-  }
-}
-    `) as unknown as TypedDocumentString<
-  CreateCheckoutSessionMutation,
-  CreateCheckoutSessionMutationVariables
->;
 export const WhoamiDocument = new TypedDocumentString(`
     query Whoami {
   whoami {
@@ -3335,19 +3206,6 @@ export const WhoamiDocument = new TypedDocumentString(`
   email
   emailVerified
 }`) as unknown as TypedDocumentString<WhoamiQuery, WhoamiQueryVariables>;
-export const CreateUserDocument = new TypedDocumentString(`
-    mutation CreateUser($input: CreateUserInput!) {
-  createUser(input: $input) {
-    apiErrors {
-      code
-      message
-    }
-    user {
-      id
-    }
-  }
-}
-    `) as unknown as TypedDocumentString<CreateUserMutation, CreateUserMutationVariables>;
 export const GenerateAccessTokenDocument = new TypedDocumentString(`
     mutation GenerateAccessToken($input: GenerateUserAccessTokenInput!) {
   generateUserAccessToken(input: $input) {
@@ -3369,31 +3227,6 @@ export const ValidateAccessTokenDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<
   ValidateAccessTokenQuery,
   ValidateAccessTokenQueryVariables
->;
-export const ValidateOtpDocument = new TypedDocumentString(`
-    mutation ValidateOtp($input: ValidateOtpInput!) {
-  validateOtp(input: $input) {
-    apiErrors {
-      code
-      message
-    }
-    user {
-      id
-    }
-  }
-}
-    `) as unknown as TypedDocumentString<ValidateOtpMutation, ValidateOtpMutationVariables>;
-export const UserHasSubscriptionDocument = new TypedDocumentString(`
-    query UserHasSubscription {
-  whoami {
-    subscription {
-      id
-    }
-  }
-}
-    `) as unknown as TypedDocumentString<
-  UserHasSubscriptionQuery,
-  UserHasSubscriptionQueryVariables
 >;
 export const CreateVariantDocument = new TypedDocumentString(`
     mutation CreateVariant($productId: ID!, $input: CreateVariantInput!) {

@@ -2,12 +2,6 @@ import * as path from 'path';
 
 import { DynamicModule, Module } from '@nestjs/common';
 
-import { BusinessModule } from '@/business/business.module';
-import { SecurityModule } from '@/security/security.module';
-import { ShipmentModule } from '@/shipments/shipment.module';
-
-import { COMMON_RESOLVERS } from '../shared/common-resolvers';
-import { GraphqlApiModule, SHARED_SCHEMA_PATH } from '../shared/graphql-api.module';
 import { CollectionResolver } from './resolvers/collection.resolver';
 import { CountryResolver } from './resolvers/country.resolver';
 import { CustomerResolver } from './resolvers/customer.resolver';
@@ -19,10 +13,15 @@ import { ProductResolver } from './resolvers/product.resolver';
 import { ShippingMethodResolver } from './resolvers/shipping-method.resolver';
 import { ShopResolver } from './resolvers/shop.resolver';
 import { StateResolver } from './resolvers/state.resolver';
-import { SubscriptionResolver } from './resolvers/subscription.resolver';
 import { UserResolver } from './resolvers/user.resolver';
 import { VariantResolver } from './resolvers/variant.resolver';
 import { ZoneResolver } from './resolvers/zone.resolver';
+import { COMMON_RESOLVERS } from '../shared/common-resolvers';
+import { GraphqlApiModule, SHARED_SCHEMA_PATH } from '../shared/graphql-api.module';
+
+import { BusinessModule } from '@/business/business.module';
+import { SecurityModule } from '@/security/security.module';
+import { ShipmentModule } from '@/shipments/shipment.module';
 
 const ADMIN_API_SCHEMA_PATH = './src/api/admin/gql/**/*.gql';
 
@@ -58,7 +57,6 @@ export class AdminApiModule {
     OrderResolver,
     CustomerResolver,
     MetricsResolver,
-    SubscriptionResolver,
     CollectionResolver
   ]
 })

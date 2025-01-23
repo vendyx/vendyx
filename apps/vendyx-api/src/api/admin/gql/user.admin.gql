@@ -14,10 +14,6 @@ type User implements Node {
   The user's shops
   """
   shops: ShopList!
-  """
-  The user's subscription
-  """
-  subscription: UserSubscription
 }
 
 type UserList implements List {
@@ -35,7 +31,6 @@ type Mutation {
   createUser(input: CreateUserInput!): UserResult!
   updateUser(id: ID!, input: UpdateUserInput!): UserResult!
   generateUserAccessToken(input: GenerateUserAccessTokenInput!): UserAccessTokenResult!
-  validateOtp(input: ValidateOtpInput!): UserResult!
 }
 
 input CreateUserInput {
@@ -50,10 +45,6 @@ input UpdateUserInput {
 input GenerateUserAccessTokenInput {
   email: String!
   password: String!
-}
-
-input ValidateOtpInput {
-  otp: String!
 }
 
 type UserAccessTokenResult {
@@ -76,6 +67,4 @@ enum UserErrorCode {
   EMAIL_ALREADY_EXISTS
   PASSWORD_INVALID_LENGTH
   INVALID_EMAIL
-  INVALID_OTP
-  OTP_EXPIRED
 }

@@ -47,30 +47,11 @@ export enum ShopErrorCode {
     EMAIL_ALREADY_EXISTS = "EMAIL_ALREADY_EXISTS"
 }
 
-export enum SubscriptionStatus {
-    INCOMPLETE = "INCOMPLETE",
-    INCOMPLETE_EXPIRED = "INCOMPLETE_EXPIRED",
-    TRIALING = "TRIALING",
-    ACTIVE = "ACTIVE",
-    PAST_DUE = "PAST_DUE",
-    CANCELED = "CANCELED",
-    UNPAID = "UNPAID",
-    PAUSED = "PAUSED"
-}
-
-export enum SubscriptionPlan {
-    BASIC = "BASIC",
-    ESSENTIAL = "ESSENTIAL",
-    ENTERPRISE = "ENTERPRISE"
-}
-
 export enum UserErrorCode {
     INVALID_CREDENTIALS = "INVALID_CREDENTIALS",
     EMAIL_ALREADY_EXISTS = "EMAIL_ALREADY_EXISTS",
     PASSWORD_INVALID_LENGTH = "PASSWORD_INVALID_LENGTH",
-    INVALID_EMAIL = "INVALID_EMAIL",
-    INVALID_OTP = "INVALID_OTP",
-    OTP_EXPIRED = "OTP_EXPIRED"
+    INVALID_EMAIL = "INVALID_EMAIL"
 }
 
 export enum AssetType {
@@ -269,10 +250,6 @@ export class UpdateShopInput {
     storefrontUrl?: Nullable<string>;
 }
 
-export class CreateCheckoutSessionInput {
-    lookupKey: string;
-}
-
 export class CreateUserInput {
     email: string;
     password: string;
@@ -285,10 +262,6 @@ export class UpdateUserInput {
 export class GenerateUserAccessTokenInput {
     email: string;
     password: string;
-}
-
-export class ValidateOtpInput {
-    otp: string;
 }
 
 export class CreateVariantInput {
@@ -463,15 +436,11 @@ export abstract class IMutation {
 
     abstract generateShopApiKey(): ShopResult | Promise<ShopResult>;
 
-    abstract createCheckoutSession(input: CreateCheckoutSessionInput): CheckoutSession | Promise<CheckoutSession>;
-
     abstract createUser(input: CreateUserInput): UserResult | Promise<UserResult>;
 
     abstract updateUser(id: string, input: UpdateUserInput): UserResult | Promise<UserResult>;
 
     abstract generateUserAccessToken(input: GenerateUserAccessTokenInput): UserAccessTokenResult | Promise<UserAccessTokenResult>;
-
-    abstract validateOtp(input: ValidateOtpInput): UserResult | Promise<UserResult>;
 
     abstract createVariant(productId: string, input: CreateVariantInput): Variant | Promise<Variant>;
 
@@ -725,20 +694,6 @@ export class ShopErrorResult {
     message: string;
 }
 
-export class UserSubscription implements Node {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    status: SubscriptionStatus;
-    plan: SubscriptionPlan;
-    currentPeriodStart: Date;
-    currentPeriodEnd: Date;
-}
-
-export class CheckoutSession {
-    sessionUrl: string;
-}
-
 export class User implements Node {
     id: string;
     createdAt: Date;
@@ -746,7 +701,6 @@ export class User implements Node {
     email: string;
     emailVerified: boolean;
     shops: ShopList;
-    subscription?: Nullable<UserSubscription>;
 }
 
 export class UserList implements List {

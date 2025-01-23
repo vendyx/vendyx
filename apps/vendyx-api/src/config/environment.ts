@@ -22,12 +22,6 @@ export const loadEnvironment = (): Environment => ({
   SENDGRID: {
     API_KEY: process.env.SENDGRID_API_KEY ?? ''
   },
-  STRIPE: {
-    SECRET_KEY: process.env.STRIPE_SECRET_KEY ?? '',
-    WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SIGNING_SECRET ?? '',
-    BASIC_PRODUCT_ID: process.env.STRIPE_BASIC_PRODUCT_ID ?? '',
-    ESSENTIAL_PRODUCT_ID: process.env.STRIPE_ESSENTIAL_PRODUCT_ID ?? ''
-  },
   SECURITY: {
     ENCRYPT_ALGORITHM: process.env.ENCRYPT_ALGORITHM as CipherGCMTypes,
     ENCRYPT_PASSWORD: process.env.ENCRYPT_PASSWORD ?? ''
