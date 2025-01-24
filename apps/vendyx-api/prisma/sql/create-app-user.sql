@@ -2,7 +2,7 @@
 CREATE USER app_user WITH PASSWORD 'app_secure_password';
 
 -- 2. Grant all privileges on the database -- `railway` instead of `vendyx` in prod
-GRANT ALL PRIVILEGES ON DATABASE vendyx TO app_user;
+GRANT ALL PRIVILEGES ON DATABASE railway TO app_user;
 
 -- 3. Grant all privileges on all tables, sequences, and functions in the schema
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO app_user;

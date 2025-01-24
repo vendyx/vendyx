@@ -19,13 +19,5 @@ export const getUserError = (error?: UserErrorResult) => {
     return 'Invalid password length';
   }
 
-  if (error.code === UserErrorCode.InvalidOtp) {
-    return 'Invalid code entered';
-  }
-
-  if (error.code === UserErrorCode.OtpExpired) {
-    return 'Code has expired, please request a new one';
-  }
-
   return 'Something went wrong';
 };

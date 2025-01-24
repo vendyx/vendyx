@@ -16,7 +16,7 @@
     "-----------------": "-----------------",
     "db:setup-local": "dotenv -e .env.local.migration prisma db push && dotenv -e .env.local.migration ts-node prisma/setup-db.ts",
     "db:seed-local": "dotenv -e .env.local.migration ts-node prisma/seed/seed.ts",
-    "db:setup-prod": "dotenv -e .env.prod.migration prisma db push && ts-node prisma/setup-db.ts",
+    "db:setup-prod": "dotenv -e .env.prod.migration prisma db push && dotenv -e .env.prod.migration ts-node prisma/setup-db.ts",
     "db:seed-prod": "dotenv -e .env.prod.migration ts-node prisma/seed/seed.ts",
     "------------------": "-----------------",
     "emails": "email dev --dir ./src/mail/templates"
