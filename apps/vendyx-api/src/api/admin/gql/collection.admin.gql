@@ -1,7 +1,7 @@
 type Mutation {
   createCollection(input: CreateCollectionInput!): Collection!
   updateCollection(id: ID!, input: UpdateCollectionInput!): Collection!
-  removeCollection(id: ID!): Boolean!
+  removeCollection(ids: [ID!]!): Boolean!
 }
 
 type Query {

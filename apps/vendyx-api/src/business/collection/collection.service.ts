@@ -114,12 +114,14 @@ export class CollectionService {
     return result[result.length - 1];
   }
 
-  async remove(id: ID) {
-    await this.prisma.$transaction([
+  async remove(ids: ID[]) {
+    const transactions = ids.map(id => [
       this.prisma.collectionAsset.deleteMany({ where: { collectionId: id } }),
       this.prisma.productCollection.deleteMany({ where: { collectionId: id } }),
       this.prisma.collection.delete({ where: { id } })
     ]);
+
+    await this.prisma.$transaction(transactions.reduce((acc, val) => acc.concat(val), []));
 
     return true;
   }

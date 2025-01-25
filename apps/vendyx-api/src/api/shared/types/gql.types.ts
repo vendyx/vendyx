@@ -394,7 +394,7 @@ export abstract class IMutation {
 
     abstract updateCollection(id: string, input: UpdateCollectionInput): Collection | Promise<Collection>;
 
-    abstract removeCollection(id: string): boolean | Promise<boolean>;
+    abstract removeCollection(ids: string[]): boolean | Promise<boolean>;
 
     abstract updateCustomer(id: string, input: UpdateCustomerInput): CustomerResult | Promise<CustomerResult>;
 

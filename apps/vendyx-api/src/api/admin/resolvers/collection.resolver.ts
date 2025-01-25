@@ -42,7 +42,7 @@ export class CollectionResolver {
   }
 
   @Mutation('removeCollection')
-  async removeCollection(@Args('id') id: ID) {
-    return this.collectionService.remove(id);
+  async removeCollection(@Args('ids') ids: ID[]) {
+    return this.collectionService.remove(ids);
   }
 }
