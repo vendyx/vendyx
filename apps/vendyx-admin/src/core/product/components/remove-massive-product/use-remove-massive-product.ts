@@ -1,23 +1,34 @@
-import { useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 
 import { notification } from '@/shared/notifications/notifications';
 
-import { removeProduct } from '../../actions/remove-product';
+import { removeMassiveProducts } from '../../actions/remove-massive-products';
 
 export const useRemoveMassiveProduct = (onFinish?: () => void) => {
   const [isLoading, startTransition] = useTransition();
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    // When is success, the button unmounts
+    // So we put the notification in the cleanup function validating if operation is successful to show notification
+    return () => {
+      if (isSuccess) {
+        notification.success('Products removed');
+        onFinish?.();
+      }
+    };
+  });
 
   const exec = async (ids: string[]) => {
     startTransition(async () => {
-      const result = await removeProduct(ids);
+      const result = await removeMassiveProducts(ids);
 
       if (result?.error) {
         notification.error(result.error);
         return;
       }
 
-      notification.success('Products removed');
-      onFinish?.();
+      setIsSuccess(true);
     });
   };
 
