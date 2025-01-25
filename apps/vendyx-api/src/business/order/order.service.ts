@@ -487,15 +487,17 @@ export class OrderService extends OrderFinders {
       );
     }
 
-    this.eventBus.emit(new OrderShippedEvent(orderId));
-
-    return await this.prisma.order.update({
+    const result = await this.prisma.order.update({
       where: { id: orderId },
       data: {
         shipment: { update: { carrier: input.carrier, trackingCode: input.trackingCode } },
         state: OrderState.SHIPPED
       }
     });
+
+    this.eventBus.emit(new OrderShippedEvent(orderId));
+
+    return result;
   }
 
   async markAsDelivered(orderId: ID) {
@@ -511,12 +513,14 @@ export class OrderService extends OrderFinders {
       );
     }
 
-    this.eventBus.emit(new OrderDeliveredEvent(orderId));
-
-    return await this.prisma.order.update({
+    const result = await this.prisma.order.update({
       where: { id: orderId },
       data: { state: OrderState.DELIVERED }
     });
+
+    this.eventBus.emit(new OrderDeliveredEvent(orderId));
+
+    return result;
   }
 
   async cancel(orderId: ID) {

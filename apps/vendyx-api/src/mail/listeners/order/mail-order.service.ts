@@ -94,6 +94,12 @@ export class MailOrderService {
       throw new MailError(`Order or customer doesn't exist for order id: ${orderId}`);
     }
 
+    if (!order || !order.shipment?.carrier || order.shipment.trackingCode) {
+      throw new MailError(
+        `Order or carrier or tracking code doesn't exist for order id: ${orderId}`
+      );
+    }
+
     const orderInput = {
       ...order,
       lines: order.lines.map(line => ({
