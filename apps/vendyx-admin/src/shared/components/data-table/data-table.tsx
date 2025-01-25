@@ -193,8 +193,6 @@ type DataTableProps<TData, TValue> = ConfigurableTable & {
    */
   queryParamPrefix?: string;
   /**
-   * TODO: Make this required
-   *
    * @description
    * This prop is used to render a customizable action.
    * The onFinish prop should be executed when the action is to be finished.
