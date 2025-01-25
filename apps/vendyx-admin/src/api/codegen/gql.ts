@@ -26,7 +26,7 @@ const documents = {
     types.CreateCollectionDocument,
   '\n  mutation UpdateCollection($id: ID!, $input: UpdateCollectionInput!) {\n    updateCollection(id: $id, input: $input) {\n      id\n    }\n  }\n':
     types.UpdateCollectionDocument,
-  '\n  mutation RemoveCollection($id: ID!) {\n    removeCollection(id: $id)\n  }\n':
+  '\n  mutation RemoveCollection($ids: [ID!]!) {\n    removeCollection(ids: $ids)\n  }\n':
     types.RemoveCollectionDocument,
   '\n  fragment CommonCountry on Country {\n    id\n    name\n    states {\n      id\n      name\n    }\n  }\n':
     types.CommonCountryFragmentDoc,
@@ -196,7 +196,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation RemoveCollection($id: ID!) {\n    removeCollection(id: $id)\n  }\n'
+  source: '\n  mutation RemoveCollection($ids: [ID!]!) {\n    removeCollection(ids: $ids)\n  }\n'
 ): typeof import('./graphql').RemoveCollectionDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

@@ -8,8 +8,8 @@ import { type ID } from '@/api/scalars/scalars.type';
 import { CollectionService } from '@/api/services/collection.service';
 import { getBasePathFormHeaders } from '@/shared/utils/url';
 
-export const removeCollection = async (id: ID) => {
-  await CollectionService.remove([id]);
+export const removeMassiveCollection = async (ids: ID[]) => {
+  await CollectionService.remove(ids);
 
   const base = getBasePathFormHeaders(headers());
 

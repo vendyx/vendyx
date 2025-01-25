@@ -93,7 +93,7 @@ export const UPDATE_COLLECTION_MUTATION = graphql(`
 `);
 
 export const REMOVE_COLLECTION_MUTATION = graphql(`
-  mutation RemoveCollection($id: ID!) {
-    removeCollection(id: $id)
+  mutation RemoveCollection($ids: [ID!]!) {
+    removeCollection(ids: $ids)
   }
 `);
