@@ -20,15 +20,15 @@ export const Dropzone: FC<Props> = ({ size, disabled, disabledMessage, onAcceptF
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger>
+          <TooltipTrigger type="button">
             <div className={cn(getDropzoneSize(size), 'opacity-50 flex-shrink-0')}>
-              <label
+              <div
                 className={cn(
                   'rounded-md border border-dashed flex items-center justify-center w-full h-full cursor-not-allowed'
                 )}
               >
                 <UploadIcon size={size === 'lg' ? 24 : 16} />
-              </label>
+              </div>
             </div>
           </TooltipTrigger>
           <TooltipContent>
