@@ -1,7 +1,6 @@
 import { type FC } from 'react';
 
 import { ProductService } from '@/api/services/product.service';
-import { DataTable } from '@/shared/components/data-table/data-table';
 import {
   type DataTableSearchParams,
   getSkip,
@@ -9,7 +8,7 @@ import {
 } from '@/shared/components/data-table/data-table-utils';
 import { DataTableEmptyState } from '@/shared/components/empty-states/data-table-empty-state';
 
-import { ProductTableColumns } from './products-table-columns';
+import ProductTableData from './product-table-data';
 
 export const ProductTable: FC<Props> = async props => {
   const { page, search, size } = parseDataTableSearchParams({ ...props });
@@ -47,12 +46,7 @@ export const ProductTable: FC<Props> = async props => {
     }) ?? [];
 
   return (
-    <DataTable
-      columns={ProductTableColumns}
-      data={data}
-      defaults={{ page, search, size }}
-      totalRows={pageInfo.total}
-    />
+    <ProductTableData data={data} pagination={{ page, search, size }} totalRows={pageInfo.total} />
   );
 };
 

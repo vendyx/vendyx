@@ -14,7 +14,7 @@ export const RemoveProductButton: FC<Props> = ({ product }) => {
     <RemoveEntityButton
       title={`Remove product "${product.name}"`}
       description="By removing this product you will also remove all related information, media files, variants and options. This action cannot be undone."
-      onRemove={async () => await removeProduct(product.id)}
+      onRemove={async () => await removeProduct([product.id])}
       isLoading={isLoading}
     />
   );

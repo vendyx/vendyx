@@ -18,9 +18,9 @@ export const useRemoveProduct = () => {
     };
   }, [isSuccess, isLoading]);
 
-  const exec = async (id: string) => {
+  const exec = async (ids: string[]) => {
     startTransition(async () => {
-      const result = await removeProduct(id);
+      const result = await removeProduct(ids);
 
       if (result?.error) {
         notification.error(result.error);
