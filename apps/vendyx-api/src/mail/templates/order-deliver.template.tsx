@@ -57,9 +57,11 @@ const Component: React.FC<Props> = ({ order, shop }) => {
                   <Text className="text-[#666666] !my-0">{order.shipment?.trackingCode}</Text>
                 </Column>
               </Row>
-              <Heading className="text-black text-[30px] font-normal">It's on the way!</Heading>
+              <Heading className="text-black text-[30px] font-normal">
+                Your order has been delivered
+              </Heading>
               <Text className="text-[#666666] text-[16px]">
-                Your order is on the way. Track your order with the link below.
+                Your order has been delivered. Track your order with the link below.
               </Text>
               {/* TODO: Add tracking url */}
               <Button className="bg-[#000000] rounded text-white text-[14px] font-semibold no-underline text-center px-5 py-3">
@@ -246,4 +248,4 @@ export type Props = {
 
 export default Component;
 
-export const createOrderSentTemplate = (input: Props) => render(<Component {...input} />);
+export const createOrderDeliverTemplate = (input: Props) => render(<Component {...input} />);

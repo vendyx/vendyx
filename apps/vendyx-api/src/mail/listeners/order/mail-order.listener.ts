@@ -22,4 +22,11 @@ export class MailOrderListener {
       await this.mailOrderService.sendOrderSentEmail(payload.orderId);
     } catch (error) {}
   }
+
+  @OnEvent(OrderEvent.DELIVERED)
+  async handleOrderDeliveredEvent(payload: OrderPaidEvent) {
+    try {
+      await this.mailOrderService.sendOrderDeliverEmail(payload.orderId);
+    } catch (error) {}
+  }
 }
