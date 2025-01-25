@@ -42,6 +42,7 @@ export const LoginForm = () => {
                 placeholder="********"
                 label="Password"
                 type="password"
+                isPassword
               />
               <Button disabled={isLoading} isLoading={isLoading} type="submit" className="w-full">
                 Login
