@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { Inject, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
@@ -71,7 +73,10 @@ export class ProductRepository {
   }
 
   softDelete(id: string) {
-    return this.prisma.product.update({ where: { id }, data: { deletedAt: new Date() } });
+    return this.prisma.product.update({
+      where: { id },
+      data: { deletedAt: new Date(), slug: randomUUID() }
+    });
   }
 
   softDeleteVariants(productId: string) {
