@@ -9,7 +9,7 @@ import { CollectionService } from '@/api/services/collection.service';
 import { getBasePathFormHeaders } from '@/shared/utils/url';
 
 export const removeCollection = async (id: ID) => {
-  await CollectionService.remove(id);
+  await CollectionService.remove([id]);
 
   const base = getBasePathFormHeaders(headers());
 

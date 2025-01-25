@@ -453,7 +453,7 @@ export type MutationMarkOrderAsShippedArgs = {
 };
 
 export type MutationRemoveCollectionArgs = {
-  id: Scalars['ID']['input'];
+  ids: Array<Scalars['ID']['input']>;
 };
 
 export type MutationRemoveCustomerAddressArgs = {
@@ -1331,7 +1331,7 @@ export type UpdateCollectionMutation = {
 };
 
 export type RemoveCollectionMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
 }>;
 
 export type RemoveCollectionMutation = { __typename?: 'Mutation'; removeCollection: boolean };
@@ -2586,8 +2586,8 @@ export const UpdateCollectionDocument = new TypedDocumentString(`
   UpdateCollectionMutationVariables
 >;
 export const RemoveCollectionDocument = new TypedDocumentString(`
-    mutation RemoveCollection($id: ID!) {
-  removeCollection(id: $id)
+    mutation RemoveCollection($ids: [ID!]!) {
+  removeCollection(ids: $ids)
 }
     `) as unknown as TypedDocumentString<
   RemoveCollectionMutation,

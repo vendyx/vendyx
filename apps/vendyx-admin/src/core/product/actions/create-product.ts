@@ -27,7 +27,7 @@ export const createProduct = async (input: CreateProductInput) => {
 
   if (!input.options?.length) {
     await createVariants(product.id, input.variants);
-    redirect(`${product.id}`);
+    redirect(`${product.id}?new=true`);
   }
 
   const options = await createOptions(product.id, input.options);
@@ -35,7 +35,7 @@ export const createProduct = async (input: CreateProductInput) => {
   const newVariants = attachOptionValues(options, input.variants);
   await createVariants(product.id, newVariants);
 
-  redirect(`${product.id}`);
+  redirect(`${product.id}?new=true`);
 };
 
 const attachOptionValues = (

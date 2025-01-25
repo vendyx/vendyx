@@ -2,27 +2,27 @@ import { useTransition } from 'react';
 
 import { notification } from '@/shared/notifications/notifications';
 
-import { removeMassiveProducts } from '../../actions/remove-massive-products';
+import { removeMassiveCollection } from '../../actions/remove-massive-collection';
 
-export const useRemoveMassiveProduct = (onFinish?: () => void) => {
+export const useRemoveMassiveCollections = (onFinish?: () => void) => {
   const [isLoading, startTransition] = useTransition();
 
   const exec = async (ids: string[]) => {
     startTransition(async () => {
-      const result = await removeMassiveProducts(ids);
+      const result = await removeMassiveCollection(ids);
 
       if (result?.error) {
         notification.error(result.error);
         return;
       }
 
-      notification.success('Products removed');
+      notification.success('Collections removed');
       onFinish?.();
     });
   };
 
   return {
     isLoading,
-    removeProduct: exec
+    removeMassiveCollection: exec
   };
 };
