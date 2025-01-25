@@ -17,7 +17,7 @@ export const createCollection = async (input: Input) => {
     products: input.products
   });
 
-  redirect(`${collection.id}`);
+  redirect(`${collection.id}?new=true`);
 };
 
 type Input = Pick<CreateCollectionInput, 'name' | 'description' | 'enabled' | 'products'> & {
