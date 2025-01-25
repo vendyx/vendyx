@@ -7,9 +7,9 @@ import { removeProduct } from '../../actions/remove-product';
 export const useRemoveMassiveProduct = (onFinish?: () => void) => {
   const [isLoading, startTransition] = useTransition();
 
-  const exec = async (id: string[]) => {
+  const exec = async (ids: string[]) => {
     startTransition(async () => {
-      const result = await removeProduct(id);
+      const result = await removeProduct(ids);
 
       if (result?.error) {
         notification.error(result.error);

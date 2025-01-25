@@ -12,15 +12,11 @@ export const RemoveMassiveProductsButton: FC<Props> = ({ rows, onFinish }) => {
 
   const entitiesId = rows.map(row => row.id);
 
-  const handleRemove = async () => {
-    await removeProduct(entitiesId);
-  };
-
   return (
     <RemoveEntityButton
       title={`Remove all selected products`}
       description="By removing the products you will also remove all related information, media files, variants and options. This action cannot be undone."
-      onRemove={handleRemove}
+      onRemove={async () => await removeProduct(entitiesId)}
       isLoading={isLoading}
     />
   );
