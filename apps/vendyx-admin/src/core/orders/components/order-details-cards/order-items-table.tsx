@@ -1,4 +1,7 @@
+'use client';
 import { type FC } from 'react';
+
+import Link from 'next/link';
 
 import { type CommonOrderFragment } from '@/api/types';
 import { ImagePlaceholder } from '@/shared/components/placeholders/image-placeholder';
@@ -14,12 +17,14 @@ import {
   TableHeader,
   TableRow
 } from '@/shared/components/ui/table';
+import { useBase } from '@/shared/hooks/use-base';
 import { formatPrice } from '@/shared/utils/formatters';
 import { cn } from '@/shared/utils/theme';
 
 export const OrderItemsTable: FC<Props> = ({ order }) => {
   const lines = order.lines.items;
   const { shipment } = order;
+  const base = useBase();
 
   return (
     <Card>
@@ -41,10 +46,13 @@ export const OrderItemsTable: FC<Props> = ({ order }) => {
           </TableHeader>
           <TableBody>
             {lines.map(line => {
-              const productImage = line.productVariant.product.assets.items[0]?.source;
-              const variantImage = line.productVariant.asset?.source;
+              const { product, asset, optionValues, deletedAt } = line.productVariant ?? {};
+              const productImage = product.assets.items[0]?.source;
+              const variantImage = asset?.source;
 
               const itemImage = variantImage ?? productImage;
+
+              const productUrl = `${base}/products/${product.id}`;
 
               return (
                 <TableRow key={line.id}>
@@ -52,22 +60,25 @@ export const OrderItemsTable: FC<Props> = ({ order }) => {
                     {itemImage ? (
                       <img
                         src={itemImage}
-                        alt={line.productVariant.product.name}
+                        alt={product.name}
                         className="h-12 w-12 object-cover rounded-md"
                       />
                     ) : (
-                      <ImagePlaceholder initial={line.productVariant.product.name} />
+                      <ImagePlaceholder initial={product.name} />
                     )}
                     <div
-                      className={cn(
-                        'flex flex-col justify-between',
-                        line.productVariant.optionValues.length && 'h-12'
-                      )}
+                      className={cn('flex flex-col justify-between', optionValues.length && 'h-12')}
                     >
-                      <span className="text-nowrap">{line.productVariant.product.name}</span>
-                      {Boolean(line.productVariant.optionValues?.length) && (
+                      {!deletedAt ? (
+                        <Link href={productUrl}>
+                          <span className="text-nowrap hover:underline">{product.name}</span>
+                        </Link>
+                      ) : (
+                        <span className="text-nowrap">{product.name}</span>
+                      )}
+                      {Boolean(optionValues?.length) && (
                         <Badge variant="secondary" className="py-0 px-1 w-fit text-xs">
-                          {line.productVariant.optionValues?.map(v => v.name).join(' / ')}
+                          {optionValues?.map(v => v.name).join(' / ')}
                         </Badge>
                       )}
                     </div>
