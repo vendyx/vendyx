@@ -73,8 +73,8 @@ export const CollectionService = {
     return updateCollection;
   },
 
-  async remove(id: ID) {
-    const { removeCollection } = await serviceGqlFetcher(REMOVE_COLLECTION_MUTATION, { id });
+  async remove(ids: ID[]) {
+    const { removeCollection } = await serviceGqlFetcher(REMOVE_COLLECTION_MUTATION, { ids });
 
     return removeCollection;
   }

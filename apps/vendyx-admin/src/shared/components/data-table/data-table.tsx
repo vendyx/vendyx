@@ -117,16 +117,8 @@ export const DataTable = <TData, TValue>({
   }, [pagination.pageSize]);
 
   const handleFinishAction = () => {
-    const params = new URLSearchParams(searchParams);
-
     table.resetRowSelection(true);
-
-    if (table.getState().pagination.pageIndex !== 0) {
-      table.setPageIndex(0);
-      params.set(getParamName('page'), '1');
-    }
-
-    replace(`${pathname}?${params.toString()}`, { scroll: false });
+    table.setPageIndex(0);
   };
 
   const selectedRows = table.getSelectedRowModel().rows.map(row => row.original);
