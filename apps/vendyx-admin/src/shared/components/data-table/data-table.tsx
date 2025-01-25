@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { type ReactElement, useEffect, useState } from 'react';
 
 import {
   type ColumnDef,
@@ -26,7 +26,8 @@ export const DataTable = <TData, TValue>({
   data,
   totalRows,
   queryParamPrefix,
-  defaults
+  defaults,
+  actions
 }: DataTableProps<TData, TValue>) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -115,6 +116,13 @@ export const DataTable = <TData, TValue>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.pageSize]);
 
+  const handleFinishAction = () => {
+    table.resetRowSelection(true);
+    table.setPageIndex(0);
+  };
+
+  const selectedRows = table.getSelectedRowModel().rows.map(row => row.original);
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-4">
@@ -126,7 +134,7 @@ export const DataTable = <TData, TValue>({
             defaultValue={searchParams.get(getParamName('search'))?.toString()}
           />
         </div>
-        {/* {download && <DownloadDataTableButton download={download} data={data} />} */}
+        {actions && selectedRows.length ? actions(selectedRows, handleFinishAction) : null}
       </div>
       <div className="rounded-md border bg-background">
         <Table>
@@ -184,6 +192,7 @@ type DataTableProps<TData, TValue> = ConfigurableTable & {
    * this is useful when working with 2 data tables in the same page
    */
   queryParamPrefix?: string;
+  actions?: (rows: TData[], onFinish: () => void) => ReactElement;
 };
 
 /**
