@@ -724,6 +724,22 @@ export class UserErrorResult {
     message: string;
 }
 
+export class Variant implements Node {
+    deletedAt?: Nullable<Date>;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    sku?: Nullable<string>;
+    salePrice: number;
+    stock: number;
+    comparisonPrice?: Nullable<number>;
+    costPerUnit?: Nullable<number>;
+    requiresShipping: boolean;
+    asset?: Nullable<Asset>;
+    optionValues: OptionValue[];
+    product: Product;
+}
+
 export class Zone implements Node {
     id: string;
     createdAt: Date;
@@ -911,21 +927,6 @@ export class Shipment implements Node {
     amount: number;
     method: string;
     order: Order;
-}
-
-export class Variant implements Node {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    sku?: Nullable<string>;
-    salePrice: number;
-    stock: number;
-    comparisonPrice?: Nullable<number>;
-    costPerUnit?: Nullable<number>;
-    requiresShipping: boolean;
-    asset?: Nullable<Asset>;
-    optionValues: OptionValue[];
-    product: Product;
 }
 
 export class VariantList implements List {

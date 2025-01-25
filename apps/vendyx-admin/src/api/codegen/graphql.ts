@@ -1198,6 +1198,7 @@ export type Variant = Node & {
    */
   costPerUnit?: Maybe<Scalars['Int']['output']>;
   createdAt: Scalars['Date']['output'];
+  deletedAt?: Maybe<Scalars['Date']['output']>;
   id: Scalars['ID']['output'];
   optionValues: Array<OptionValue>;
   product: Product;
@@ -1540,10 +1541,12 @@ export type CommonOrderFragment = {
         __typename?: 'Variant';
         id: string;
         sku?: string | null;
+        deletedAt?: any | null;
         optionValues: Array<{ __typename?: 'OptionValue'; id: string; name: string }>;
         asset?: { __typename?: 'Asset'; id: string; source: string } | null;
         product: {
           __typename?: 'Product';
+          id: string;
           name: string;
           slug: string;
           assets: {
@@ -2289,6 +2292,7 @@ export const CommonOrderFragmentDoc = new TypedDocumentString(
       productVariant {
         id
         sku
+        deletedAt
         optionValues {
           id
           name
@@ -2298,6 +2302,7 @@ export const CommonOrderFragmentDoc = new TypedDocumentString(
           source
         }
         product {
+          id
           name
           slug
           assets(input: {take: 1}) {
@@ -2802,6 +2807,7 @@ export const GetOrderbyIdQueryDocument = new TypedDocumentString(`
       productVariant {
         id
         sku
+        deletedAt
         optionValues {
           id
           name
@@ -2811,6 +2817,7 @@ export const GetOrderbyIdQueryDocument = new TypedDocumentString(`
           source
         }
         product {
+          id
           name
           slug
           assets(input: {take: 1}) {
