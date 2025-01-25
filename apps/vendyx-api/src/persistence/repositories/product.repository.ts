@@ -15,7 +15,7 @@ export class ProductRepository {
     return await this.prisma.product.findMany({
       ...clean({ skip: input?.skip, take: input?.take }),
       where: {
-        name: clean(input?.filters?.name ?? {}),
+        name: input?.filters?.name ? { ...clean(input.filters.name), mode: 'insensitive' } : {},
         archived: clean(input?.filters?.archived ?? {}),
         enabled: clean(input?.filters?.enabled ?? {}),
         ProductCollection: input?.collectionId
@@ -30,7 +30,7 @@ export class ProductRepository {
     return this.prisma.product.findUnique({
       where: {
         slug,
-        name: clean(filters?.name ?? {}),
+        name: filters?.name ? { ...clean(filters.name), mode: 'insensitive' } : {},
         archived: clean(filters?.archived ?? {}),
         enabled: clean(filters?.enabled ?? {})
       }
@@ -41,7 +41,7 @@ export class ProductRepository {
     return this.prisma.product.findUnique({
       where: {
         id,
-        name: clean(filters?.name ?? {}),
+        name: filters?.name ? { ...clean(filters.name), mode: 'insensitive' } : {},
         archived: clean(filters?.archived ?? {}),
         enabled: clean(filters?.enabled ?? {})
       }
@@ -52,7 +52,7 @@ export class ProductRepository {
     return this.prisma.product.count({
       ...clean({ skip: input?.skip, take: input?.take }),
       where: {
-        name: clean(input?.filters?.name ?? {}),
+        name: input?.filters?.name ? { ...clean(input.filters.name), mode: 'insensitive' } : {},
         archived: clean(input?.filters?.archived ?? {}),
         enabled: clean(input?.filters?.enabled ?? {}),
         ProductCollection: input?.collectionId

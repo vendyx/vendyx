@@ -23,7 +23,8 @@ export class CollectionService {
     return this.prisma.collection.findMany({
       ...clean({ skip: input?.skip, take: input?.take }),
       where: {
-        ...clean(input?.filters ?? {})
+        ...clean(input?.filters ?? {}),
+        name: input?.filters?.name ? { ...clean(input.filters.name), mode: 'insensitive' } : {}
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -33,7 +34,8 @@ export class CollectionService {
     return this.prisma.collection.count({
       ...clean({ skip: input?.skip, take: input?.take }),
       where: {
-        ...clean(input?.filters ?? {})
+        ...clean(input?.filters ?? {}),
+        name: input?.filters?.name ? { ...clean(input.filters.name), mode: 'insensitive' } : {}
       }
     });
   }
