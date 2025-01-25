@@ -1,12 +1,12 @@
-import { type FC } from 'react';
+import React, { type FC } from 'react';
 
 import { RemoveEntityButton } from '@/shared/components/remove-entity/remove-entity-button';
 
 import { type CollectionsTableRow } from '../collections-table/collections-table';
-import { useRemoveMassiveCollection } from './use-remove-massive-collection';
+import { useRemoveMassiveCollections } from './use-remove-massive-collection';
 
-export const RemoveMassiveCollectionButton: FC<Props> = ({ rows }) => {
-  const { removeMassiveCollection, isLoading } = useRemoveMassiveCollection();
+export const RemoveMassiveCollectionButton: FC<Props> = ({ rows, onFinish }) => {
+  const { removeMassiveCollection, isLoading } = useRemoveMassiveCollections(onFinish);
 
   const entitiesId = rows.map(row => row.id);
 

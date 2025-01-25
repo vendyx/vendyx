@@ -1,28 +1,23 @@
-import { useEffect, useState, useTransition } from 'react';
+import { useTransition } from 'react';
 
-import { type ID } from '@/api/scalars/scalars.type';
 import { notification } from '@/shared/notifications/notifications';
 
 import { removeMassiveCollection } from '../../actions/remove-massive-collection';
 
-export const useRemoveMassiveCollection = () => {
+export const useRemoveMassiveCollections = (onFinish?: () => void) => {
   const [isLoading, startTransition] = useTransition();
-  const [isSuccess, setIsSuccess] = useState(false);
 
-  useEffect(() => {
-    // When is success, the button unmounts
-    // So we put the notification in the cleanup function validating if operation is successful to show notification
-    return () => {
-      if (isSuccess) {
-        notification.success('Collection removed');
-      }
-    };
-  }, [isSuccess, isLoading]);
-
-  const exec = async (ids: ID[]) => {
+  const exec = async (ids: string[]) => {
     startTransition(async () => {
-      await removeMassiveCollection(ids);
-      setIsSuccess(true);
+      const result = await removeMassiveCollection(ids);
+
+      if (result?.error) {
+        notification.error(result.error);
+        return;
+      }
+
+      notification.success('Collections removed');
+      onFinish?.();
     });
   };
 

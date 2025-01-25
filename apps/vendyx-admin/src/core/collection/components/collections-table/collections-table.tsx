@@ -1,7 +1,6 @@
 import { type FC } from 'react';
 
 import { CollectionService } from '@/api/services/collection.service';
-import { DataTable } from '@/shared/components/data-table/data-table';
 import {
   type DataTableSearchParams,
   getSkip,
@@ -9,7 +8,7 @@ import {
 } from '@/shared/components/data-table/data-table-utils';
 import { DataTableEmptyState } from '@/shared/components/empty-states/data-table-empty-state';
 
-import { CollectionsTableColumns } from './collections-table-columns';
+import CollectionTableData from './collection-table-data';
 
 export const CollectionsTable: FC<Props> = async props => {
   const { page, search, size } = parseDataTableSearchParams({ ...props });
@@ -45,10 +44,9 @@ export const CollectionsTable: FC<Props> = async props => {
     }) ?? [];
 
   return (
-    <DataTable
-      columns={CollectionsTableColumns}
+    <CollectionTableData
       data={data}
-      defaults={{ page, search, size }}
+      pagination={{ page, search, size }}
       totalRows={pageInfo.total}
     />
   );

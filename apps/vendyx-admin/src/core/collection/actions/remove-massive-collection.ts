@@ -9,7 +9,11 @@ import { CollectionService } from '@/api/services/collection.service';
 import { getBasePathFormHeaders } from '@/shared/utils/url';
 
 export const removeMassiveCollection = async (ids: ID[]) => {
-  await CollectionService.remove(ids);
+  const isOk = await CollectionService.remove(ids);
+
+  if (!isOk) {
+    return { error: 'Failed to remove products' };
+  }
 
   const base = getBasePathFormHeaders(headers());
 
