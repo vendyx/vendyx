@@ -68,4 +68,56 @@ export class MailOrderService {
 
     await this.sendGridClient.send(mail);
   }
+
+  async sendOrderSentEmail(orderId: ID): Promise<void> {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        customer: true,
+        shipment: true,
+        shop: true,
+        lines: {
+          include: {
+            productVariant: {
+              include: {
+                asset: true,
+                variantOptionValues: { include: { optionValue: true } },
+                product: { include: { assets: { include: { asset: true } } } }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!order || !order.customer) {
+      throw new MailError(`Order or customer doesn't exist for order id: ${orderId}`);
+    }
+
+    const orderInput = {
+      ...order,
+      lines: order.lines.map(line => ({
+        ...line,
+        variant: {
+          ...line.productVariant,
+          optionValues: line.productVariant.variantOptionValues.map(vo => vo.optionValue),
+          product: {
+            ...line.productVariant.product,
+            assets: line.productVariant.product.assets.map(asset => asset.asset)
+          }
+        }
+      }))
+    };
+
+    const html = await EmailTemplates.OrderSent({ order: orderInput, shop: order.shop });
+
+    const mail: MailClientSendInput = {
+      to: order.customer.email,
+      from: { email: 'vendyxmail@gmail.com', name: order.shop.name },
+      subject: 'Your order is on its way',
+      html
+    };
+
+    await this.sendGridClient.send(mail);
+  }
 }

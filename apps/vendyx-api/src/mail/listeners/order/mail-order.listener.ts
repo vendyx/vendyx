@@ -15,4 +15,11 @@ export class MailOrderListener {
       await this.mailOrderService.sendOrderConfirmationEmail(payload.orderId);
     } catch (error) {}
   }
+
+  @OnEvent(OrderEvent.SHIPPED)
+  async handleOrderShippedEvent(payload: OrderPaidEvent) {
+    try {
+      await this.mailOrderService.sendOrderSentEmail(payload.orderId);
+    } catch (error) {}
+  }
 }
