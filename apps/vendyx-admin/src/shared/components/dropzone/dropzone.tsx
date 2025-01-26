@@ -1,7 +1,7 @@
 'use client';
 
 import { type FC } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { type Accept, useDropzone } from 'react-dropzone';
 
 import { UploadIcon } from 'lucide-react';
 
@@ -9,11 +9,17 @@ import { cn } from '@/shared/utils/theme';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
-export const Dropzone: FC<Props> = ({ size, disabled, disabledMessage, onAcceptFiles }) => {
+const ACCEPT_FILES = {
+  'image/jpeg': [],
+  'image/png': []
+};
+
+export const Dropzone: FC<Props> = ({ size, disabled, disabledMessage, onAcceptFiles, accept }) => {
   const { getRootProps, getInputProps } = useDropzone({
     onDropAccepted(files) {
       onAcceptFiles(files);
-    }
+    },
+    accept: accept ?? ACCEPT_FILES
   });
 
   if (disabled) {
@@ -60,6 +66,7 @@ type Props = {
   disabled?: boolean;
   disabledMessage?: string;
   onAcceptFiles: (files: File[]) => void;
+  accept?: Accept;
 };
 
 export const getDropzoneSize = (size: Props['size']) => {
