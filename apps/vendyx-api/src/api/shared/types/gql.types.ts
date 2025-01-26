@@ -232,12 +232,19 @@ export class UpdateShippingMethodInput {
     args?: Nullable<JSON>;
 }
 
+export class ShopSocialsInput {
+    facebook?: Nullable<string>;
+    twitter?: Nullable<string>;
+    instagram?: Nullable<string>;
+}
+
 export class CreateShopInput {
     name: string;
     email: string;
     phoneNumber: string;
     address?: Nullable<CreateAddressInput>;
     logo?: Nullable<string>;
+    socials?: Nullable<ShopSocialsInput>;
     storefrontUrl?: Nullable<string>;
 }
 
@@ -247,6 +254,7 @@ export class UpdateShopInput {
     phoneNumber?: Nullable<string>;
     address?: Nullable<CreateAddressInput>;
     logo?: Nullable<string>;
+    socials?: Nullable<ShopSocialsInput>;
     storefrontUrl?: Nullable<string>;
 }
 
@@ -675,7 +683,14 @@ export class Shop implements Node {
     logo?: Nullable<string>;
     address?: Nullable<AddressJson>;
     storefrontUrl?: Nullable<string>;
+    socials?: Nullable<ShopSocials>;
     owner: User;
+}
+
+export class ShopSocials {
+    facebook?: Nullable<string>;
+    twitter?: Nullable<string>;
+    instagram?: Nullable<string>;
 }
 
 export class ShopList implements List {
