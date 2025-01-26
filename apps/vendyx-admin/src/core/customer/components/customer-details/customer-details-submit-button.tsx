@@ -2,6 +2,7 @@ import { type FC } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { type CommonCustomerFragment } from '@/api/types';
+import BlockerWhenDirty from '@/shared/components/blocker-when-dirty/blocker-when-dirty';
 import { Button } from '@/shared/components/ui/button';
 
 import { type CustomerDetailsFormInput } from './use-customer-details-form';
@@ -13,9 +14,12 @@ export const CustomerDetailsSubmitButton: FC<Props> = ({ customer, isLoading }) 
   const isDisabled = !valuesHasChanged(customer, values as CustomerDetailsFormInput);
 
   return (
-    <Button disabled={isDisabled || isLoading} isLoading={isLoading} type="submit">
-      Save
-    </Button>
+    <>
+      <BlockerWhenDirty isDirty={!isDisabled} />
+      <Button disabled={isDisabled || isLoading} isLoading={isLoading} type="submit">
+        Save
+      </Button>
+    </>
   );
 };
 
