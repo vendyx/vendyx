@@ -110,7 +110,7 @@ const documents = {
     types.UpdateShippingMethodDocument,
   '\n  mutation RemoveShippingMethod($id: ID!) {\n    removeShippingMethod(id: $id)\n  }\n':
     types.RemoveShippingMethodDocument,
-  '\n  fragment CommonShop on Shop {\n    id\n    name\n    slug\n    email\n    phoneNumber\n    shopApiKey\n  }\n':
+  '\n  fragment CommonShop on Shop {\n    id\n    name\n    slug\n    email\n    logo\n    phoneNumber\n    shopApiKey\n  }\n':
     types.CommonShopFragmentDoc,
   '\n  fragment CommonListShop on Shop {\n    id\n    name\n    slug\n  }\n':
     types.CommonListShopFragmentDoc,
@@ -448,7 +448,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment CommonShop on Shop {\n    id\n    name\n    slug\n    email\n    phoneNumber\n    shopApiKey\n  }\n'
+  source: '\n  fragment CommonShop on Shop {\n    id\n    name\n    slug\n    email\n    logo\n    phoneNumber\n    shopApiKey\n  }\n'
 ): typeof import('./graphql').CommonShopFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

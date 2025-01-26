@@ -224,6 +224,7 @@ export type CreateShopInput = {
   logo?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   phoneNumber: Scalars['String']['input'];
+  socials?: InputMaybe<ShopSocialsInput>;
   storefrontUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -990,6 +991,8 @@ export type Shop = Node & {
   shopApiKey: Scalars['String']['output'];
   /** The shop's slug */
   slug: Scalars['String']['output'];
+  /** The shop's socials */
+  socials?: Maybe<ShopSocials>;
   /** The shop's storefront url */
   storefrontUrl?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['Date']['output'];
@@ -1017,6 +1020,19 @@ export type ShopResult = {
   __typename?: 'ShopResult';
   apiErrors: Array<ShopErrorResult>;
   shop?: Maybe<Shop>;
+};
+
+export type ShopSocials = {
+  __typename?: 'ShopSocials';
+  facebook?: Maybe<Scalars['String']['output']>;
+  instagram?: Maybe<Scalars['String']['output']>;
+  twitter?: Maybe<Scalars['String']['output']>;
+};
+
+export type ShopSocialsInput = {
+  facebook?: InputMaybe<Scalars['String']['input']>;
+  instagram?: InputMaybe<Scalars['String']['input']>;
+  twitter?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type State = Node & {
@@ -1112,6 +1128,7 @@ export type UpdateShopInput = {
   logo?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  socials?: InputMaybe<ShopSocialsInput>;
   storefrontUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1957,6 +1974,7 @@ export type CommonShopFragment = {
   name: string;
   slug: string;
   email: string;
+  logo?: string | null;
   phoneNumber: string;
   shopApiKey: string;
 } & { ' $fragmentName'?: 'CommonShopFragment' };
@@ -2449,6 +2467,7 @@ export const CommonShopFragmentDoc = new TypedDocumentString(
   name
   slug
   email
+  logo
   phoneNumber
   shopApiKey
 }
@@ -3158,6 +3177,7 @@ export const ShopDocument = new TypedDocumentString(`
   name
   slug
   email
+  logo
   phoneNumber
   shopApiKey
 }`) as unknown as TypedDocumentString<ShopQuery, ShopQueryVariables>;

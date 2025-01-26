@@ -5,12 +5,14 @@ import { type FC } from 'react';
 import { type CommonShopFragment } from '@/api/types';
 import { CopyToClipboardButton } from '@/shared/components/copy-to-clipboard/copy-to-clipboard-button';
 import { SettingsPageLayout } from '@/shared/components/layout/settings-page-layout/settings-page-layout';
+import { Label } from '@/shared/components/ui/label';
 import { Separator } from '@/shared/components/ui/separator';
 import { Form } from '@/shared/form/form';
 import { FormInput } from '@/shared/form/form-input';
 import { FormPhoneInput } from '@/shared/form/form-phone-input';
 
 import { GenerateShopApiKeyButton } from '../generate-shop-api-key/generate-shop-api-key-button';
+import { ShopLogoUploader } from '../shop-logo-uploader/shop-logo-uploader';
 import { ShopDetailsSubmitButton } from './shop-details-submit-button';
 import { useShopDetailsForm } from './use-shop-details-form';
 
@@ -34,6 +36,10 @@ export const ShopDetailsForm: FC<Props> = ({ shop }) => {
               placeholder="m@example.com"
             />
             <FormPhoneInput label="Phone number" control={form.control} name="phoneNumber" />
+            <div className="flex flex-col gap-2">
+              <Label>Upload your logo</Label>
+              <ShopLogoUploader shop={shop} />
+            </div>
             <Separator />
             <div>
               <h3 className="text-lg font-semibold">API keys</h3>
