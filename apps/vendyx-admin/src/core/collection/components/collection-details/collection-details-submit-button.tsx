@@ -2,8 +2,8 @@ import { type FC } from 'react';
 import { type DeepPartial, useFormContext, useWatch } from 'react-hook-form';
 
 import { type CommonCollectionFragment } from '@/api/types';
+import BlockerWhenDirty from '@/shared/components/blocker-when-dirty/blocker-when-dirty';
 import { Button } from '@/shared/components/ui/button';
-import useWarningDirtyForm from '@/shared/hooks/use-warning-dirty-form';
 
 import { type CollectionDetailsFormInput } from './use-collection-details-form';
 
@@ -17,16 +17,17 @@ export const CollectionDetailsSubmitButton: FC<Props> = ({ collection }) => {
 
   const isDirty = !(!withRequiredValues || isLoading || !hasChanged);
 
-  useWarningDirtyForm(isDirty);
-
   return (
-    <Button
-      disabled={!hasChanged || !withRequiredValues || isLoading}
-      isLoading={isLoading}
-      type="submit"
-    >
-      Save
-    </Button>
+    <>
+      <BlockerWhenDirty isDirty={isDirty} />
+      <Button
+        disabled={!hasChanged || !withRequiredValues || isLoading}
+        isLoading={isLoading}
+        type="submit"
+      >
+        Save
+      </Button>
+    </>
   );
 };
 

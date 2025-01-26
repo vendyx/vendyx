@@ -6,8 +6,8 @@ import { type DeepPartial, useFormContext, useWatch } from 'react-hook-form';
 import { type VariantProps } from 'class-variance-authority';
 
 import { type CommonProductFragment } from '@/api/types';
+import BlockerWhenDirty from '@/shared/components/blocker-when-dirty/blocker-when-dirty';
 import { Button, type buttonVariants } from '@/shared/components/ui/button';
-import useWarningDirtyForm from '@/shared/hooks/use-warning-dirty-form';
 import { formatPrice } from '@/shared/utils/formatters';
 import { clean } from '@/shared/utils/obj';
 
@@ -23,17 +23,18 @@ export const ProductSubmitButton: FC<Props> = ({ product, size = 'default' }) =>
 
   const isDirty = !(!withRequiredValues || isLoading || !hasChanged);
 
-  useWarningDirtyForm(isDirty);
-
   return (
-    <Button
-      isLoading={isLoading}
-      disabled={!withRequiredValues || isLoading || !hasChanged}
-      type="submit"
-      size={size}
-    >
-      Save
-    </Button>
+    <>
+      <BlockerWhenDirty isDirty={isDirty} />
+      <Button
+        isLoading={isLoading}
+        disabled={!withRequiredValues || isLoading || !hasChanged}
+        type="submit"
+        size={size}
+      >
+        Save
+      </Button>
+    </>
   );
 };
 
