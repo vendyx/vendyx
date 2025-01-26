@@ -10,7 +10,6 @@ import { type CommonProductFragment } from '@/api/types';
 import { createProduct } from '@/core/product/actions/create-product';
 import { updateProduct } from '@/core/product/actions/update-product';
 import { FormMessages } from '@/shared/form/form-messages';
-import useWarningDirtyForm from '@/shared/hooks/use-warning-dirty-form';
 import { notification } from '@/shared/notifications/notifications';
 import { formatPrice, parsePrice } from '@/shared/utils/formatters';
 
@@ -56,8 +55,6 @@ export const useProductDetailsForm = (product?: CommonProductFragment) => {
         })) ?? []
     }
   });
-
-  useWarningDirtyForm(form.formState.isDirty);
 
   useEffect(
     function setInitialValuesAfterProductIsRefetched() {
@@ -161,8 +158,6 @@ export const useProductDetailsForm = (product?: CommonProductFragment) => {
         });
       }
     });
-
-    form.reset(values);
   }
 
   return {
