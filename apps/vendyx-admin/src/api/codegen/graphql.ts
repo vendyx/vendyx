@@ -1977,6 +1977,12 @@ export type CommonShopFragment = {
   logo?: string | null;
   phoneNumber: string;
   shopApiKey: string;
+  socials?: {
+    __typename?: 'ShopSocials';
+    facebook?: string | null;
+    twitter?: string | null;
+    instagram?: string | null;
+  } | null;
 } & { ' $fragmentName'?: 'CommonShopFragment' };
 
 export type CommonListShopFragment = {
@@ -2468,6 +2474,11 @@ export const CommonShopFragmentDoc = new TypedDocumentString(
   slug
   email
   logo
+  socials {
+    facebook
+    twitter
+    instagram
+  }
   phoneNumber
   shopApiKey
 }
@@ -3178,6 +3189,11 @@ export const ShopDocument = new TypedDocumentString(`
   slug
   email
   logo
+  socials {
+    facebook
+    twitter
+    instagram
+  }
   phoneNumber
   shopApiKey
 }`) as unknown as TypedDocumentString<ShopQuery, ShopQueryVariables>;

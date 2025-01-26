@@ -7,6 +7,11 @@ export const COMMON_SHOP_FRAGMENT = graphql(`
     slug
     email
     logo
+    socials {
+      facebook
+      twitter
+      instagram
+    }
     phoneNumber
     shopApiKey
   }

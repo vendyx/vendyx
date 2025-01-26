@@ -27,9 +27,17 @@ const valuesHasChanged = (
 ) => {
   // Omit shopApiKey and shopId from the comparison
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { shopApiKey, shopId, ...formInput } = formValues;
+  const { shopApiKey, shopId, socials, ...formInput } = formValues;
 
-  return Object.keys(formInput).some(key => (formValues as any)[key] !== (shop as any)[key]);
+  const socialsHasChanged = Object.keys(socials ?? {}).some(
+    key => (formValues as any).socials[key] !== (shop as any).socials[key]
+  );
+
+  const generalHasChanged = Object.keys(formInput).some(
+    key => (formValues as any)[key] !== (shop as any)[key]
+  );
+
+  return socialsHasChanged || generalHasChanged;
 };
 
 type Props = {

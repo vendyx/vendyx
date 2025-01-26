@@ -20,6 +20,11 @@ export const useShopDetailsForm = (shop: CommonShopFragment) => {
       name: shop.name,
       email: shop.email,
       phoneNumber: shop.phoneNumber,
+      socials: {
+        facebook: shop.socials?.facebook ?? '',
+        twitter: shop.socials?.twitter ?? '',
+        instagram: shop.socials?.instagram ?? ''
+      },
       shopApiKey: shop.shopApiKey,
       shopId: shop.id
     }
@@ -31,6 +36,11 @@ export const useShopDetailsForm = (shop: CommonShopFragment) => {
         name: shop.name,
         email: shop.email,
         phoneNumber: shop.phoneNumber,
+        socials: {
+          facebook: shop.socials?.facebook ?? '',
+          twitter: shop.socials?.twitter ?? '',
+          instagram: shop.socials?.instagram ?? ''
+        },
         shopApiKey: shop.shopApiKey,
         shopId: shop.id
       });
@@ -48,8 +58,13 @@ export const useShopDetailsForm = (shop: CommonShopFragment) => {
   async function onSubmit(values: ShopDetailsFormInput) {
     startTransition(async () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { shopApiKey, shopId, ...rest } = values;
-      const result = await updateShop(shop.slug, rest);
+      const { shopApiKey, shopId, socials, ...rest } = values;
+      const { facebook, twitter, instagram } = socials;
+
+      const result = await updateShop(shop.slug, {
+        ...rest,
+        socials: { facebook, twitter, instagram }
+      });
 
       if (result?.error) {
         if (result.errorCode === ShopErrorCode.EmailAlreadyExists) {
@@ -75,6 +90,11 @@ const schema = z.object({
   name: z.string().min(1, FormMessages.required),
   email: z.string().email(FormMessages.invalidEmail),
   phoneNumber: z.string().min(1, FormMessages.invalidPhoneNumber),
+  socials: z.object({
+    facebook: z.string().optional(),
+    twitter: z.string().optional(),
+    instagram: z.string().optional()
+  }),
   shopApiKey: z.string().readonly().optional(),
   shopId: z.string().readonly().optional()
 });

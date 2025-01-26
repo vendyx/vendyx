@@ -42,6 +42,16 @@ export const ShopDetailsForm: FC<Props> = ({ shop }) => {
             </div>
             <Separator />
             <div>
+              <h3 className="text-lg font-semibold">Socials</h3>
+              <p className="text-sm text-gray-500">Add your social media links to your store.</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <FormInput control={form.control} name="socials.facebook" placeholder="Facebook" />
+              <FormInput control={form.control} name="socials.twitter" placeholder="Twitter" />
+              <FormInput control={form.control} name="socials.instagram" placeholder="Instagram" />
+            </div>
+            <Separator />
+            <div>
               <h3 className="text-lg font-semibold">API keys</h3>
               <p className="text-sm text-gray-500">
                 API keys are used to authenticate your store with our servers. Do not share them
