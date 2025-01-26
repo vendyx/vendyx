@@ -7,6 +7,7 @@ import { type VariantProps } from 'class-variance-authority';
 
 import { type CommonProductFragment } from '@/api/types';
 import { Button, type buttonVariants } from '@/shared/components/ui/button';
+import useWarningDirtyForm from '@/shared/hooks/use-warning-dirty-form';
 import { formatPrice } from '@/shared/utils/formatters';
 import { clean } from '@/shared/utils/obj';
 
@@ -19,6 +20,10 @@ export const ProductSubmitButton: FC<Props> = ({ product, size = 'default' }) =>
   const isLoading = (form as any).isLoading as boolean; // This exists in every form, i just need to add it to the type but i'm lazy
   const hasChanged = product ? valuesHasChanged(values, product) : true; // is creating a new product;
   const withRequiredValues = Boolean(values.name?.length);
+
+  const isDirty = !(!withRequiredValues || isLoading || !hasChanged);
+
+  useWarningDirtyForm(isDirty);
 
   return (
     <Button

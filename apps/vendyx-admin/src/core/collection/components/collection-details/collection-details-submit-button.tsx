@@ -3,6 +3,7 @@ import { type DeepPartial, useFormContext, useWatch } from 'react-hook-form';
 
 import { type CommonCollectionFragment } from '@/api/types';
 import { Button } from '@/shared/components/ui/button';
+import useWarningDirtyForm from '@/shared/hooks/use-warning-dirty-form';
 
 import { type CollectionDetailsFormInput } from './use-collection-details-form';
 
@@ -13,6 +14,10 @@ export const CollectionDetailsSubmitButton: FC<Props> = ({ collection }) => {
   const hasChanged = collection ? valuesHasChanged(collection, values) : true; // is creating a new collection;
   const isLoading = (form as any).isLoading as boolean; // This exists in every form, i just need to add it to the type but i'm lazy
   const withRequiredValues = Boolean(values.name?.length);
+
+  const isDirty = !(!withRequiredValues || isLoading || !hasChanged);
+
+  useWarningDirtyForm(isDirty);
 
   return (
     <Button
