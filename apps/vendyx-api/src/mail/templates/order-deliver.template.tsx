@@ -20,7 +20,6 @@ import {
   Hr,
   Html,
   Img,
-  Link,
   Preview,
   Row,
   Section,
@@ -32,6 +31,8 @@ import * as React from 'react';
 
 import { formatOrderCode } from '@/business/order/order.utils';
 import { getFormattedPrice } from '@/business/shared/utils/price.utils';
+
+import { OrderFooter } from './shared/order-footer';
 
 const Component: React.FC<Props> = ({ order, shop }) => {
   const { customer, shipment } = order;
@@ -170,60 +171,7 @@ const Component: React.FC<Props> = ({ order, shop }) => {
             </Section>
 
             {/* Footer */}
-            <Section className="mt-[80px] bg-[#F7F7F7] p-4">
-              <Row>
-                <Column className="w-1/2">
-                  <Img
-                    alt="React Email logo"
-                    height="42"
-                    src="https://react.email/static/logo-without-background.png"
-                  />
-                  <Text className="text-[16px] !my-2 font-semibold text-black">{shop.name}</Text>
-                </Column>
-                <Column className="w-1/2">
-                  <Row className="table-cell h-[44px] w-[56px] align-bottom">
-                    <Column className="pr-[8px]">
-                      <Link href="#">
-                        <Img
-                          alt="Facebook"
-                          height="36"
-                          src="https://react.email/static/facebook-logo.png"
-                          width="36"
-                        />
-                      </Link>
-                    </Column>
-                    <Column className="pr-[8px]">
-                      <Link href="#">
-                        <Img
-                          alt="X"
-                          height="36"
-                          src="https://react.email/static/x-logo.png"
-                          width="36"
-                        />
-                      </Link>
-                    </Column>
-                    <Column>
-                      <Link href="#">
-                        <Img
-                          alt="Instagram"
-                          height="36"
-                          src="https://react.email/static/instagram-logo.png"
-                          width="36"
-                        />
-                      </Link>
-                    </Column>
-                  </Row>
-                  <Row>
-                    <Text className="!my-2 text-[16px]  leading-[24px] text-gray-500">
-                      123 Main Street Anytown, CA 12345
-                    </Text>
-                    <Text className="!mb-[0px] !mt-1 text-[16px]  leading-[24px] text-gray-500">
-                      mail@example.com +123456789
-                    </Text>
-                  </Row>
-                </Column>
-              </Row>
-            </Section>
+            <OrderFooter shop={shop} />
           </Container>
         </Body>
       </Tailwind>

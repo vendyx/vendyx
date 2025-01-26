@@ -19,6 +19,8 @@ model Shop {
   logo          String?
   /// Physical address of the shop
   address       Json?
+  /// The shop's socials
+  socials       Json?
   /// The shop's storefront url
   storefrontUrl String? @unique @map("storefront_url")
 

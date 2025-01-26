@@ -1,3 +1,7 @@
+extend type Variant {
+  deletedAt: Date
+}
+
 type Query {
   variant(id: ID!): Variant
 }

@@ -35,9 +35,25 @@ type Shop implements Node {
   """
   storefrontUrl: String
   """
+  The shop's socials
+  """
+  socials: ShopSocials
+  """
   The shop's owner
   """
   owner: User!
+}
+
+type ShopSocials {
+  facebook: String
+  twitter: String
+  instagram: String
+}
+
+input ShopSocialsInput {
+  facebook: String
+  twitter: String
+  instagram: String
 }
 
 type ShopList implements List {
@@ -63,6 +79,7 @@ input CreateShopInput {
   phoneNumber: String!
   address: CreateAddressInput
   logo: String
+  socials: ShopSocialsInput
   storefrontUrl: String
 }
 
@@ -72,6 +89,7 @@ input UpdateShopInput {
   phoneNumber: String
   address: CreateAddressInput
   logo: String
+  socials: ShopSocialsInput
   storefrontUrl: String
 }
 

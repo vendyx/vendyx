@@ -56,7 +56,7 @@ const documents = {
     types.UpdateOptionDocument,
   '\n  mutation RemoveOption($id: ID!) {\n    softRemoveOption(id: $id) {\n      id\n    }\n  }\n':
     types.RemoveOptionDocument,
-  '\n  fragment CommonOrder on Order {\n    id\n    createdAt\n    code\n    state\n    subtotal\n    total\n    totalQuantity\n    lines {\n      items {\n        id\n        linePrice\n        quantity\n        unitPrice\n        productVariant {\n          id\n          sku\n          optionValues {\n            id\n            name\n          }\n          asset {\n            id\n            source\n          }\n          product {\n            name\n            slug\n            assets(input: { take: 1 }) {\n              items {\n                id\n                source\n              }\n            }\n          }\n        }\n      }\n    }\n    customer {\n      id\n      email\n      firstName\n      lastName\n      phoneNumber\n    }\n    shippingAddress {\n      streetLine1\n      streetLine2\n      postalCode\n      city\n      province\n      country\n    }\n    shipment {\n      id\n      amount\n      carrier\n      method\n      trackingCode\n    }\n    payment {\n      id\n      amount\n      method\n      transactionId\n    }\n  }\n':
+  '\n  fragment CommonOrder on Order {\n    id\n    createdAt\n    code\n    state\n    subtotal\n    total\n    totalQuantity\n    lines {\n      items {\n        id\n        linePrice\n        quantity\n        unitPrice\n        productVariant {\n          id\n          sku\n          deletedAt\n          optionValues {\n            id\n            name\n          }\n          asset {\n            id\n            source\n          }\n          product {\n            id\n            name\n            slug\n            assets(input: { take: 1 }) {\n              items {\n                id\n                source\n              }\n            }\n          }\n        }\n      }\n    }\n    customer {\n      id\n      email\n      firstName\n      lastName\n      phoneNumber\n    }\n    shippingAddress {\n      streetLine1\n      streetLine2\n      postalCode\n      city\n      province\n      country\n    }\n    shipment {\n      id\n      amount\n      carrier\n      method\n      trackingCode\n    }\n    payment {\n      id\n      amount\n      method\n      transactionId\n    }\n  }\n':
     types.CommonOrderFragmentDoc,
   '\n  query GetAllOrdersQuery($input: OrderListInput) {\n    orders(input: $input) {\n      count\n      pageInfo {\n        total\n      }\n      items {\n        id\n        code\n        state\n        total\n        totalQuantity\n        placedAt\n        customer {\n          id\n          firstName\n          lastName\n        }\n        shipment {\n          id\n          amount\n          trackingCode\n          method\n        }\n      }\n    }\n  }\n':
     types.GetAllOrdersQueryDocument,
@@ -110,7 +110,7 @@ const documents = {
     types.UpdateShippingMethodDocument,
   '\n  mutation RemoveShippingMethod($id: ID!) {\n    removeShippingMethod(id: $id)\n  }\n':
     types.RemoveShippingMethodDocument,
-  '\n  fragment CommonShop on Shop {\n    id\n    name\n    slug\n    email\n    phoneNumber\n    shopApiKey\n  }\n':
+  '\n  fragment CommonShop on Shop {\n    id\n    name\n    slug\n    email\n    logo\n    socials {\n      facebook\n      twitter\n      instagram\n    }\n    phoneNumber\n    shopApiKey\n  }\n':
     types.CommonShopFragmentDoc,
   '\n  fragment CommonListShop on Shop {\n    id\n    name\n    slug\n  }\n':
     types.CommonListShopFragmentDoc,
@@ -286,7 +286,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment CommonOrder on Order {\n    id\n    createdAt\n    code\n    state\n    subtotal\n    total\n    totalQuantity\n    lines {\n      items {\n        id\n        linePrice\n        quantity\n        unitPrice\n        productVariant {\n          id\n          sku\n          optionValues {\n            id\n            name\n          }\n          asset {\n            id\n            source\n          }\n          product {\n            name\n            slug\n            assets(input: { take: 1 }) {\n              items {\n                id\n                source\n              }\n            }\n          }\n        }\n      }\n    }\n    customer {\n      id\n      email\n      firstName\n      lastName\n      phoneNumber\n    }\n    shippingAddress {\n      streetLine1\n      streetLine2\n      postalCode\n      city\n      province\n      country\n    }\n    shipment {\n      id\n      amount\n      carrier\n      method\n      trackingCode\n    }\n    payment {\n      id\n      amount\n      method\n      transactionId\n    }\n  }\n'
+  source: '\n  fragment CommonOrder on Order {\n    id\n    createdAt\n    code\n    state\n    subtotal\n    total\n    totalQuantity\n    lines {\n      items {\n        id\n        linePrice\n        quantity\n        unitPrice\n        productVariant {\n          id\n          sku\n          deletedAt\n          optionValues {\n            id\n            name\n          }\n          asset {\n            id\n            source\n          }\n          product {\n            id\n            name\n            slug\n            assets(input: { take: 1 }) {\n              items {\n                id\n                source\n              }\n            }\n          }\n        }\n      }\n    }\n    customer {\n      id\n      email\n      firstName\n      lastName\n      phoneNumber\n    }\n    shippingAddress {\n      streetLine1\n      streetLine2\n      postalCode\n      city\n      province\n      country\n    }\n    shipment {\n      id\n      amount\n      carrier\n      method\n      trackingCode\n    }\n    payment {\n      id\n      amount\n      method\n      transactionId\n    }\n  }\n'
 ): typeof import('./graphql').CommonOrderFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -448,7 +448,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment CommonShop on Shop {\n    id\n    name\n    slug\n    email\n    phoneNumber\n    shopApiKey\n  }\n'
+  source: '\n  fragment CommonShop on Shop {\n    id\n    name\n    slug\n    email\n    logo\n    socials {\n      facebook\n      twitter\n      instagram\n    }\n    phoneNumber\n    shopApiKey\n  }\n'
 ): typeof import('./graphql').CommonShopFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

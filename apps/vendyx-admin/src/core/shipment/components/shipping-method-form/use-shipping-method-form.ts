@@ -52,14 +52,14 @@ export const useShippingMethodForm = (
   };
 
   const exec = () => {
-    const isNameOrDescriptionEmpty = !method.description || !method.name;
+    const isNameEmpty = !method.name;
 
     const isAnyArgNotFilled =
       Object.values(handler.args).length !== Object.keys(method.args).length;
 
     const isAnyArgWithEmptyValue = Object.values(method.args).some(arg => arg === '');
 
-    if (isNameOrDescriptionEmpty || isAnyArgWithEmptyValue || isAnyArgNotFilled) {
+    if (isNameEmpty || isAnyArgWithEmptyValue || isAnyArgNotFilled) {
       notification.error('Please fill all the fields');
       return;
     }

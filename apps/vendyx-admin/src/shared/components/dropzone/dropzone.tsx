@@ -14,7 +14,14 @@ const ACCEPT_FILES = {
   'image/png': []
 };
 
-export const Dropzone: FC<Props> = ({ size, disabled, disabledMessage, onAcceptFiles, accept }) => {
+export const Dropzone: FC<Props> = ({
+  size,
+  disabled,
+  disabledMessage,
+  onAcceptFiles,
+  className,
+  accept
+}) => {
   const { getRootProps, getInputProps } = useDropzone({
     onDropAccepted(files) {
       onAcceptFiles(files);
@@ -27,7 +34,7 @@ export const Dropzone: FC<Props> = ({ size, disabled, disabledMessage, onAcceptF
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger type="button">
-            <div className={cn(getDropzoneSize(size), 'opacity-50 flex-shrink-0')}>
+            <div className={cn(className, getDropzoneSize(size), 'opacity-50 flex-shrink-0')}>
               <div
                 className={cn(
                   'rounded-md border border-dashed flex items-center justify-center w-full h-full cursor-not-allowed'
@@ -46,7 +53,7 @@ export const Dropzone: FC<Props> = ({ size, disabled, disabledMessage, onAcceptF
   }
 
   return (
-    <div className={cn(getDropzoneSize(size), 'flex-shrink-0')}>
+    <div className={cn(className, getDropzoneSize(size), 'flex-shrink-0')}>
       <label
         className={cn(
           'rounded-md border border-dashed cursor-pointer flex items-center justify-center w-full h-full',
@@ -62,17 +69,20 @@ export const Dropzone: FC<Props> = ({ size, disabled, disabledMessage, onAcceptF
 };
 
 type Props = {
-  size: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg';
+  onAcceptFiles: (files: File[]) => void;
   disabled?: boolean;
   disabledMessage?: string;
-  onAcceptFiles: (files: File[]) => void;
-  accept?: Accept;
+  className?: string;
+  accept: Accept;
 };
 
-export const getDropzoneSize = (size: Props['size']) => {
+export const getDropzoneSize = (size?: Props['size']) => {
   if (size === 'sm') return 'w-[48px] h-[48px]';
 
   if (size === 'md') return 'w-[60px] h-[60px]';
 
   if (size === 'lg') return 'aspect-w-1 aspect-h-1';
+
+  return '';
 };

@@ -224,6 +224,7 @@ export type CreateShopInput = {
   logo?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   phoneNumber: Scalars['String']['input'];
+  socials?: InputMaybe<ShopSocialsInput>;
   storefrontUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -990,6 +991,8 @@ export type Shop = Node & {
   shopApiKey: Scalars['String']['output'];
   /** The shop's slug */
   slug: Scalars['String']['output'];
+  /** The shop's socials */
+  socials?: Maybe<ShopSocials>;
   /** The shop's storefront url */
   storefrontUrl?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['Date']['output'];
@@ -1017,6 +1020,19 @@ export type ShopResult = {
   __typename?: 'ShopResult';
   apiErrors: Array<ShopErrorResult>;
   shop?: Maybe<Shop>;
+};
+
+export type ShopSocials = {
+  __typename?: 'ShopSocials';
+  facebook?: Maybe<Scalars['String']['output']>;
+  instagram?: Maybe<Scalars['String']['output']>;
+  twitter?: Maybe<Scalars['String']['output']>;
+};
+
+export type ShopSocialsInput = {
+  facebook?: InputMaybe<Scalars['String']['input']>;
+  instagram?: InputMaybe<Scalars['String']['input']>;
+  twitter?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type State = Node & {
@@ -1112,6 +1128,7 @@ export type UpdateShopInput = {
   logo?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  socials?: InputMaybe<ShopSocialsInput>;
   storefrontUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1198,6 +1215,7 @@ export type Variant = Node & {
    */
   costPerUnit?: Maybe<Scalars['Int']['output']>;
   createdAt: Scalars['Date']['output'];
+  deletedAt?: Maybe<Scalars['Date']['output']>;
   id: Scalars['ID']['output'];
   optionValues: Array<OptionValue>;
   product: Product;
@@ -1540,10 +1558,12 @@ export type CommonOrderFragment = {
         __typename?: 'Variant';
         id: string;
         sku?: string | null;
+        deletedAt?: any | null;
         optionValues: Array<{ __typename?: 'OptionValue'; id: string; name: string }>;
         asset?: { __typename?: 'Asset'; id: string; source: string } | null;
         product: {
           __typename?: 'Product';
+          id: string;
           name: string;
           slug: string;
           assets: {
@@ -1954,8 +1974,15 @@ export type CommonShopFragment = {
   name: string;
   slug: string;
   email: string;
+  logo?: string | null;
   phoneNumber: string;
   shopApiKey: string;
+  socials?: {
+    __typename?: 'ShopSocials';
+    facebook?: string | null;
+    twitter?: string | null;
+    instagram?: string | null;
+  } | null;
 } & { ' $fragmentName'?: 'CommonShopFragment' };
 
 export type CommonListShopFragment = {
@@ -2289,6 +2316,7 @@ export const CommonOrderFragmentDoc = new TypedDocumentString(
       productVariant {
         id
         sku
+        deletedAt
         optionValues {
           id
           name
@@ -2298,6 +2326,7 @@ export const CommonOrderFragmentDoc = new TypedDocumentString(
           source
         }
         product {
+          id
           name
           slug
           assets(input: {take: 1}) {
@@ -2444,6 +2473,12 @@ export const CommonShopFragmentDoc = new TypedDocumentString(
   name
   slug
   email
+  logo
+  socials {
+    facebook
+    twitter
+    instagram
+  }
   phoneNumber
   shopApiKey
 }
@@ -2802,6 +2837,7 @@ export const GetOrderbyIdQueryDocument = new TypedDocumentString(`
       productVariant {
         id
         sku
+        deletedAt
         optionValues {
           id
           name
@@ -2811,6 +2847,7 @@ export const GetOrderbyIdQueryDocument = new TypedDocumentString(`
           source
         }
         product {
+          id
           name
           slug
           assets(input: {take: 1}) {
@@ -3151,6 +3188,12 @@ export const ShopDocument = new TypedDocumentString(`
   name
   slug
   email
+  logo
+  socials {
+    facebook
+    twitter
+    instagram
+  }
   phoneNumber
   shopApiKey
 }`) as unknown as TypedDocumentString<ShopQuery, ShopQueryVariables>;

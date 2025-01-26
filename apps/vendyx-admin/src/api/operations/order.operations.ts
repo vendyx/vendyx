@@ -18,6 +18,7 @@ export const COMMON_ORDER_FRAGMENT = graphql(`
         productVariant {
           id
           sku
+          deletedAt
           optionValues {
             id
             name
@@ -27,6 +28,7 @@ export const COMMON_ORDER_FRAGMENT = graphql(`
             source
           }
           product {
+            id
             name
             slug
             assets(input: { take: 1 }) {
