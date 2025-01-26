@@ -44,10 +44,6 @@ export function Blocker() {
 export function BlockBrowserNavigation() {
   const isBlocked = useIsBlocked();
 
-  if (typeof window !== 'undefined') {
-    window.history.pushState(null, document.title, window.location.href);
-  }
-
   useEffect(() => {
     if (isBlocked) {
       const showModal = (event: BeforeUnloadEvent) => {
