@@ -566,7 +566,8 @@ export class OrderService extends OrderFinders {
 
     if (action === 'mark_as_delivered') return order.state === OrderState.SHIPPED;
 
-    if (action === 'cancel') return order.state !== OrderState.CANCELED;
+    if (action === 'cancel')
+      return order.state !== OrderState.CANCELED && order.state !== OrderState.DELIVERED;
   }
 
   /**

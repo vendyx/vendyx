@@ -20,7 +20,6 @@ import {
   Hr,
   Html,
   Img,
-  Link,
   Preview,
   Row,
   Section,
@@ -30,7 +29,6 @@ import {
 } from '@react-email/components';
 import * as React from 'react';
 
-import { ShopSocials } from '@/api/shared/types/gql.types';
 import { formatOrderCode } from '@/business/order/order.utils';
 import { getFormattedPrice } from '@/business/shared/utils/price.utils';
 
@@ -40,7 +38,6 @@ const Component: React.FC<Props> = ({ order, shop }) => {
   const customerName = order.customer?.firstName ?? order.customer?.lastName;
   const { customer, shipment } = order;
   const shippingAddress = order.shippingAddress as unknown as Address;
-  const socials = shop.socials as ShopSocials;
 
   return (
     <Html>
