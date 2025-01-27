@@ -30,7 +30,7 @@ const valuesHasChanged = (
   const { shopApiKey, shopId, socials, ...formInput } = formValues;
 
   const socialsHasChanged = Object.keys(socials ?? {}).some(
-    key => (formValues as any).socials[key] !== (shop as any).socials[key]
+    key => (formValues as any).socials?.[key] !== (shop as any).socials?.[key]
   );
 
   const generalHasChanged = Object.keys(formInput).some(
