@@ -74,7 +74,7 @@ type Props = {
   disabled?: boolean;
   disabledMessage?: string;
   className?: string;
-  accept: Accept;
+  accept?: Accept;
 };
 
 export const getDropzoneSize = (size?: Props['size']) => {
