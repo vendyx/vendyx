@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 

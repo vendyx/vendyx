@@ -2,6 +2,7 @@ import { type FC } from 'react';
 import { type DeepPartial, useFormContext, useWatch } from 'react-hook-form';
 
 import { type CommonCollectionFragment } from '@/api/types';
+import BlockerWhenDirty from '@/shared/components/blocker-when-dirty/blocker-when-dirty';
 import { Button } from '@/shared/components/ui/button';
 
 import { type CollectionDetailsFormInput } from './use-collection-details-form';
@@ -14,14 +15,19 @@ export const CollectionDetailsSubmitButton: FC<Props> = ({ collection }) => {
   const isLoading = (form as any).isLoading as boolean; // This exists in every form, i just need to add it to the type but i'm lazy
   const withRequiredValues = Boolean(values.name?.length);
 
+  const isDirty = !(!withRequiredValues || isLoading || !hasChanged);
+
   return (
-    <Button
-      disabled={!hasChanged || !withRequiredValues || isLoading}
-      isLoading={isLoading}
-      type="submit"
-    >
-      Save
-    </Button>
+    <>
+      <BlockerWhenDirty isDirty={isDirty} />
+      <Button
+        disabled={!hasChanged || !withRequiredValues || isLoading}
+        isLoading={isLoading}
+        type="submit"
+      >
+        Save
+      </Button>
+    </>
   );
 };
 

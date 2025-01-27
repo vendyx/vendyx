@@ -1,9 +1,10 @@
 import { type FC } from 'react';
 
 import { type LucideIcon } from 'lucide-react';
-import Link from 'next/link';
 
 import { cn } from '@/shared/utils/theme';
+
+import { Link } from '../../link/link';
 
 export const AdminSidebarNavItem: FC<Props> = ({ href, label, icon: Icon, isActive }) => {
   return (

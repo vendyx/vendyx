@@ -3,6 +3,7 @@
 'use client';
 
 import { type FC, useMemo, useState } from 'react';
+import { type Accept } from 'react-dropzone';
 
 import { isFirst } from '@/shared/utils/arrays';
 import { cn } from '@/shared/utils/theme';
@@ -15,7 +16,8 @@ export const FileUploader: FC<Props> = ({
   defaultPreviews,
   disabledState,
   title = 'Images',
-  max
+  max,
+  accept
 }) => {
   const [files, setFiles] = useState<File[]>([]);
 
@@ -53,7 +55,7 @@ export const FileUploader: FC<Props> = ({
             {max ? (
               previews.length < max && <Dropzone size="lg" onAcceptFiles={_onAcceptFiles} />
             ) : (
-              <Dropzone size="lg" onAcceptFiles={_onAcceptFiles} />
+              <Dropzone size="lg" onAcceptFiles={_onAcceptFiles} accept={accept} />
             )}
           </div>
         )}
@@ -68,4 +70,5 @@ type Props = {
   disabledState?: boolean;
   title?: string;
   max?: number;
+  accept?: Accept;
 };
