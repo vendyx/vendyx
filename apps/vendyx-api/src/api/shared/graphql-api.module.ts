@@ -27,7 +27,7 @@ export class GraphqlApiModule {
         path: options.path,
         typePaths: options.typePaths,
         include: options.include,
-        // Al unhandled http error comes here
+        // Al unhandled http error comes here (executed after filters)
         formatError: error => {
           const originalError = error.extensions?.originalError as OriginalError;
 
