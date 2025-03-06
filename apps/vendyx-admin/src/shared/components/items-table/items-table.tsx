@@ -78,7 +78,7 @@ export const ItemsTable = <T,>({
           </TableHeader>
           <TableBody>
             {!items.length
-              ? emptyState ?? <ItemsTableEmptyState />
+              ? (emptyState ?? <ItemsTableEmptyState />)
               : items.map(item => renderRow(item))}
           </TableBody>
         </Table>

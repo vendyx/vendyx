@@ -56,17 +56,17 @@ export const generateVariants = (
             {
               id: variantAlreadyExists ? variantAlreadyExists.id : Math.random().toString(),
               values: [value],
-              price: variantAlreadyExists ? variantAlreadyExists.price : formValues?.price ?? '0',
+              price: variantAlreadyExists ? variantAlreadyExists.price : (formValues?.price ?? '0'),
               stock: variantAlreadyExists
                 ? variantAlreadyExists.stock
-                : Number(formValues?.stock) ?? 0,
+                : (Number(formValues?.stock) ?? 0),
               comparisonPrice: variantAlreadyExists
                 ? variantAlreadyExists.comparisonPrice
-                : formValues?.comparisonPrice ?? '0',
-              sku: variantAlreadyExists ? variantAlreadyExists.sku : formValues?.sku ?? '',
+                : (formValues?.comparisonPrice ?? '0'),
+              sku: variantAlreadyExists ? variantAlreadyExists.sku : (formValues?.sku ?? ''),
               requiresShipping: variantAlreadyExists
                 ? variantAlreadyExists.requiresShipping
-                : formValues?.requiresShipping ?? false,
+                : (formValues?.requiresShipping ?? false),
               image: variantAlreadyExists ? variantAlreadyExists.image : undefined,
               selected: false,
               action: (variantAlreadyExists ? 'none' : 'create') as 'create' | 'update' | 'none'
@@ -123,7 +123,7 @@ export const generateVariants = (
               set,
               base
             ) === 'update'
-              ? baseExists ?? null
+              ? (baseExists ?? null)
               : // If the variant is not in the existing variants and does not need to be updated,
                 // then is a new variant that need to be created and for this iteration, there is no data to persist
                 // we use the default values

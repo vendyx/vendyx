@@ -45,7 +45,7 @@ export const ShopLogoUploader: FC<Props> = ({ shop }) => {
         </button>
         <div className={cn('relative', 'w-20 h-20')}>
           <img
-            src={file ? URL.createObjectURL(file) : image ?? ''}
+            src={file ? URL.createObjectURL(file) : (image ?? '')}
             alt="Uploaded"
             className={cn('object-cover rounded', isLoading && 'opacity-50', 'w-20 h-20')}
           />

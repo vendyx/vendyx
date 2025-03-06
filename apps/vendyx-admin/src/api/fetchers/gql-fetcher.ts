@@ -19,7 +19,7 @@ export const gqlFetcher = async <R, V>(
         query: query.toString(),
         variables
       }),
-      cache: options?.cache === null ? undefined : options?.cache ?? 'no-store',
+      cache: options?.cache === null ? undefined : (options?.cache ?? 'no-store'),
       next: { tags: options?.tags, revalidate: options?.revalidate }
     });
 

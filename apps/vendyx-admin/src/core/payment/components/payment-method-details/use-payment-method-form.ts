@@ -22,7 +22,7 @@ export const usePaymentMethodForm = (
   const [isLoading, startTransition] = useTransition();
 
   const defaultIntegration = method
-    ? handlers.find(i => i.name === method.name) ?? handlers[0]
+    ? (handlers.find(i => i.name === method.name) ?? handlers[0])
     : handlers[0];
 
   const form = useForm<PaymentMethodFormInput>({

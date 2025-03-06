@@ -22,7 +22,7 @@ import { type PaymentMethodFormInput } from './use-payment-method-form';
 
 export const PaymentMethodDetails: FC<Props> = ({ handlers, method }) => {
   const defaultHandler = method
-    ? handlers.find(i => i.name === method.name) ?? handlers[0]
+    ? (handlers.find(i => i.name === method.name) ?? handlers[0])
     : handlers[0];
 
   const { control, setValue, getValues } = useFormContext<PaymentMethodFormInput>();

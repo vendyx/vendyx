@@ -44,7 +44,7 @@ export const VariantAssetUploader: FC<Props> = ({
         </button>
         <div className={cn('relative', getDropzoneSize(size))}>
           <img
-            src={file ? URL.createObjectURL(file) : image ?? ''}
+            src={file ? URL.createObjectURL(file) : (image ?? '')}
             alt="Uploaded"
             className={cn('object-cover rounded', isLoading && 'opacity-50', getDropzoneSize(size))}
           />
