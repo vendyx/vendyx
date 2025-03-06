@@ -84,5 +84,8 @@
   },
   "gacp": {
     "push": false
+  }, 
+  "engines" : { 
+    "node" : ">=20" 
   }
 }
