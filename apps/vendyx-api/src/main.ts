@@ -9,7 +9,8 @@ import { ConfigService } from './config/config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    rawBody: true // Required for Stripe webhook
+    rawBody: true, // Required for Stripe webhook,
+    cors: { origin: '*' }
   });
 
   const authService = app.get(AuthService);
