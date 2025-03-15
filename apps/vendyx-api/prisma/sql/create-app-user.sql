@@ -1,3 +1,6 @@
+-- 0. Drop the user (If is already created, omit this step)
+DROP USER IF EXISTS app_user;
+
 -- 1. Create the user (If is already created, omit this step)
 CREATE USER app_user WITH PASSWORD 'app_secure_password';
 
