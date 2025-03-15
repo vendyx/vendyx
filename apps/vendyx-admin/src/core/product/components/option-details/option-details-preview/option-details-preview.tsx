@@ -19,7 +19,7 @@ export const OptionDetailsPreview: FC<Props> = ({ option }) => {
         })
       }
     >
-      <Label>{option.name}</Label>
+      <Label className="text-left">{option.name}</Label>
       <div className="flex items-center gap-2">
         {option.values.map(value => (
           <Badge key={value.id} variant="secondary">
