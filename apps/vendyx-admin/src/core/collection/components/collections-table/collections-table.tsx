@@ -1,6 +1,7 @@
 import { type FC } from 'react';
 
 import { CollectionService } from '@/api/services/collection.service';
+import { type CollectionContentType } from '@/api/types';
 import {
   type DataTableSearchParams,
   getSkip,
@@ -32,6 +33,7 @@ export const CollectionsTable: FC<Props> = async props => {
   const data: CollectionsTableRow[] =
     collections?.map(c => {
       const totalProducts = c.products.count;
+      const totalSubCollections = c.subCollections.count;
       const image = c.assets.items[0]?.source;
 
       return {
@@ -39,7 +41,9 @@ export const CollectionsTable: FC<Props> = async props => {
         name: c.name,
         image,
         totalProducts,
-        status: c.enabled
+        totalSubCollections,
+        status: c.enabled,
+        contentType: c.contentType
       };
     }) ?? [];
 
@@ -57,7 +61,9 @@ export type CollectionsTableRow = {
   image: string;
   name: string;
   totalProducts: number;
+  totalSubCollections: number;
   status: boolean;
+  contentType: CollectionContentType;
 };
 
 type Props = DataTableSearchParams;

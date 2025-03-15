@@ -3,6 +3,7 @@
 import { type ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 
+import { CollectionContentType } from '@/api/types';
 import { DataTableColumnHeader } from '@/shared/components/data-table/data-table-column-header';
 import { ImagePlaceholder } from '@/shared/components/placeholders/image-placeholder';
 import { Badge } from '@/shared/components/ui/badge';
@@ -57,8 +58,29 @@ export const CollectionsTableColumns: ColumnDef<CollectionsTableRow>[] = [
   },
   {
     accessorKey: 'totalProducts',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Products" />,
-    cell: ({ row }) => <p className="text-nowrap">{row.original.totalProducts}</p>
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Items" />,
+    cell: ({ row }) => {
+      const { contentType } = row.original;
+      const totalItems =
+        contentType === CollectionContentType.Products
+          ? row.original.totalProducts
+          : row.original.totalSubCollections;
+
+      return <p className="text-nowrap">{totalItems}</p>;
+    }
+  },
+  {
+    accessorKey: 'contentType',
+    header: ({ column }) => {
+      return <DataTableColumnHeader column={column} title="Content" />;
+    },
+    cell: ({ row }) => {
+      const contentType =
+        row.original.contentType === CollectionContentType.Products ? 'Products' : 'Collections';
+
+      return <p className="text-nowrap">{contentType}</p>;
+    },
+    enableSorting: false
   },
   {
     accessorKey: 'status',

@@ -15,7 +15,7 @@ export const serviceGqlFetcher = async <R, V>(
     ...options,
     headers: {
       Authorization: `Bearer ${getToken()}`,
-      shop_id: getActiveShop()?.id ?? '',
+      x_vendyx_shop_id: getActiveShop()?.id ?? '',
       ...options?.headers
     }
   });

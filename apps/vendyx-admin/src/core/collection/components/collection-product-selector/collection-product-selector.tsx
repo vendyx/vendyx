@@ -33,7 +33,7 @@ export const CollectionProductSelector: FC<Props> = ({
   return (
     <EntitySelector
       title="Add products"
-      description="Add products to your zone"
+      description="Add products to your collection"
       triggerText="Add products"
       items={items}
       isFetching={isFetching}
@@ -42,7 +42,7 @@ export const CollectionProductSelector: FC<Props> = ({
         await addCollectionProducts(collectionId, selected);
         close();
         onFinishSelection();
-        notification.success('Products updated');
+        notification.success('Content updated');
       }}
       onSearch={handleSearch}
       renderItem={product => (

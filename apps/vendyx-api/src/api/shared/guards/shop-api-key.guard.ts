@@ -12,7 +12,7 @@ export class ShopApiKeyGuard implements CanActivate {
 
     const req = ctx.getContext().req;
 
-    const shopId = req.headers.shop_id;
+    const shopId = req.headers.x_vendyx_shop_id;
     const shopApiKey = req.headers.x_vendyx_shop_api_key;
 
     if (!shopApiKey) {

@@ -12,8 +12,10 @@ input CreateCollectionInput {
   name: String!
   description: String
   enabled: Boolean
+  contentType: CollectionContentType!
   products: [ID!]
   assets: [AssetInCollectionInput!]
+  subCollections: [ID!]
 }
 
 input UpdateCollectionInput {
@@ -22,30 +24,14 @@ input UpdateCollectionInput {
   enabled: Boolean
   products: [ID!]
   assets: [AssetInCollectionInput!]
+  subCollections: [ID!]
 }
 
 input AssetInCollectionInput {
   id: ID!
 }
 
-input CollectionListInput {
-  """
-  Skip the first n results
-  """
-  skip: Int
-
-  """
-  takes n result from where the skip position is
-  """
-  take: Int
-
-  """
-  Filters to apply
-  """
-  filters: CollectionFilters
-}
-
-input CollectionFilters {
-  name: StringFilter
+extend input CollectionFilters {
   enabled: BooleanFilter
+  contentType: CollectionContentType
 }

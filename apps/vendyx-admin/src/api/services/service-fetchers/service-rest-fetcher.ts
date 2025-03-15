@@ -9,7 +9,7 @@ export const serviceRestFetcher = async <R>(url: string, options?: Options) =>
     ...options,
     headers: {
       Authorization: `Bearer ${getToken()}`,
-      shop_id: getActiveShop()?.id ?? '',
+      x_vendyx_shop_id: getActiveShop()?.id ?? '',
       ...options?.headers
     }
   });

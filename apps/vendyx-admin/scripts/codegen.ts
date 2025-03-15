@@ -5,7 +5,6 @@ const GQL_SCHEMA_URL = process.env.VENDYX_API_URL + '/admin-api';
 const config: CodegenConfig = {
   schema: GQL_SCHEMA_URL,
   documents: ['./src/api/**/*.ts'],
-  ignoreNoDocuments: true,
   generates: {
     './src/api/codegen/': {
       preset: 'client',

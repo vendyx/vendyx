@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
-import { type CommonCollectionFragment } from '@/api/types';
+import { CollectionContentType, type CommonCollectionFragment } from '@/api/types';
 import { FormMessages } from '@/shared/form/form-messages';
 import { notification } from '@/shared/notifications/notifications';
 
@@ -22,7 +22,8 @@ export const useCollectionDetailsForm = (collection?: CommonCollectionFragment) 
     defaultValues: {
       name: collection?.name ?? '',
       description: collection?.description ?? '',
-      enabled: collection?.enabled ?? true
+      enabled: collection?.enabled ?? true,
+      contentType: collection?.contentType ?? CollectionContentType.Products
     }
   });
 
@@ -59,7 +60,10 @@ const schema = z.object({
   name: z.string().min(1, FormMessages.required),
   description: z.string().optional(),
   enabled: z.boolean(),
-  image: z.instanceof(File).optional()
+  image: z.instanceof(File).optional(),
+  contentType: z
+    .enum([CollectionContentType.Products, CollectionContentType.Collections])
+    .default(CollectionContentType.Products)
 });
 
 export type CollectionDetailsFormInput = z.infer<typeof schema>;

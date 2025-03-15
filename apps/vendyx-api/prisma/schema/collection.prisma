@@ -1,3 +1,8 @@
+enum CollectionContentType {
+  PRODUCTS
+  COLLECTIONS
+}
+
 /// A collection is a group of products that are displayed together in the storefront.
 model Collection {
   id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -8,11 +13,13 @@ model Collection {
   /// The collection's name
   name        String
   /// The collection's slug used in the URL
-  slug        String  @unique
+  slug        String                @unique
   /// The collection's description
   description String?
   /// The collection's order user to decide to show the collection in the storefront
-  enabled     Boolean @default(true)
+  enabled     Boolean               @default(true)
+  /// The collection's content type indicating if the collection contains products or other collections
+  contentType CollectionContentType @default(PRODUCTS) @map("content_type")
 
   parentId       String?      @map("parent_id") @db.Uuid
   parent         Collection?  @relation("CollectionToCollection", fields: [parentId], references: [id])

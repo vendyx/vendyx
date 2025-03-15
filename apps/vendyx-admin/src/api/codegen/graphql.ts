@@ -102,6 +102,8 @@ export type BooleanFilter = {
 export type Collection = Node & {
   __typename?: 'Collection';
   assets: AssetList;
+  /** The collection's content type indicating if the collection contains products or other collections */
+  contentType: CollectionContentType;
   createdAt: Scalars['Date']['output'];
   /** The collection's description */
   description?: Maybe<Scalars['String']['output']>;
@@ -113,6 +115,7 @@ export type Collection = Node & {
   products: ProductList;
   /** The collection's slug used in the URL */
   slug: Scalars['String']['output'];
+  subCollections: CollectionList;
   updatedAt: Scalars['Date']['output'];
 };
 
@@ -126,7 +129,18 @@ export type CollectionProductsArgs = {
   input?: InputMaybe<ProductListInput>;
 };
 
+/** A collection is a group of products that are displayed together in the storefront. */
+export type CollectionSubCollectionsArgs = {
+  input?: InputMaybe<CollectionListInput>;
+};
+
+export enum CollectionContentType {
+  Collections = 'COLLECTIONS',
+  Products = 'PRODUCTS'
+}
+
 export type CollectionFilters = {
+  contentType?: InputMaybe<CollectionContentType>;
   enabled?: InputMaybe<BooleanFilter>;
   name?: InputMaybe<StringFilter>;
 };
@@ -180,10 +194,12 @@ export type CreateAddressInput = {
 
 export type CreateCollectionInput = {
   assets?: InputMaybe<Array<AssetInCollectionInput>>;
+  contentType: CollectionContentType;
   description?: InputMaybe<Scalars['String']['input']>;
   enabled?: InputMaybe<Scalars['Boolean']['input']>;
   name: Scalars['String']['input'];
   products?: InputMaybe<Array<Scalars['ID']['input']>>;
+  subCollections?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type CreateOptionInput = {
@@ -1068,6 +1084,7 @@ export type UpdateCollectionInput = {
   enabled?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   products?: InputMaybe<Array<Scalars['ID']['input']>>;
+  subCollections?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type UpdateCustomerInput = {
@@ -1256,6 +1273,7 @@ export type CommonCollectionFragment = {
   name: string;
   description?: string | null;
   enabled: boolean;
+  contentType: CollectionContentType;
   products: { __typename?: 'ProductList'; items: Array<{ __typename?: 'Product'; id: string }> };
   assets: {
     __typename?: 'AssetList';
@@ -1270,6 +1288,20 @@ export type CommonCollectionProductFragment = {
   slug: string;
   enabled: boolean;
 } & { ' $fragmentName'?: 'CommonCollectionProductFragment' };
+
+export type CommonCollectionSubCollectionFragment = {
+  __typename?: 'Collection';
+  id: string;
+  name: string;
+  enabled: boolean;
+  products: { __typename?: 'ProductList'; count: number };
+} & { ' $fragmentName'?: 'CommonCollectionSubCollectionFragment' };
+
+export type CommonSubCollectionForSelectorFragment = {
+  __typename?: 'Collection';
+  id: string;
+  name: string;
+} & { ' $fragmentName'?: 'CommonSubCollectionForSelectorFragment' };
 
 export type GetAllCollectionsQueryVariables = Exact<{
   input?: InputMaybe<CollectionListInput>;
@@ -1286,11 +1318,21 @@ export type GetAllCollectionsQuery = {
       name: string;
       slug: string;
       enabled: boolean;
+      contentType: CollectionContentType;
       assets: {
         __typename?: 'AssetList';
         items: Array<{ __typename?: 'Asset'; id: string; source: string }>;
       };
-      products: { __typename?: 'ProductList'; count: number };
+      subCollections: {
+        __typename?: 'CollectionList';
+        count: number;
+        items: Array<{ __typename?: 'Collection'; id: string; name: string }>;
+      };
+      products: {
+        __typename?: 'ProductList';
+        count: number;
+        items: Array<{ __typename?: 'Product'; id: string; name: string }>;
+      };
     }>;
   };
 };
@@ -1327,6 +1369,47 @@ export type GetCollectionProductsQuery = {
       >;
     };
   } | null;
+};
+
+export type GetCollectionSubCollectionsQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']['input']>;
+  input?: InputMaybe<CollectionListInput>;
+}>;
+
+export type GetCollectionSubCollectionsQuery = {
+  __typename?: 'Query';
+  collection?: {
+    __typename?: 'Collection';
+    subCollections: {
+      __typename?: 'CollectionList';
+      count: number;
+      items: Array<
+        { __typename?: 'Collection' } & {
+          ' $fragmentRefs'?: {
+            CommonCollectionSubCollectionFragment: CommonCollectionSubCollectionFragment;
+          };
+        }
+      >;
+    };
+  } | null;
+};
+
+export type GetAllSubCollectionsForSelectorQueryVariables = Exact<{
+  input?: InputMaybe<CollectionListInput>;
+}>;
+
+export type GetAllSubCollectionsForSelectorQuery = {
+  __typename?: 'Query';
+  collections: {
+    __typename?: 'CollectionList';
+    items: Array<
+      { __typename?: 'Collection' } & {
+        ' $fragmentRefs'?: {
+          CommonSubCollectionForSelectorFragment: CommonSubCollectionForSelectorFragment;
+        };
+      }
+    >;
+  };
 };
 
 export type CreateCollectionMutationVariables = Exact<{
@@ -2196,7 +2279,7 @@ export class TypedDocumentString<TResult, TVariables>
 
   constructor(
     private value: string,
-    public __meta__?: Record<string, any>
+    public __meta__?: Record<string, any> | undefined
   ) {
     super(value);
   }
@@ -2212,6 +2295,7 @@ export const CommonCollectionFragmentDoc = new TypedDocumentString(
   name
   description
   enabled
+  contentType
   products {
     items {
       id
@@ -2239,6 +2323,28 @@ export const CommonCollectionProductFragmentDoc = new TypedDocumentString(
     `,
   { fragmentName: 'CommonCollectionProduct' }
 ) as unknown as TypedDocumentString<CommonCollectionProductFragment, unknown>;
+export const CommonCollectionSubCollectionFragmentDoc = new TypedDocumentString(
+  `
+    fragment CommonCollectionSubCollection on Collection {
+  id
+  name
+  products {
+    count
+  }
+  enabled
+}
+    `,
+  { fragmentName: 'CommonCollectionSubCollection' }
+) as unknown as TypedDocumentString<CommonCollectionSubCollectionFragment, unknown>;
+export const CommonSubCollectionForSelectorFragmentDoc = new TypedDocumentString(
+  `
+    fragment CommonSubCollectionForSelector on Collection {
+  id
+  name
+}
+    `,
+  { fragmentName: 'CommonSubCollectionForSelector' }
+) as unknown as TypedDocumentString<CommonSubCollectionForSelectorFragment, unknown>;
 export const CommonCountryFragmentDoc = new TypedDocumentString(
   `
     fragment CommonCountry on Country {
@@ -2543,14 +2649,26 @@ export const GetAllCollectionsDocument = new TypedDocumentString(`
       name
       slug
       enabled
+      contentType
       assets(input: {take: 1}) {
         items {
           id
           source
         }
       }
+      subCollections(input: {take: 8}) {
+        count
+        items {
+          id
+          name
+        }
+      }
       products {
         count
+        items {
+          id
+          name
+        }
       }
     }
   }
@@ -2567,6 +2685,7 @@ export const GetCollectionDocument = new TypedDocumentString(`
   name
   description
   enabled
+  contentType
   products {
     items {
       id
@@ -2599,6 +2718,43 @@ export const GetCollectionProductsDocument = new TypedDocumentString(`
 }`) as unknown as TypedDocumentString<
   GetCollectionProductsQuery,
   GetCollectionProductsQueryVariables
+>;
+export const GetCollectionSubCollectionsDocument = new TypedDocumentString(`
+    query GetCollectionSubCollections($id: ID, $input: CollectionListInput) {
+  collection(id: $id) {
+    subCollections(input: $input) {
+      count
+      items {
+        ...CommonCollectionSubCollection
+      }
+    }
+  }
+}
+    fragment CommonCollectionSubCollection on Collection {
+  id
+  name
+  products {
+    count
+  }
+  enabled
+}`) as unknown as TypedDocumentString<
+  GetCollectionSubCollectionsQuery,
+  GetCollectionSubCollectionsQueryVariables
+>;
+export const GetAllSubCollectionsForSelectorDocument = new TypedDocumentString(`
+    query GetAllSubCollectionsForSelector($input: CollectionListInput) {
+  collections(input: $input) {
+    items {
+      ...CommonSubCollectionForSelector
+    }
+  }
+}
+    fragment CommonSubCollectionForSelector on Collection {
+  id
+  name
+}`) as unknown as TypedDocumentString<
+  GetAllSubCollectionsForSelectorQuery,
+  GetAllSubCollectionsForSelectorQueryVariables
 >;
 export const CreateCollectionDocument = new TypedDocumentString(`
     mutation CreateCollection($input: CreateCollectionInput!) {

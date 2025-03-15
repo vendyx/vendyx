@@ -3,12 +3,13 @@ import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { Collection } from '@prisma/client';
 
 import { ProductService } from '@/business/product/product.service';
+import { clean } from '@/business/shared/utils/clean.utils';
 import {
   PRISMA_FOR_SHOP,
   PrismaForShop
 } from '@/persistence/prisma-clients/prisma-for-shop.provider';
 
-import { ProductListInput } from '../types/gql.types';
+import { CollectionListInput, ListInput, ProductListInput } from '../types/gql.types';
 import { ListResponse } from '../utils/list-response';
 
 @Resolver('Collection')
@@ -36,6 +37,32 @@ export class CollectionFieldResolver {
       }),
       this.prisma.asset.count({
         where: { collections: { some: { collectionId: collection.id } } }
+      })
+    ]);
+
+    return new ListResponse(result, result.length, { total });
+  }
+
+  @ResolveField('subCollections')
+  async subCollections(
+    @Parent() collection: Collection,
+    @Args('input') input: CollectionListInput
+  ) {
+    const [result, total] = await Promise.all([
+      this.prisma.collection.findMany({
+        where: {
+          ...clean(input?.filters ?? {}),
+          name: input?.filters?.name ? { ...clean(input.filters.name), mode: 'insensitive' } : {},
+          parentId: collection.id
+        },
+        ...clean({ skip: input?.skip, take: input?.take })
+      }),
+      this.prisma.collection.count({
+        where: {
+          ...clean(input?.filters ?? {}),
+          name: input?.filters?.name ? { ...clean(input.filters.name), mode: 'insensitive' } : {},
+          parentId: collection.id
+        }
       })
     ]);
 

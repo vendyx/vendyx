@@ -10,7 +10,7 @@ export const clsMiddleware = (authService: AuthService) => {
       const token = String(req.headers.authorization).replace('Bearer ', '');
       const payload = await authService.decodeAccessToken<JwtPayload>(token);
 
-      cls.set(CLS_SHOP_ID, req.headers.shop_id);
+      cls.set(CLS_SHOP_ID, req.headers.x_vendyx_shop_id);
       cls.set(CLS_OWNER_ID, payload?.sub);
     }
   }).use;

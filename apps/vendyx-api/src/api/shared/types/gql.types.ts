@@ -58,6 +58,11 @@ export enum AssetType {
     IMAGE = "IMAGE"
 }
 
+export enum CollectionContentType {
+    PRODUCTS = "PRODUCTS",
+    COLLECTIONS = "COLLECTIONS"
+}
+
 export enum OrderState {
     MODIFYING = "MODIFYING",
     PAYMENT_ADDED = "PAYMENT_ADDED",
@@ -76,8 +81,10 @@ export class CreateCollectionInput {
     name: string;
     description?: Nullable<string>;
     enabled?: Nullable<boolean>;
+    contentType: CollectionContentType;
     products?: Nullable<string[]>;
     assets?: Nullable<AssetInCollectionInput[]>;
+    subCollections?: Nullable<string[]>;
 }
 
 export class UpdateCollectionInput {
@@ -86,21 +93,17 @@ export class UpdateCollectionInput {
     enabled?: Nullable<boolean>;
     products?: Nullable<string[]>;
     assets?: Nullable<AssetInCollectionInput[]>;
+    subCollections?: Nullable<string[]>;
 }
 
 export class AssetInCollectionInput {
     id: string;
 }
 
-export class CollectionListInput {
-    skip?: Nullable<number>;
-    take?: Nullable<number>;
-    filters?: Nullable<CollectionFilters>;
-}
-
 export class CollectionFilters {
-    name?: Nullable<StringFilter>;
     enabled?: Nullable<BooleanFilter>;
+    contentType?: Nullable<CollectionContentType>;
+    name?: Nullable<StringFilter>;
 }
 
 export class ConfigurableProperty {
@@ -330,6 +333,12 @@ export class UpdateAddressInput {
     isDefault?: Nullable<boolean>;
 }
 
+export class CollectionListInput {
+    skip?: Nullable<number>;
+    take?: Nullable<number>;
+    filters?: Nullable<CollectionFilters>;
+}
+
 export class ListInput {
     skip?: Nullable<number>;
     take?: Nullable<number>;
@@ -500,7 +509,7 @@ export abstract class IMutation {
 }
 
 export abstract class IQuery {
-    abstract collections(input?: Nullable<ListInput>): CollectionList | Promise<CollectionList>;
+    abstract collections(input?: Nullable<CollectionListInput>): CollectionList | Promise<CollectionList>;
 
     abstract customers(input?: Nullable<CustomerListInput>): CustomerList | Promise<CustomerList>;
 
@@ -810,8 +819,10 @@ export class Collection implements Node {
     slug: string;
     description?: Nullable<string>;
     enabled: boolean;
+    contentType: CollectionContentType;
     assets?: AssetList;
     products?: ProductList;
+    subCollections?: CollectionList;
 }
 
 export class CollectionList implements List {

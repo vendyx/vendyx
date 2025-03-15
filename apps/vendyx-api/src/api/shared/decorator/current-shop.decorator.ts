@@ -6,7 +6,7 @@ export const CurrentShop = createParamDecorator((data: unknown, ctx: ExecutionCo
   const headers = GqlExecutionContext.create(ctx).getContext().req.headers;
 
   return {
-    id: headers.shop_id
+    id: headers.x_vendyx_shop_id
   };
 });
 

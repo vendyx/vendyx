@@ -6,6 +6,7 @@ export const COMMON_COLLECTION_FRAGMENT = graphql(`
     name
     description
     enabled
+    contentType
     products {
       items {
         id
@@ -30,6 +31,24 @@ export const COMMON_COLLECTION_PRODUCT_FRAGMENT = graphql(`
   }
 `);
 
+export const COMMON_COLLECTION_SUB_COLLECTION_FRAGMENT = graphql(`
+  fragment CommonCollectionSubCollection on Collection {
+    id
+    name
+    products {
+      count
+    }
+    enabled
+  }
+`);
+
+export const COMMON_SUB_COLLECTION_FOR_SELECTOR_FRAGMENT = graphql(`
+  fragment CommonSubCollectionForSelector on Collection {
+    id
+    name
+  }
+`);
+
 export const GET_ALL_COLLECTIONS_QUERY = graphql(`
   query GetAllCollections($input: CollectionListInput) {
     collections(input: $input) {
@@ -41,14 +60,26 @@ export const GET_ALL_COLLECTIONS_QUERY = graphql(`
         name
         slug
         enabled
+        contentType
         assets(input: { take: 1 }) {
           items {
             id
             source
           }
         }
+        subCollections(input: { take: 8 }) {
+          count
+          items {
+            id
+            name
+          }
+        }
         products {
           count
+          items {
+            id
+            name
+          }
         }
       }
     }
@@ -71,6 +102,29 @@ export const GET_ALL_COLLECTION_PRODUCTS_QUERY = graphql(`
         items {
           ...CommonCollectionProduct
         }
+      }
+    }
+  }
+`);
+
+export const GET_ALL_COLLECTION_SUB_COLLECTIONS_QUERY = graphql(`
+  query GetCollectionSubCollections($id: ID, $input: CollectionListInput) {
+    collection(id: $id) {
+      subCollections(input: $input) {
+        count
+        items {
+          ...CommonCollectionSubCollection
+        }
+      }
+    }
+  }
+`);
+
+export const GET_ALL_SUB_COLLECTIONS_FOR_SELECTOR_QUERY = graphql(`
+  query GetAllSubCollectionsForSelector($input: CollectionListInput) {
+    collections(input: $input) {
+      items {
+        ...CommonSubCollectionForSelector
       }
     }
   }

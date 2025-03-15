@@ -14,6 +14,7 @@ export const createCollection = async (input: Input) => {
     name: input.name,
     description: input.description,
     enabled: input.enabled,
+    contentType: input.contentType,
     assets: image ? [{ id: image[0].id }] : [],
     products: input.products
   });
@@ -21,6 +22,9 @@ export const createCollection = async (input: Input) => {
   redirect(`${collection.id}?${ParamNotifications.EntityCreated}=true`);
 };
 
-type Input = Pick<CreateCollectionInput, 'name' | 'description' | 'enabled' | 'products'> & {
+type Input = Pick<
+  CreateCollectionInput,
+  'name' | 'description' | 'enabled' | 'products' | 'contentType'
+> & {
   image: FormData;
 };

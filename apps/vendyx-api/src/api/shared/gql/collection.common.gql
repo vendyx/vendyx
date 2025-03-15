@@ -22,9 +22,14 @@ type Collection implements Node {
   The collection's order user to decide to show the collection in the storefront
   """
   enabled: Boolean!
+  """
+  The collection's content type indicating if the collection contains products or other collections
+  """
+  contentType: CollectionContentType!
 
   assets(input: ListInput): AssetList!
   products(input: ProductListInput): ProductList!
+  subCollections(input: CollectionListInput): CollectionList!
 }
 
 type CollectionList implements List {
@@ -35,4 +40,30 @@ type CollectionList implements List {
 
 type Query {
   collection(id: ID, slug: String): Collection
+}
+
+enum CollectionContentType {
+  PRODUCTS
+  COLLECTIONS
+}
+
+input CollectionListInput {
+  """
+  Skip the first n results
+  """
+  skip: Int
+
+  """
+  takes n result from where the skip position is
+  """
+  take: Int
+
+  """
+  Filters to apply
+  """
+  filters: CollectionFilters
+}
+
+input CollectionFilters {
+  name: StringFilter
 }
