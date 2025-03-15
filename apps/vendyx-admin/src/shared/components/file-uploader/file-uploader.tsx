@@ -48,7 +48,7 @@ export const FileUploader: FC<Props> = ({
                 <img
                   key={file}
                   src={file}
-                  className="object-cover rounded w-full h-full hover:opacity-60 cursor-pointer"
+                  className="object-cover rounded-lg w-full h-full hover:opacity-60 cursor-pointer"
                 />
               </div>
             ))}

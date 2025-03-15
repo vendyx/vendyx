@@ -54,7 +54,7 @@ export const Dropzone: FC<Props> = ({
 
   return (
     <div className={cn(className, getDropzoneSize(size), 'flex-shrink-0')}>
-      <label
+      <div
         className={cn(
           'rounded-md border border-dashed cursor-pointer flex items-center justify-center w-full h-full',
           !disabled && 'hover:bg-muted/50'
@@ -63,7 +63,7 @@ export const Dropzone: FC<Props> = ({
       >
         <input {...getInputProps()} type="file" className="hidden" disabled={disabled} />
         <UploadIcon size={size === 'lg' ? 24 : 16} />
-      </label>
+      </div>
     </div>
   );
 };
