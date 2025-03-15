@@ -65,6 +65,14 @@ export class ProductService {
   }
 
   async update(id: string, input: UpdateProductInput) {
+    const productAssets = await this.productRepository.findAssets(id);
+
+    const assetsToRemove = productAssets
+      .map(a => a.assetId)
+      .filter(assetId => {
+        return !input?.assets?.some(asset => asset.id === assetId);
+      });
+
     return this.productRepository.update(id, {
       ...clean(input),
       assets: input.assets
@@ -72,6 +80,9 @@ export class ProductService {
             connectOrCreate: input.assets.map(asset => ({
               where: { productId_assetId: { productId: id, assetId: asset.id } },
               create: { assetId: asset.id, order: asset.order }
+            })),
+            delete: assetsToRemove.map(asset => ({
+              productId_assetId: { productId: id, assetId: asset }
             }))
           }
         : undefined

@@ -106,6 +106,10 @@ export class ProductRepository {
     });
   }
 
+  async findAssets(productId: string) {
+    return this.prisma.productAsset.findMany({ where: { productId } });
+  }
+
   async hardDeleteAssets(productId: string) {
     const assetsToDelete = await this.prisma.productAsset.findMany({ where: { productId } });
     const assetsIds = assetsToDelete.map(a => a.assetId);
