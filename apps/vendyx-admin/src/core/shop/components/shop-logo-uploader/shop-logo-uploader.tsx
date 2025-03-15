@@ -10,10 +10,6 @@ import { cn } from '@/shared/utils/theme';
 import { useLogoUploader } from './use-logo-uploader';
 
 export const ShopLogoUploader: FC<Props> = ({ shop }) => {
-  console.log({
-    shop
-  });
-
   const image = shop.logo;
   const { isUploading, onUpload, isRemoving, onRemove } = useLogoUploader(shop);
   const [file, setFile] = useState<File | null>(null);

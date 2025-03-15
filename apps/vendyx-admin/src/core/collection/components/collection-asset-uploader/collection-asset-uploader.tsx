@@ -7,11 +7,14 @@ import { notification } from '@/shared/notifications/notifications';
 
 import { type CollectionDetailsFormInput } from '../collection-details/use-collection-details-form';
 import { useCollectionAssetUploader } from './use-collection-asset-uploader';
+import { useRemoveCollectionAsset } from './use-remove-collection-asset';
 
 export const CollectionAssetUploader: FC<Props> = ({ collection }) => {
   const { setValue } = useFormContext<CollectionDetailsFormInput>();
+  const { isLoading: isRemoving, removeCollectionImage } = useRemoveCollectionAsset(collection);
   const { isLoading, addCollectionImage } = useCollectionAssetUploader();
   const notificationRef: MutableRefObject<string | number | null> = useRef(null);
+  const removingNotificationRef: MutableRefObject<string | number | null> = useRef(null);
 
   useEffect(() => {
     if (isLoading) {
@@ -24,9 +27,30 @@ export const CollectionAssetUploader: FC<Props> = ({ collection }) => {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    if (isRemoving) {
+      removingNotificationRef.current = notification.loading('Removing image...');
+    }
+
+    if (!isRemoving && removingNotificationRef.current) {
+      notification.dismiss(removingNotificationRef.current);
+      notification.success('Image removed');
+    }
+  }, [isRemoving]);
+
   return (
     <FileUploader
       title="Image"
+      onRemoveFile={file => {
+        if (file instanceof File) {
+          setValue('image', undefined);
+          return;
+        }
+
+        if (collection) {
+          removeCollectionImage(file);
+        }
+      }}
       onAcceptFiles={files => {
         if (!collection) {
           setValue('image', files[0]);

@@ -24,6 +24,13 @@ export const FileUploader: FC<Props> = ({
 }) => {
   const [files, setFiles] = useState<FileState[]>([]);
 
+  /**
+   * Save the files in the state and call the onAcceptFiles callback
+   *
+   * Disabled state is used to prevent setting file into the state
+   * used when uploading image in an entity already created
+   * in that case, image will be uploaded in the entity itself
+   */
   const _onAcceptFiles = (acceptedFiles: File[]) => {
     const newFiles = [...files.map(f => f.file), ...acceptedFiles];
     const withPreviews = acceptedFiles.map(file => ({
@@ -35,6 +42,10 @@ export const FileUploader: FC<Props> = ({
     onAcceptFiles(newFiles);
   };
 
+  /**
+   * If file is string, do not store in memory state and run onRemoveFile callback
+   * If file is a File (meaning is a file uploaded in memory), remove from memory state and run onRemoveFile callback
+   */
   const _onRemoveFile = (file: FileState | string) => {
     if (typeof file === 'string') {
       onRemoveFile(file);
@@ -49,6 +60,8 @@ export const FileUploader: FC<Props> = ({
 
   const nothingToRender = !defaultPreviews?.length && !files.length;
   const images = [...(defaultPreviews ?? []), ...files];
+
+  const shouldRenderNextDropzone = images.length < (max ?? 0) && !nothingToRender;
 
   return (
     <Card>
@@ -68,7 +81,6 @@ export const FileUploader: FC<Props> = ({
                   type="button"
                   className="z-10 opacity-0 absolute top-0 right-0 group-hover:opacity-100 transition-opacity cursor-pointer p-1 rounded-full bg-muted"
                   onClick={() => _onRemoveFile(file)}
-                  // disabled={isLoading}
                 >
                   <XIcon size={12} className="" />
                 </button>
@@ -80,11 +92,13 @@ export const FileUploader: FC<Props> = ({
                 </div>
               </div>
             ))}
-            {max ? (
-              files.length < max && <Dropzone size="lg" onAcceptFiles={_onAcceptFiles} />
-            ) : (
-              <Dropzone size="lg" onAcceptFiles={_onAcceptFiles} accept={accept} />
-            )}
+            {max
+              ? shouldRenderNextDropzone && (
+                  <Dropzone size="lg" onAcceptFiles={_onAcceptFiles} accept={accept} />
+                )
+              : !nothingToRender && (
+                  <Dropzone size="lg" onAcceptFiles={_onAcceptFiles} accept={accept} />
+                )}
           </div>
         )}
       </CardContent>
@@ -94,13 +108,11 @@ export const FileUploader: FC<Props> = ({
 
 type Props = {
   onAcceptFiles: (files: File[]) => void;
-  onRemoveFile: (
-    /**
-     * If file is a string, it means it's a http link
-     * If file is a File, it means it's a file in memory and is being used it in creating
-     */
-    file: File | string
-  ) => void;
+  /**
+   * @param file - If file is a string, it means that it's a preview image already stored
+   * @param file - If file is a File, it means that it's a new file that was uploaded in memory
+   */
+  onRemoveFile: (file: File | string) => void;
   defaultPreviews?: string[];
   disabledState?: boolean;
   title?: string;
