@@ -6,6 +6,7 @@ import { AssetService, type VendyxAsset } from '@/api/services/asset.service';
 import { OptionService } from '@/api/services/option.services';
 import { ProductService } from '@/api/services/product.service';
 import { VariantService } from '@/api/services/variant.service';
+import { ParamNotifications } from '@/shared/notifications/notification-constants';
 
 export const createProduct = async (input: CreateProductInput) => {
   if (!input.variants.length) {
@@ -27,7 +28,7 @@ export const createProduct = async (input: CreateProductInput) => {
 
   if (!input.options?.length) {
     await createVariants(product.id, input.variants);
-    redirect(`${product.id}?new=true`);
+    redirect(`${product.id}?${ParamNotifications.EntityCreated}=true`);
   }
 
   const options = await createOptions(product.id, input.options);
@@ -35,7 +36,7 @@ export const createProduct = async (input: CreateProductInput) => {
   const newVariants = attachOptionValues(options, input.variants);
   await createVariants(product.id, newVariants);
 
-  redirect(`${product.id}?new=true`);
+  redirect(`${product.id}?${ParamNotifications.EntityCreated}=true`);
 };
 
 const attachOptionValues = (

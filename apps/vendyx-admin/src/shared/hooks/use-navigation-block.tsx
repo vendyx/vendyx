@@ -1,5 +1,7 @@
 'use client';
 
+// TODO: Refactorizar esta mrd
+
 import {
   createContext,
   type Dispatch,

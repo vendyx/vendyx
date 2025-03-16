@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { AssetService } from '@/api/services/asset.service';
 import { CollectionService } from '@/api/services/collection.service';
 import { type CreateCollectionInput } from '@/api/types';
+import { ParamNotifications } from '@/shared/notifications/notification-constants';
 
 export const createCollection = async (input: Input) => {
   const image = input.image.has('files') ? await AssetService.upload(input.image) : null;
@@ -17,7 +18,7 @@ export const createCollection = async (input: Input) => {
     products: input.products
   });
 
-  redirect(`${collection.id}?new=true`);
+  redirect(`${collection.id}?${ParamNotifications.EntityCreated}=true`);
 };
 
 type Input = Pick<CreateCollectionInput, 'name' | 'description' | 'enabled' | 'products'> & {
