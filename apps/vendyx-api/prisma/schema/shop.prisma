@@ -39,6 +39,7 @@ model Shop {
   customer       Customer[]
   addresses      Address[]
   collections    Collection[]
+  discounts      Discount[]
 
   /// The shop's owner
   owner   User   @relation(fields: [ownerId], references: [id])

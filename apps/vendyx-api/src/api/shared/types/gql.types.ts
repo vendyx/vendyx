@@ -39,6 +39,10 @@ export enum OrderRequirementType {
     MINIMUM_ITEMS = "MINIMUM_ITEMS"
 }
 
+export enum DiscountErrorCode {
+    HANDLE_ALREADY_EXISTS = "HANDLE_ALREADY_EXISTS"
+}
+
 export enum OrderErrorCode {
     NOT_ENOUGH_STOCK = "NOT_ENOUGH_STOCK",
     CUSTOMER_INVALID_EMAIL = "CUSTOMER_INVALID_EMAIL",
@@ -160,7 +164,7 @@ export class CreateDiscountInput {
     discountValueType: DiscountValueType;
     discountValue: number;
     type: DiscountType;
-    perCustomerLimit: number;
+    perCustomerLimit?: Nullable<number>;
     startsAt: Date;
     endsAt?: Nullable<Date>;
     enabled?: Nullable<boolean>;
@@ -478,9 +482,9 @@ export abstract class IMutation {
 
     abstract updateCustomer(id: string, input: UpdateCustomerInput): CustomerResult | Promise<CustomerResult>;
 
-    abstract createDiscount(input: CreateDiscountInput): Nullable<Discount> | Promise<Nullable<Discount>>;
+    abstract createDiscount(input: CreateDiscountInput): DiscountResult | Promise<DiscountResult>;
 
-    abstract updateDiscount(id: string, input: UpdateDiscountInput): Nullable<Discount> | Promise<Nullable<Discount>>;
+    abstract updateDiscount(id: string, input: UpdateDiscountInput): DiscountResult | Promise<DiscountResult>;
 
     abstract removeDiscounts(id: string[]): Nullable<boolean> | Promise<Nullable<boolean>>;
 
@@ -668,7 +672,7 @@ export class Discount implements Node {
     discountValueType: DiscountValueType;
     discountValue: number;
     type: DiscountType;
-    perCustomerLimit: number;
+    perCustomerLimit?: Nullable<number>;
     startsAt: Date;
     endsAt?: Nullable<Date>;
     enabled: boolean;
@@ -682,6 +686,16 @@ export class DiscountList implements List {
     items: Discount[];
     count: number;
     pageInfo: PageInfo;
+}
+
+export class DiscountResult {
+    discount?: Nullable<Discount>;
+    apiErrors: DiscountErrorResult[];
+}
+
+export class DiscountErrorResult {
+    code: DiscountErrorCode;
+    message: string;
 }
 
 export class Metric {

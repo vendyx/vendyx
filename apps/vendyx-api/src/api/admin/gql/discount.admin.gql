@@ -55,7 +55,7 @@ type Discount implements Node {
   """
   The maximum number of times the discount can be used by a customer.
   """
-  perCustomerLimit: Int!
+  perCustomerLimit: Int
   """
   Date when the discount starts to be applicable.
   """
@@ -92,8 +92,8 @@ type Query {
 }
 
 type Mutation {
-  createDiscount(input: CreateDiscountInput!): Discount
-  updateDiscount(id: ID!, input: UpdateDiscountInput!): Discount
+  createDiscount(input: CreateDiscountInput!): DiscountResult!
+  updateDiscount(id: ID!, input: UpdateDiscountInput!): DiscountResult!
   removeDiscounts(id: [ID!]!): Boolean
 }
 
@@ -103,7 +103,7 @@ input CreateDiscountInput {
   discountValueType: DiscountValueType!
   discountValue: Int!
   type: DiscountType!
-  perCustomerLimit: Int!
+  perCustomerLimit: Int
   startsAt: Date!
   endsAt: Date
   enabled: Boolean
@@ -153,4 +153,18 @@ input DiscountListInput {
 
 input DiscountFilters {
   handle: StringFilter
+}
+
+type DiscountResult {
+  discount: Discount
+  apiErrors: [DiscountErrorResult!]!
+}
+
+type DiscountErrorResult {
+  code: DiscountErrorCode!
+  message: String!
+}
+
+enum DiscountErrorCode {
+  HANDLE_ALREADY_EXISTS
 }

@@ -2,6 +2,10 @@ import * as path from 'path';
 
 import { DynamicModule, Module } from '@nestjs/common';
 
+import { BusinessModule } from '@/business/business.module';
+import { SecurityModule } from '@/security/security.module';
+import { ShipmentModule } from '@/shipments/shipment.module';
+
 import { CollectionResolver } from './resolvers/collection.resolver';
 import { CountryResolver } from './resolvers/country.resolver';
 import { CustomerResolver } from './resolvers/customer.resolver';
@@ -18,10 +22,7 @@ import { VariantResolver } from './resolvers/variant.resolver';
 import { ZoneResolver } from './resolvers/zone.resolver';
 import { COMMON_RESOLVERS } from '../shared/common-resolvers';
 import { GraphqlApiModule, SHARED_SCHEMA_PATH } from '../shared/graphql-api.module';
-
-import { BusinessModule } from '@/business/business.module';
-import { SecurityModule } from '@/security/security.module';
-import { ShipmentModule } from '@/shipments/shipment.module';
+import { DiscountResolver } from './resolvers/discount.resolver';
 
 const ADMIN_API_SCHEMA_PATH = './src/api/admin/gql/**/*.gql';
 
@@ -57,7 +58,8 @@ export class AdminApiModule {
     OrderResolver,
     CustomerResolver,
     MetricsResolver,
-    CollectionResolver
+    CollectionResolver,
+    DiscountResolver
   ]
 })
 class AdminModule {}
