@@ -4,7 +4,7 @@ type Mutation {
   updateOrderLine(lineId: ID!, input: UpdateOrderLineInput!): OrderResult!
   removeOrderLine(lineId: ID!): OrderResult!
   addCustomerToOrder(orderId: ID!, input: AddCustomerToOrderInput!): OrderResult!
-  addShippingAddressToOrder(orderId: ID!, input: CreateAddressInput!): OrderResult!
+  addShippingAddressToOrder(orderId: ID!, input: CreateOrderAddressInput!): OrderResult!
   addShipmentToOrder(orderId: ID!, input: AddShipmentToOrderInput!): OrderResult!
   addPaymentToOrder(orderId: ID!, input: AddPaymentToOrderInput!): OrderResult!
 }
@@ -34,8 +34,8 @@ input AddCustomerToOrderInput {
   phoneNumber: String
 }
 
-input CreateAddressInput {
-  country: String!
+input CreateOrderAddressInput {
+  countryId: String!
   streetLine1: String!
   streetLine2: String
   city: String!

@@ -7,6 +7,7 @@ import {
   AddPaymentToOrderInput,
   AddShipmentToOrderInput,
   CreateAddressInput,
+  CreateOrderAddressInput,
   CreateOrderInput,
   CreateOrderLineInput,
   UpdateOrderLineInput
@@ -70,9 +71,10 @@ export class OrderResolver {
   @Mutation('addShippingAddressToOrder')
   async addShippingAddressToOrder(
     @Args('orderId') orderId: ID,
-    @Args('input') input: CreateAddressInput
+    @Args('input') input: CreateOrderAddressInput
   ) {
     const result = await this.orderService.addShippingAddress(orderId, input);
+    console.log(result);
 
     return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
   }

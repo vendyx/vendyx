@@ -453,6 +453,16 @@ export class AddCustomerToOrderInput {
     phoneNumber?: Nullable<string>;
 }
 
+export class CreateOrderAddressInput {
+    countryId: string;
+    streetLine1: string;
+    streetLine2?: Nullable<string>;
+    city: string;
+    province: string;
+    postalCode: string;
+    references?: Nullable<string>;
+}
+
 export class AddPaymentToOrderInput {
     methodId: string;
 }
@@ -572,7 +582,7 @@ export abstract class IMutation {
 
     abstract addCustomerToOrder(orderId: string, input: AddCustomerToOrderInput): OrderResult | Promise<OrderResult>;
 
-    abstract addShippingAddressToOrder(orderId: string, input: CreateAddressInput): OrderResult | Promise<OrderResult>;
+    abstract addShippingAddressToOrder(orderId: string, input: CreateOrderAddressInput): OrderResult | Promise<OrderResult>;
 
     abstract addShipmentToOrder(orderId: string, input: AddShipmentToOrderInput): OrderResult | Promise<OrderResult>;
 

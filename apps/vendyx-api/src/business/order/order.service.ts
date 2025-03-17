@@ -6,6 +6,7 @@ import {
   AddPaymentToOrderInput,
   AddShipmentToOrderInput,
   CreateAddressInput,
+  CreateOrderAddressInput,
   CreateOrderInput,
   CreateOrderLineInput,
   MarkOrderAsShippedInput,
@@ -311,16 +312,23 @@ export class OrderService extends OrderFinders {
     });
   }
 
-  async addShippingAddress(orderId: ID, input: CreateAddressInput) {
+  async addShippingAddress(orderId: ID, input: CreateOrderAddressInput) {
     const order = await this.findOrderOrThrow(orderId);
 
     if (!this.canPerformAction(order, 'add_shipping_address')) {
       return new ForbiddenOrderAction(order.state);
     }
 
+    const country = await this.prisma.country.findUniqueOrThrow({ where: { id: input.countryId } });
+
+    const addressToSave = {
+      ...input,
+      country: country.name
+    };
+
     return await this.prisma.order.update({
       where: { id: orderId },
-      data: { shippingAddress: input as unknown as Prisma.JsonObject }
+      data: { shippingAddress: addressToSave as unknown as Prisma.JsonObject }
     });
   }
 
