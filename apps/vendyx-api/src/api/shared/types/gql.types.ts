@@ -166,7 +166,7 @@ export class CreateDiscountInput {
     enabled?: Nullable<boolean>;
     orderRequirementType?: Nullable<OrderRequirementType>;
     orderRequirementValue?: Nullable<number>;
-    availableCombinations?: Nullable<Nullable<DiscountType>[]>;
+    availableCombinations?: Nullable<DiscountType[]>;
     metadata?: Nullable<JSON>;
 }
 
@@ -181,8 +181,18 @@ export class UpdateDiscountInput {
     enabled?: Nullable<boolean>;
     orderRequirementType?: Nullable<OrderRequirementType>;
     orderRequirementValue?: Nullable<number>;
-    availableCombinations?: Nullable<Nullable<DiscountType>[]>;
+    availableCombinations?: Nullable<DiscountType[]>;
     metadata?: Nullable<JSON>;
+}
+
+export class DiscountListInput {
+    skip?: Nullable<number>;
+    take?: Nullable<number>;
+    filters?: Nullable<DiscountFilters>;
+}
+
+export class DiscountFilters {
+    handle?: Nullable<StringFilter>;
 }
 
 export class MetricsInput {
@@ -472,7 +482,7 @@ export abstract class IMutation {
 
     abstract updateDiscount(id: string, input: UpdateDiscountInput): Nullable<Discount> | Promise<Nullable<Discount>>;
 
-    abstract removeDiscount(id: string): Nullable<boolean> | Promise<Nullable<boolean>>;
+    abstract removeDiscounts(id: string[]): Nullable<boolean> | Promise<Nullable<boolean>>;
 
     abstract createOption(productId: string, input: CreateOptionInput): Option | Promise<Option>;
 
@@ -574,6 +584,10 @@ export abstract class IQuery {
 
     abstract customer(id: string): Nullable<Customer> | Promise<Nullable<Customer>>;
 
+    abstract discounts(input?: Nullable<DiscountListInput>): DiscountList | Promise<DiscountList>;
+
+    abstract discount(id: string): Nullable<Discount> | Promise<Nullable<Discount>>;
+
     abstract totalSales(input: MetricsInput): MetricsResult | Promise<MetricsResult>;
 
     abstract totalOrders(input: MetricsInput): MetricsResult | Promise<MetricsResult>;
@@ -660,8 +674,14 @@ export class Discount implements Node {
     enabled: boolean;
     orderRequirementType?: Nullable<OrderRequirementType>;
     orderRequirementValue?: Nullable<number>;
-    availableCombinations: DiscountType[];
+    availableCombinations?: Nullable<DiscountType[]>;
     metadata?: Nullable<JSON>;
+}
+
+export class DiscountList implements List {
+    items: Discount[];
+    count: number;
+    pageInfo: PageInfo;
 }
 
 export class Metric {

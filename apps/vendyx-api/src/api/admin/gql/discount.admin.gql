@@ -79,17 +79,22 @@ type Discount implements Node {
   """
   List of available combinations for the discount.
   """
-  availableCombinations: [DiscountType!]!
+  availableCombinations: [DiscountType!]
   """
   Extra metadata needed for the discount.
   """
   metadata: JSON
 }
 
+type Query {
+  discounts(input: DiscountListInput): DiscountList!
+  discount(id: ID!): Discount
+}
+
 type Mutation {
   createDiscount(input: CreateDiscountInput!): Discount
   updateDiscount(id: ID!, input: UpdateDiscountInput!): Discount
-  removeDiscount(id: ID!): Boolean
+  removeDiscounts(id: [ID!]!): Boolean
 }
 
 input CreateDiscountInput {
@@ -104,7 +109,7 @@ input CreateDiscountInput {
   enabled: Boolean
   orderRequirementType: OrderRequirementType
   orderRequirementValue: Int
-  availableCombinations: [DiscountType]
+  availableCombinations: [DiscountType!]
   metadata: JSON
 }
 
@@ -119,6 +124,33 @@ input UpdateDiscountInput {
   enabled: Boolean
   orderRequirementType: OrderRequirementType
   orderRequirementValue: Int
-  availableCombinations: [DiscountType]
+  availableCombinations: [DiscountType!]
   metadata: JSON
+}
+
+type DiscountList implements List {
+  items: [Discount!]!
+  count: Int!
+  pageInfo: PageInfo!
+}
+
+input DiscountListInput {
+  """
+  Skip the first n results
+  """
+  skip: Int
+
+  """
+  takes n result from where the skip position is
+  """
+  take: Int
+
+  """
+  Filters to apply
+  """
+  filters: DiscountFilters
+}
+
+input DiscountFilters {
+  handle: StringFilter
 }
