@@ -17,6 +17,28 @@ export enum CustomerErrorCode {
     DISABLED_CUSTOMER = "DISABLED_CUSTOMER"
 }
 
+export enum DiscountApplicationMode {
+    CODE = "CODE",
+    AUTOMATIC = "AUTOMATIC"
+}
+
+export enum DiscountValueType {
+    PERCENTAGE = "PERCENTAGE",
+    FIXED_AMOUNT = "FIXED_AMOUNT"
+}
+
+export enum DiscountType {
+    ORDER = "ORDER",
+    PRODUCT = "PRODUCT",
+    SHIPPING = "SHIPPING",
+    BUY_X_GET_Y = "BUY_X_GET_Y"
+}
+
+export enum OrderRequirementType {
+    MINIMUM_AMOUNT = "MINIMUM_AMOUNT",
+    MINIMUM_ITEMS = "MINIMUM_ITEMS"
+}
+
 export enum OrderErrorCode {
     NOT_ENOUGH_STOCK = "NOT_ENOUGH_STOCK",
     CUSTOMER_INVALID_EMAIL = "CUSTOMER_INVALID_EMAIL",
@@ -130,6 +152,37 @@ export class CustomerFilters {
     lastName?: Nullable<StringFilter>;
     email?: Nullable<StringFilter>;
     enabled?: Nullable<BooleanFilter>;
+}
+
+export class CreateDiscountInput {
+    applicationMode: DiscountApplicationMode;
+    handle: string;
+    discountValueType: DiscountValueType;
+    discountValue: number;
+    type: DiscountType;
+    perCustomerLimit: number;
+    startsAt: Date;
+    endsAt?: Nullable<Date>;
+    enabled?: Nullable<boolean>;
+    orderRequirementType?: Nullable<OrderRequirementType>;
+    orderRequirementValue?: Nullable<number>;
+    availableCombinations?: Nullable<Nullable<DiscountType>[]>;
+    metadata?: Nullable<JSON>;
+}
+
+export class UpdateDiscountInput {
+    handle?: Nullable<string>;
+    discountValueType?: Nullable<DiscountValueType>;
+    discountValue?: Nullable<number>;
+    type?: Nullable<DiscountType>;
+    perCustomerLimit?: Nullable<number>;
+    startsAt?: Nullable<Date>;
+    endsAt?: Nullable<Date>;
+    enabled?: Nullable<boolean>;
+    orderRequirementType?: Nullable<OrderRequirementType>;
+    orderRequirementValue?: Nullable<number>;
+    availableCombinations?: Nullable<Nullable<DiscountType>[]>;
+    metadata?: Nullable<JSON>;
 }
 
 export class MetricsInput {
@@ -415,6 +468,12 @@ export abstract class IMutation {
 
     abstract updateCustomer(id: string, input: UpdateCustomerInput): CustomerResult | Promise<CustomerResult>;
 
+    abstract createDiscount(input: CreateDiscountInput): Nullable<Discount> | Promise<Nullable<Discount>>;
+
+    abstract updateDiscount(id: string, input: UpdateDiscountInput): Nullable<Discount> | Promise<Nullable<Discount>>;
+
+    abstract removeDiscount(id: string): Nullable<boolean> | Promise<Nullable<boolean>>;
+
     abstract createOption(productId: string, input: CreateOptionInput): Option | Promise<Option>;
 
     abstract updateOption(id: string, input: UpdateOptionInput): Option | Promise<Option>;
@@ -584,6 +643,25 @@ export class CustomerResult {
 export class CustomerErrorResult {
     code: CustomerErrorCode;
     message: string;
+}
+
+export class Discount implements Node {
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    applicationMode: DiscountApplicationMode;
+    handle: string;
+    discountValueType: DiscountValueType;
+    discountValue: number;
+    type: DiscountType;
+    perCustomerLimit: number;
+    startsAt: Date;
+    endsAt?: Nullable<Date>;
+    enabled: boolean;
+    orderRequirementType?: Nullable<OrderRequirementType>;
+    orderRequirementValue?: Nullable<number>;
+    availableCombinations: DiscountType[];
+    metadata?: Nullable<JSON>;
 }
 
 export class Metric {
