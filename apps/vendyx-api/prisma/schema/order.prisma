@@ -32,7 +32,8 @@ model Order {
   /// Shipping address where this order will be shipped
   shippingAddress Json?      @map("shipping_address")
 
-  lines OrderLine[]
+  lines     OrderLine[]
+  discounts DiscountOrder[]
 
   customer   Customer? @relation(fields: [customerId], references: [id])
   customerId String?   @map("customer_id") @db.Uuid
