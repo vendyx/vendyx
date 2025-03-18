@@ -17,7 +17,7 @@ model Customer {
   /// to customer be able to login, place orders, etc. the customer must be enabled
   enabled     Boolean @default(true)
 
-  Order     Order[]
+  orders    Order[]
   addresses Address[]
 
   shop   Shop   @relation(fields: [shopId], references: [id])

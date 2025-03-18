@@ -1,11 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Address, Customer, Order, OrderState, Prisma, Shipment, Variant } from '@prisma/client';
+import {
+  Address,
+  Customer,
+  Discount,
+  DiscountApplicationMode,
+  DiscountType,
+  Order,
+  OrderLine,
+  OrderRequirementType,
+  OrderState,
+  Prisma,
+  Shipment,
+  Variant
+} from '@prisma/client';
 
 import {
   AddCustomerToOrderInput,
   AddPaymentToOrderInput,
   AddShipmentToOrderInput,
-  CreateAddressInput,
   CreateOrderAddressInput,
   CreateOrderInput,
   CreateOrderLineInput,
@@ -27,6 +39,7 @@ import {
   ConfigurableProperty,
   ConfigurablePropertyArgs
 } from '@/persistence/types/configurable-operation.type';
+import { OrderAddressJson } from '@/persistence/types/order-address-json';
 import { ID } from '@/persistence/types/scalars.type';
 import { SecurityService } from '@/security/security.service';
 import { ShipmentService } from '@/shipments/shipment.service';
@@ -193,7 +206,7 @@ export class OrderService extends OrderFinders {
     }
 
     // Add a new line to the order
-    return await this.prisma.order.update({
+    const orderSaved = await this.prisma.order.update({
       where: { id: orderId },
       data: {
         lines: {
@@ -207,8 +220,21 @@ export class OrderService extends OrderFinders {
         subtotal: order.subtotal + newLinePrice,
         total: order.total + newLinePrice,
         totalQuantity: order.totalQuantity + input.quantity
-      }
+      },
+      include: { lines: { include: { productVariant: true } } }
     });
+
+    const automaticDiscounts = await this.prisma.discount.findMany({
+      where: { applicationMode: DiscountApplicationMode.AUTOMATIC }
+    });
+
+    if (!automaticDiscounts.length) {
+      return order;
+    }
+
+    const applicableDiscounts = this.getApplicableDiscounts(orderSaved, automaticDiscounts, []);
+    console.log({ applicableDiscounts });
+    return orderSaved;
   }
 
   async updateLine(lineId: ID, input: UpdateOrderLineInput) {
@@ -544,6 +570,198 @@ export class OrderService extends OrderFinders {
     });
   }
 
+  private getApplicableDiscounts(
+    order: Order & { lines: (OrderLine & { productVariant: Variant })[] },
+    discounts: Discount[],
+    pastDiscounts: ID[]
+  ) {
+    const applicableDiscounts: Discount[] = [];
+
+    for (const discount of discounts) {
+      if (!discount.enabled) continue;
+
+      const hasFinished = discount.endsAt ? discount.endsAt < new Date() : false;
+      const hasStarted = discount.startsAt <= new Date();
+      const isActive = hasStarted && !hasFinished;
+
+      if (!isActive) continue;
+
+      const hasMinimumAmountRequired =
+        discount.orderRequirementType === OrderRequirementType.MINIMUM_AMOUNT
+          ? order.total >= (discount.orderRequirementValue ?? 0)
+          : true;
+
+      const isMinimumQuantityRequired =
+        discount.orderRequirementType === OrderRequirementType.MINIMUM_ITEMS
+          ? order.totalQuantity >= (discount.orderRequirementValue ?? 0)
+          : true;
+
+      if (!hasMinimumAmountRequired) continue;
+      if (!isMinimumQuantityRequired) continue;
+
+      const timesUsed = pastDiscounts.filter(p => p === discount.id).length;
+      const perCustomerLimit = discount.perCustomerLimit;
+
+      if (perCustomerLimit && timesUsed >= perCustomerLimit) continue;
+
+      if (discount.type === DiscountType.ORDER) {
+        applicableDiscounts.push(discount);
+        continue;
+      }
+
+      if (discount.type === DiscountType.PRODUCT) {
+        const { variants } = discount.metadata as { variants: ID[] };
+
+        const hasVariants = order.lines.some(line => variants.includes(line.productVariantId));
+
+        if (!hasVariants) continue;
+
+        applicableDiscounts.push(discount);
+        continue;
+      }
+
+      if (discount.type === DiscountType.SHIPPING) {
+        const { countries, allCountries } = discount.metadata as {
+          countries: ID[];
+          allCountries: boolean;
+        };
+
+        if (allCountries) {
+          applicableDiscounts.push(discount);
+          continue;
+        }
+
+        const shippingAddress = order.shippingAddress as unknown as OrderAddressJson;
+
+        if (!shippingAddress) continue;
+
+        const hasCountry = countries.some(countryId => shippingAddress.countryId === countryId);
+
+        if (!hasCountry) continue;
+
+        applicableDiscounts.push(discount);
+        continue;
+      }
+
+      if (discount.type === DiscountType.BUY_X_GET_Y) {
+        const { buy, get } = discount.metadata as {
+          buy: {
+            variants: ID[];
+            requirement: 'MIN_QUANTITY' | 'MIN_AMOUNT';
+            requirementValue: number;
+          };
+          get: { variants: ID[]; quantity: number };
+        };
+
+        const linesWithRequiredVariants = order.lines.filter(line =>
+          buy.variants.includes(line.productVariantId)
+        );
+
+        if (buy.requirement === 'MIN_QUANTITY') {
+          const totalQuantityOfRequiredVariants = linesWithRequiredVariants.reduce(
+            (acc, line) => acc + line.quantity,
+            0
+          );
+
+          const totalQuantityRequiredReached =
+            totalQuantityOfRequiredVariants >= buy.requirementValue;
+
+          if (!totalQuantityRequiredReached) continue;
+        }
+
+        if (buy.requirement === 'MIN_AMOUNT') {
+          const totalAmount = linesWithRequiredVariants.reduce(
+            (acc, line) => acc + line.quantity * line.productVariant.salePrice,
+            0
+          );
+
+          if (totalAmount < buy.requirementValue) continue;
+        }
+
+        const linesWithApplicableVariants = order.lines.filter(line =>
+          get.variants.includes(line.productVariantId)
+        );
+
+        const totalQuantityOfApplicableVariants = linesWithApplicableVariants.reduce(
+          (acc, line) => acc + line.quantity,
+          0
+        );
+
+        const totalQuantityToGiveReached = totalQuantityOfApplicableVariants >= get.quantity;
+
+        if (!totalQuantityToGiveReached) continue;
+
+        applicableDiscounts.push(discount);
+        continue;
+      }
+    }
+
+    const combinations: Discount[][] = [];
+
+    for (const discount of applicableDiscounts) {
+      if (!discount.availableCombinations.length) {
+        combinations.push([discount]);
+        continue;
+      }
+
+      const possibleCombinations = applicableDiscounts.filter(d => {
+        return (
+          d.availableCombinations.includes(discount.type) &&
+          discount.availableCombinations.includes(d.type)
+        );
+      });
+
+      if (!possibleCombinations.length) {
+        combinations.push([discount]);
+        continue;
+      } else if (possibleCombinations.length === 1) {
+        combinations.push([discount, ...possibleCombinations]);
+        continue;
+      }
+
+      const availableCombinations = possibleCombinations.filter(d => {
+        return possibleCombinations.every(
+          p => p.availableCombinations.includes(d.type) && p.id !== d.id
+        );
+      });
+
+      if (!availableCombinations.length) {
+        combinations.push([discount]);
+        continue;
+      }
+
+      combinations.push([discount, ...availableCombinations]);
+    }
+
+    return combinations;
+  }
+
+  // private getBestDiscounts(
+  //   order: Order & { lines: (OrderLine & { productVariant: Variant })[] },
+  //   discounts: Discount[][]
+  // ) {
+  //   const totals: number[] = [];
+
+  //   for (const discount of discounts) {
+  //   }
+  // }
+
+  // private applyDiscounts(
+  //   order: Order & { lines: (OrderLine & { productVariant: Variant })[] },
+  //   discounts: Discount[]
+  // ) {
+  //   const total = order.total;
+
+  //   for (const discount of discounts) {
+  //   }
+  // }
+
+  // // aplicar sólo al total
+  // private applyDiscount(
+  //   order: Order & { lines: (OrderLine & { productVariant: Variant })[] },
+  //   discounts: Discount
+  // ) {}
+
   /**
    * Validates if the order can perform the given action
    */
@@ -611,7 +829,7 @@ export class OrderService extends OrderFinders {
    * Create an empty order without any line
    */
   private async createEmptyOrder() {
-    return this.prisma.order.create({ data: {} });
+    return this._create({});
   }
 
   /**
@@ -621,16 +839,46 @@ export class OrderService extends OrderFinders {
     const unitPrice = variant.salePrice;
     const linePrice = unitPrice * quantity;
 
-    return await this.prisma.order.create({
-      data: {
-        lines: {
-          create: { productVariantId: variant.id, quantity: quantity, linePrice, unitPrice }
-        },
-        total: linePrice,
-        subtotal: linePrice,
-        totalQuantity: quantity
-      }
+    return await this._create({
+      lines: {
+        create: { productVariantId: variant.id, quantity: quantity, linePrice, unitPrice }
+      },
+      total: linePrice,
+      subtotal: linePrice,
+      totalQuantity: quantity
     });
+  }
+
+  private async _create(input: Prisma.OrderCreateInput) {
+    // const pastDiscounts = await this.prisma.order.findMany({
+    //   where: {
+    //     customerId: '',
+    //     state: { not: OrderState.MODIFYING },
+    //     placedAt: { gte: discount.startsAt }
+    //   },
+    //   select: {
+    //     discounts: {
+    //       where: { discountId: discount.id }
+    //     }
+    //   }
+    // });
+
+    const order = await this.prisma.order.create({
+      data: input,
+      include: { lines: { include: { productVariant: true } } }
+    });
+
+    const automaticDiscounts = await this.prisma.discount.findMany({
+      where: { applicationMode: DiscountApplicationMode.AUTOMATIC }
+    });
+
+    if (!automaticDiscounts.length) {
+      return order;
+    }
+
+    const applicableDiscounts = this.getApplicableDiscounts(order, automaticDiscounts, []);
+    console.log({ applicableDiscounts });
+    return order;
   }
 
   private async findOrderOrThrow(id: ID) {
