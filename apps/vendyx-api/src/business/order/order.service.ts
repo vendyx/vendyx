@@ -198,15 +198,16 @@ export class OrderService extends OrderFinders {
                 // Increment the quantity because variant already exists
                 quantity: { increment: input.quantity },
                 // Recalculate the line price with the variant sale price because this can change
-                linePrice: (input.quantity + lineWithTheVariant.quantity) * variant.salePrice,
+                lineSubtotal: (input.quantity + lineWithTheVariant.quantity) * variant.salePrice,
+                lineTotal: (input.quantity + lineWithTheVariant.quantity) * variant.salePrice,
                 // Update the unit price in case the variant price has changed
                 unitPrice: variant.salePrice
               }
             }
           },
           // Remove the old line price and add the new one
-          subtotal: order.subtotal - lineWithTheVariant.linePrice + newLinePrice,
-          total: order.total - lineWithTheVariant.linePrice + newLinePrice,
+          subtotal: order.subtotal - lineWithTheVariant.lineTotal + newLinePrice,
+          total: order.total - lineWithTheVariant.lineTotal + newLinePrice,
           // Increment the quantity because variant already exists
           totalQuantity: { increment: input.quantity }
         }
@@ -221,7 +222,8 @@ export class OrderService extends OrderFinders {
           create: {
             productVariantId: input.productVariantId,
             quantity: input.quantity,
-            linePrice: newLinePrice,
+            lineSubtotal: newLinePrice,
+            lineTotal: newLinePrice,
             unitPrice: variant.salePrice
           }
         },
@@ -237,10 +239,10 @@ export class OrderService extends OrderFinders {
     });
 
     if (!automaticDiscounts.length) {
-      return order;
+      return orderSaved;
     }
 
-    const applicableDiscounts = this.getApplicableDiscounts(orderSaved, automaticDiscounts, []);
+    const applicableDiscounts = await this.applyDiscounts(orderSaved, automaticDiscounts);
     return orderSaved;
   }
 
@@ -264,8 +266,8 @@ export class OrderService extends OrderFinders {
           lines: {
             delete: { id: line.id }
           },
-          subtotal: order.subtotal - line.linePrice,
-          total: order.total - line.linePrice,
+          subtotal: order.subtotal - line.lineTotal,
+          total: order.total - line.lineTotal,
           totalQuantity: order.totalQuantity - line.quantity
         }
       });
@@ -285,11 +287,16 @@ export class OrderService extends OrderFinders {
         lines: {
           update: {
             where: { id: line.id },
-            data: { quantity: input.quantity, linePrice, unitPrice }
+            data: {
+              quantity: input.quantity,
+              lineSubtotal: linePrice,
+              lineTotal: linePrice,
+              unitPrice
+            }
           }
         },
-        total: order.total - line.linePrice + linePrice,
-        subtotal: order.subtotal - line.linePrice + linePrice,
+        total: order.total - line.lineTotal + linePrice,
+        subtotal: order.subtotal - line.lineTotal + linePrice,
         totalQuantity: order.totalQuantity - line.quantity + input.quantity
       }
     });
@@ -311,8 +318,8 @@ export class OrderService extends OrderFinders {
         lines: {
           delete: { id: line.id }
         },
-        total: line.order.total - line.linePrice,
-        subtotal: line.order.subtotal - line.linePrice,
+        total: line.order.total - line.lineTotal,
+        subtotal: line.order.subtotal - line.lineTotal,
         totalQuantity: line.order.totalQuantity - line.quantity
       }
     });
@@ -580,7 +587,7 @@ export class OrderService extends OrderFinders {
   private async applyDiscounts(
     order: Order & {
       shipment: Shipment | null;
-      customer: Customer | null;
+      customer?: Customer | null;
       lines: (OrderLine & { productVariant: Variant })[];
     },
     discounts: Discount[]
@@ -603,7 +610,7 @@ export class OrderService extends OrderFinders {
     }
 
     const applicableDiscounts = this.getApplicableDiscounts(
-      order,
+      { ...order },
       discounts,
       pastCustomerDiscounts.map(d => d.id)
     );
@@ -613,37 +620,37 @@ export class OrderService extends OrderFinders {
     const bestDiscounts = this.getBestDiscounts(order, combinations);
 
     // apply the discounts
-    for (const discount of bestDiscounts) {
-      const discountedPrice = this.getDiscountedPrice(order, discount);
+    // for (const discount of bestDiscounts) {
+    //   const discountedPrice = this.getDiscountedPrice(order, discount);
 
-      if (discountedPrice.orderSubtotal !== undefined) {
-        order.subtotal = discountedPrice.orderSubtotal;
-        order.total = order.total + (order.shipment?.amount ?? 0);
-        continue;
-      } else if (Boolean(discountedPrice.lines?.details.length)) {
-        const originalSubtotalPrice = order.lines.reduce(
-          (acc, line) => acc + line.quantity * line.unitPrice,
-          0
-        );
+    //   if (discountedPrice.orderSubtotal !== undefined) {
+    //     order.subtotal = discountedPrice.orderSubtotal;
+    //     order.total = order.total + (order.shipment?.amount ?? 0);
+    //     continue;
+    //   } else if (Boolean(discountedPrice.lines?.details.length)) {
+    //     const originalSubtotalPrice = order.lines.reduce(
+    //       (acc, line) => acc + line.quantity * line.unitPrice,
+    //       0
+    //     );
 
-        for (const line of discountedPrice?.lines?.details ?? []) {
-          const lineToUpdate = order.lines.find(l => l.id === line.lineId);
-          if (lineToUpdate) {
-            lineToUpdate.linePrice = line.linePrice;
-          }
-        }
+    //     for (const line of discountedPrice?.lines?.details ?? []) {
+    //       const lineToUpdate = order.lines.find(l => l.id === line.lineId);
+    //       if (lineToUpdate) {
+    //         lineToUpdate.lineTotal = line.linePrice;
+    //       }
+    //     }
 
-        const alreadyDiscountedFromSubtotal = originalSubtotalPrice - order.subtotal;
-        const newSubtotal = order.lines.reduce((acc, line) => acc + line.linePrice, 0);
-        order.subtotal = newSubtotal - alreadyDiscountedFromSubtotal;
-        order.total = order.subtotal + (order.shipment?.amount ?? 0);
+    //     const alreadyDiscountedFromSubtotal = originalSubtotalPrice - order.subtotal;
+    //     const newSubtotal = order.lines.reduce((acc, line) => acc + line.lineTotal, 0);
+    //     order.subtotal = newSubtotal - alreadyDiscountedFromSubtotal;
+    //     order.total = order.subtotal + (order.shipment?.amount ?? 0);
 
-        continue;
-      } else if (discountedPrice.shipmentAmount && order.shipment) {
-        order.total = order.subtotal + discountedPrice.shipmentAmount;
-        continue;
-      }
-    }
+    //     continue;
+    //   } else if (discountedPrice.shipmentAmount && order.shipment) {
+    //     order.total = order.subtotal + discountedPrice.shipmentAmount;
+    //     continue;
+    //   }
+    // }
   }
 
   private getApplicableDiscounts(
@@ -861,7 +868,7 @@ export class OrderService extends OrderFinders {
       } else if (Boolean(discountedPrice.lines?.details.length)) {
         const subTotal = order.lines.reduce((acc, line) => {
           const discountedLine = discountedPrice.lines?.details.find(l => l.lineId === line.id);
-          return acc + (discountedLine ? discountedLine.linePrice : line.linePrice);
+          return acc + (discountedLine ? discountedLine.linePrice : line.lineTotal);
         }, 0);
 
         discountsWithPrices.push({
@@ -913,11 +920,11 @@ export class OrderService extends OrderFinders {
 
       const updatedLines = linesWithVariants.map(line => {
         const isPercentage = discountValueType === DiscountValueType.PERCENTAGE;
-        const discountPrice = isPercentage ? (line.linePrice * discountValue) / 100 : discountValue;
+        const discountPrice = isPercentage ? (line.lineTotal * discountValue) / 100 : discountValue;
 
         return {
           lineId: line.id,
-          linePrice: line.linePrice - discountPrice
+          linePrice: line.lineTotal - discountPrice
         };
       });
 
@@ -950,12 +957,12 @@ export class OrderService extends OrderFinders {
       const updatedLines = linesWithVariants.map(line => {
         const isPercentage = discount.discountValueType === DiscountValueType.PERCENTAGE;
         const discountPrice = isPercentage
-          ? (line.linePrice * discount.discountValue) / 100
+          ? (line.lineTotal * discount.discountValue) / 100
           : discount.discountValue;
 
         return {
           lineId: line.id,
-          linePrice: line.linePrice - discountPrice
+          linePrice: line.lineTotal - discountPrice
         };
       });
 
@@ -1051,7 +1058,13 @@ export class OrderService extends OrderFinders {
 
     return await this._create({
       lines: {
-        create: { productVariantId: variant.id, quantity: quantity, linePrice, unitPrice }
+        create: {
+          productVariantId: variant.id,
+          quantity: quantity,
+          lineSubtotal: linePrice,
+          lineTotal: linePrice,
+          unitPrice
+        }
       },
       total: linePrice,
       subtotal: linePrice,
@@ -1087,7 +1100,7 @@ export class OrderService extends OrderFinders {
       return order;
     }
 
-    const applicableDiscounts = this.getApplicableDiscounts(order, automaticDiscounts, []);
+    const applicableDiscounts = await this.applyDiscounts(order, automaticDiscounts);
     return order;
   }
 

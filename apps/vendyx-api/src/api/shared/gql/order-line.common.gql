@@ -4,7 +4,9 @@ type OrderLine implements Node {
   updatedAt: Date!
   unitPrice: Int!
   quantity: Int!
-  linePrice: Int!
+
+  lineSubtotal: Int!
+  lineTotal: Int!
 
   productVariant: Variant!
 }

@@ -991,7 +991,8 @@ export class OrderLine implements Node {
     updatedAt: Date;
     unitPrice: number;
     quantity: number;
-    linePrice: number;
+    lineSubtotal: number;
+    lineTotal: number;
     productVariant: Variant;
 }
 

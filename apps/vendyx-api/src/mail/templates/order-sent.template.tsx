@@ -94,7 +94,7 @@ const Component: React.FC<Props> = ({ order, shop }) => {
                   </Column>
                   <Column className="w-full">
                     <Text className="text-[16px] text-right text-black">
-                      {getFormattedPrice(line.linePrice)}
+                      {getFormattedPrice(line.lineTotal)}
                     </Text>
                   </Column>
                 </Row>

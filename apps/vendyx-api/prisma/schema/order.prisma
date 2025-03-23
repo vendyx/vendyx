@@ -57,9 +57,14 @@ model OrderLine {
   updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  unitPrice Int @default(0) @map("unit_price")
-  quantity  Int @default(0) @db.SmallInt
-  linePrice Int @default(0) @map("line_price")
+  /// The price of the variant at the time of adding the line
+  unitPrice    Int @default(0) @map("unit_price")
+  /// The quantity of the variant in the line
+  quantity     Int @default(0) @db.SmallInt
+  /// The price of the line (unitPrice * quantity) before discounts
+  lineSubtotal Int @default(0) @map("line_subtotal")
+  /// The price of the line after discounts
+  lineTotal    Int @default(0) @map("line_total")
 
   order            Order   @relation(fields: [orderId], references: [id])
   orderId          String  @map("order_id") @db.Uuid
