@@ -7,6 +7,8 @@ model Shipment {
 
   /// Amount of the shipment collected from the customer
   amount       Int
+
+  discountedAmount Int? @map("discounted_amount")
   /// Method name that was used to create the shipment. We do not reference the ShippingMethod here because the method can be deleted.
   method       String
   /// Tracking code of the shipment retrieved from the carrier

@@ -5,6 +5,7 @@ import {
   Discount,
   DiscountApplicationMode,
   DiscountType,
+  DiscountValueType,
   Order,
   OrderLine,
   OrderRequirementType,
@@ -39,6 +40,13 @@ import {
   ConfigurableProperty,
   ConfigurablePropertyArgs
 } from '@/persistence/types/configurable-operation.type';
+import {
+  BuyXGetYDiscountMetadata,
+  BuyXGetYDiscountMetadataRequirement,
+  OrderDiscount,
+  ProductDiscountMetadata,
+  ShippingDiscountMetadata
+} from '@/persistence/types/discount-metadata';
 import { OrderAddressJson } from '@/persistence/types/order-address-json';
 import { ID } from '@/persistence/types/scalars.type';
 import { SecurityService } from '@/security/security.service';
@@ -221,7 +229,7 @@ export class OrderService extends OrderFinders {
         total: order.total + newLinePrice,
         totalQuantity: order.totalQuantity + input.quantity
       },
-      include: { lines: { include: { productVariant: true } } }
+      include: { shipment: true, lines: { include: { productVariant: true } } }
     });
 
     const automaticDiscounts = await this.prisma.discount.findMany({
@@ -233,7 +241,6 @@ export class OrderService extends OrderFinders {
     }
 
     const applicableDiscounts = this.getApplicableDiscounts(orderSaved, automaticDiscounts, []);
-    console.log({ applicableDiscounts });
     return orderSaved;
   }
 
@@ -570,8 +577,80 @@ export class OrderService extends OrderFinders {
     });
   }
 
+  private async applyDiscounts(
+    order: Order & {
+      shipment: Shipment | null;
+      customer: Customer | null;
+      lines: (OrderLine & { productVariant: Variant })[];
+    },
+    discounts: Discount[]
+  ) {
+    let pastCustomerDiscounts: OrderDiscount[] = [];
+
+    if (order.customer) {
+      pastCustomerDiscounts = (
+        await this.prisma.order.findMany({
+          where: {
+            customerId: order.customer.id,
+            state: { not: OrderState.MODIFYING }
+            // placedAt: { gte: discount.startsAt } // TODO: can use the minor discounts startsAt date
+          },
+          select: {
+            discounts: true
+          }
+        })
+      ).map(p => p.discounts) as OrderDiscount[];
+    }
+
+    const applicableDiscounts = this.getApplicableDiscounts(
+      order,
+      discounts,
+      pastCustomerDiscounts.map(d => d.id)
+    );
+
+    const combinations = this.getDiscountsCombinations(applicableDiscounts);
+
+    const bestDiscounts = this.getBestDiscounts(order, combinations);
+
+    // apply the discounts
+    for (const discount of bestDiscounts) {
+      const discountedPrice = this.getDiscountedPrice(order, discount);
+
+      if (discountedPrice.orderSubtotal !== undefined) {
+        order.subtotal = discountedPrice.orderSubtotal;
+        order.total = order.total + (order.shipment?.amount ?? 0);
+        continue;
+      } else if (Boolean(discountedPrice.lines?.details.length)) {
+        const originalSubtotalPrice = order.lines.reduce(
+          (acc, line) => acc + line.quantity * line.unitPrice,
+          0
+        );
+
+        for (const line of discountedPrice?.lines?.details ?? []) {
+          const lineToUpdate = order.lines.find(l => l.id === line.lineId);
+          if (lineToUpdate) {
+            lineToUpdate.linePrice = line.linePrice;
+          }
+        }
+
+        const alreadyDiscountedFromSubtotal = originalSubtotalPrice - order.subtotal;
+        const newSubtotal = order.lines.reduce((acc, line) => acc + line.linePrice, 0);
+        order.subtotal = newSubtotal - alreadyDiscountedFromSubtotal;
+        order.total = order.subtotal + (order.shipment?.amount ?? 0);
+
+        continue;
+      } else if (discountedPrice.shipmentAmount && order.shipment) {
+        order.total = order.subtotal + discountedPrice.shipmentAmount;
+        continue;
+      }
+    }
+  }
+
   private getApplicableDiscounts(
-    order: Order & { lines: (OrderLine & { productVariant: Variant })[] },
+    order: Order & {
+      shipment: Shipment | null;
+      lines: (OrderLine & { productVariant: Variant })[];
+    },
     discounts: Discount[],
     pastDiscounts: ID[]
   ) {
@@ -610,7 +689,7 @@ export class OrderService extends OrderFinders {
       }
 
       if (discount.type === DiscountType.PRODUCT) {
-        const { variants } = discount.metadata as { variants: ID[] };
+        const { variants } = discount.metadata as ProductDiscountMetadata;
 
         const hasVariants = order.lines.some(line => variants.includes(line.productVariantId));
 
@@ -621,10 +700,7 @@ export class OrderService extends OrderFinders {
       }
 
       if (discount.type === DiscountType.SHIPPING) {
-        const { countries, allCountries } = discount.metadata as {
-          countries: ID[];
-          allCountries: boolean;
-        };
+        const { countries, allCountries } = discount.metadata as ShippingDiscountMetadata;
 
         if (allCountries) {
           applicableDiscounts.push(discount);
@@ -644,20 +720,13 @@ export class OrderService extends OrderFinders {
       }
 
       if (discount.type === DiscountType.BUY_X_GET_Y) {
-        const { buy, get } = discount.metadata as {
-          buy: {
-            variants: ID[];
-            requirement: 'MIN_QUANTITY' | 'MIN_AMOUNT';
-            requirementValue: number;
-          };
-          get: { variants: ID[]; quantity: number };
-        };
+        const { buy, get } = discount.metadata as BuyXGetYDiscountMetadata;
 
         const linesWithRequiredVariants = order.lines.filter(line =>
           buy.variants.includes(line.productVariantId)
         );
 
-        if (buy.requirement === 'MIN_QUANTITY') {
+        if (buy.requirement === BuyXGetYDiscountMetadataRequirement.MIN_QUANTITY) {
           const totalQuantityOfRequiredVariants = linesWithRequiredVariants.reduce(
             (acc, line) => acc + line.quantity,
             0
@@ -669,7 +738,7 @@ export class OrderService extends OrderFinders {
           if (!totalQuantityRequiredReached) continue;
         }
 
-        if (buy.requirement === 'MIN_AMOUNT') {
+        if (buy.requirement === BuyXGetYDiscountMetadataRequirement.MIN_AMOUNT) {
           const totalAmount = linesWithRequiredVariants.reduce(
             (acc, line) => acc + line.quantity * line.productVariant.salePrice,
             0
@@ -696,15 +765,19 @@ export class OrderService extends OrderFinders {
       }
     }
 
+    return applicableDiscounts;
+  }
+
+  private getDiscountsCombinations(discounts: Discount[]): Discount[][] {
     const combinations: Discount[][] = [];
 
-    for (const discount of applicableDiscounts) {
+    for (const discount of discounts) {
       if (!discount.availableCombinations.length) {
         combinations.push([discount]);
         continue;
       }
 
-      const possibleCombinations = applicableDiscounts.filter(d => {
+      const possibleCombinations = discounts.filter(d => {
         return (
           d.availableCombinations.includes(discount.type) &&
           discount.availableCombinations.includes(d.type)
@@ -736,31 +809,168 @@ export class OrderService extends OrderFinders {
     return combinations;
   }
 
-  // private getBestDiscounts(
-  //   order: Order & { lines: (OrderLine & { productVariant: Variant })[] },
-  //   discounts: Discount[][]
-  // ) {
-  //   const totals: number[] = [];
+  /**
+   * @description
+   * Get the best discount combinations for the given order
+   */
+  private getBestDiscounts(
+    order: Order & {
+      shipment: Shipment | null;
+      lines: (OrderLine & { productVariant: Variant })[];
+    },
+    discounts: Discount[][]
+  ) {
+    const newPrices: { total: number; discount: Discount }[][] = [];
 
-  //   for (const discount of discounts) {
-  //   }
-  // }
+    for (const discount of discounts) {
+      const newOrderPrice = this.getOrderTotalsWithDiscounts(order, discount);
+      newPrices.push(newOrderPrice);
+    }
 
-  // private applyDiscounts(
-  //   order: Order & { lines: (OrderLine & { productVariant: Variant })[] },
-  //   discounts: Discount[]
-  // ) {
-  //   const total = order.total;
+    const bestDiscounts = newPrices.sort(
+      (a, b) =>
+        b.reduce((acc, curr) => acc + (order.total - curr.total), 0) -
+        a.reduce((acc, curr) => acc + (order.total - curr.total), 0)
+    );
 
-  //   for (const discount of discounts) {
-  //   }
-  // }
+    return bestDiscounts[0].map(d => d.discount);
+  }
 
-  // // aplicar sólo al total
-  // private applyDiscount(
-  //   order: Order & { lines: (OrderLine & { productVariant: Variant })[] },
-  //   discounts: Discount
-  // ) {}
+  /**
+   * @description
+   * Get the new order totals with the given discounts
+   */
+  private getOrderTotalsWithDiscounts(
+    order: Order & {
+      shipment: Shipment | null;
+      lines: (OrderLine & { productVariant: Variant })[];
+    },
+    discounts: Discount[]
+  ) {
+    const discountsWithPrices: { total: number; discount: Discount }[] = [];
+
+    for (const discount of discounts) {
+      const discountedPrice = this.getDiscountedPrice(order, discount);
+
+      if (discountedPrice.orderSubtotal !== undefined) {
+        discountsWithPrices.push({
+          total: discountedPrice.orderSubtotal + (order.shipment?.amount ?? 0),
+          discount
+        });
+        continue;
+      } else if (Boolean(discountedPrice.lines?.details.length)) {
+        const subTotal = order.lines.reduce((acc, line) => {
+          const discountedLine = discountedPrice.lines?.details.find(l => l.lineId === line.id);
+          return acc + (discountedLine ? discountedLine.linePrice : line.linePrice);
+        }, 0);
+
+        discountsWithPrices.push({
+          total: subTotal + (order.shipment?.amount ?? 0),
+          discount
+        });
+        continue;
+      } else if (discountedPrice.shipmentAmount && order.shipment) {
+        discountsWithPrices.push({
+          total: order.subtotal + discountedPrice.shipmentAmount,
+          discount
+        });
+        continue;
+      }
+    }
+
+    return discountsWithPrices;
+  }
+
+  /**
+   * @description
+   * Get the {@link DiscountPrice} for the given order and discount
+   */
+  private getDiscountedPrice(
+    order: Order & {
+      shipment: Shipment | null;
+      lines: (OrderLine & { productVariant: Variant })[];
+    },
+    discount: Discount
+  ): DiscountPrice {
+    if (discount.type === DiscountType.ORDER) {
+      const { discountValueType, discountValue } = discount;
+
+      const isPercentage = discountValueType === DiscountValueType.PERCENTAGE;
+      const discountPrice = isPercentage ? (order.total * discountValue) / 100 : discountValue;
+
+      return {
+        orderSubtotal: order.total - discountPrice
+      };
+    }
+
+    if (discount.type === DiscountType.PRODUCT) {
+      const { variants } = discount.metadata as ProductDiscountMetadata;
+      const { discountValueType, discountValue } = discount;
+
+      const linesWithVariants = order.lines.filter(line =>
+        variants.includes(line.productVariantId)
+      );
+
+      const updatedLines = linesWithVariants.map(line => {
+        const isPercentage = discountValueType === DiscountValueType.PERCENTAGE;
+        const discountPrice = isPercentage ? (line.linePrice * discountValue) / 100 : discountValue;
+
+        return {
+          lineId: line.id,
+          linePrice: line.linePrice - discountPrice
+        };
+      });
+
+      return {
+        lines: {
+          details: updatedLines,
+          total: updatedLines.reduce((acc, line) => acc + line.linePrice, 0)
+        }
+      };
+    }
+
+    if (discount.type === DiscountType.SHIPPING && order.shipment) {
+      const isPercentage = discount.discountValueType === DiscountValueType.PERCENTAGE;
+      const discountPrice = isPercentage
+        ? (order.shipment.amount * discount.discountValue) / 100
+        : discount.discountValue;
+
+      return {
+        shipmentAmount: order.shipment.amount - discountPrice
+      };
+    }
+
+    if (discount.type === DiscountType.BUY_X_GET_Y) {
+      const { get } = discount.metadata as BuyXGetYDiscountMetadata;
+
+      const linesWithVariants = order.lines.filter(line =>
+        get.variants.includes(line.productVariantId)
+      );
+
+      const updatedLines = linesWithVariants.map(line => {
+        const isPercentage = discount.discountValueType === DiscountValueType.PERCENTAGE;
+        const discountPrice = isPercentage
+          ? (line.linePrice * discount.discountValue) / 100
+          : discount.discountValue;
+
+        return {
+          lineId: line.id,
+          linePrice: line.linePrice - discountPrice
+        };
+      });
+
+      return {
+        lines: {
+          details: updatedLines,
+          total: updatedLines.reduce((acc, line) => acc + line.linePrice, 0)
+        }
+      };
+    }
+
+    return {
+      orderSubtotal: order.subtotal
+    };
+  }
 
   /**
    * Validates if the order can perform the given action
@@ -850,6 +1060,7 @@ export class OrderService extends OrderFinders {
   }
 
   private async _create(input: Prisma.OrderCreateInput) {
+    // useful for per customer limit validation
     // const pastDiscounts = await this.prisma.order.findMany({
     //   where: {
     //     customerId: '',
@@ -865,7 +1076,7 @@ export class OrderService extends OrderFinders {
 
     const order = await this.prisma.order.create({
       data: input,
-      include: { lines: { include: { productVariant: true } } }
+      include: { shipment: true, lines: { include: { productVariant: true } } }
     });
 
     const automaticDiscounts = await this.prisma.discount.findMany({
@@ -877,7 +1088,6 @@ export class OrderService extends OrderFinders {
     }
 
     const applicableDiscounts = this.getApplicableDiscounts(order, automaticDiscounts, []);
-    console.log({ applicableDiscounts });
     return order;
   }
 
@@ -899,3 +1109,12 @@ type OrderAction =
   | 'mark_as_shipped'
   | 'mark_as_delivered'
   | 'cancel';
+
+type DiscountPrice = {
+  orderSubtotal?: number;
+  shipmentAmount?: number;
+  lines?: {
+    details: { lineId: ID; linePrice: number }[];
+    total: number;
+  };
+};

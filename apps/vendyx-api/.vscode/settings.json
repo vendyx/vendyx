@@ -27,6 +27,7 @@
     "*.controller.ts": "nest-controller"
   },
   "cSpell.words": [
+    "autoincrement",
     "Cloudinary",
     "clsx",
     "codegen",

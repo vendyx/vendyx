@@ -19,7 +19,9 @@ model Order {
   updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
+  /// The order code is a unique identifier for the order
   code            Int        @unique @default(autoincrement())
+  /// The current state of the order
   state           OrderState @default(MODIFYING)
   /// The price that will be sent to the payment provider. subtotal plus shipping price
   total           Int        @default(0)
@@ -31,9 +33,10 @@ model Order {
   totalQuantity   Int        @default(0) @map("total_quantity") @db.SmallInt
   /// Shipping address where this order will be shipped
   shippingAddress Json?      @map("shipping_address")
+  /// Discounts applied to the order
+  discounts       Json?
 
-  lines     OrderLine[]
-  discounts DiscountOrder[]
+  lines OrderLine[]
 
   customer   Customer? @relation(fields: [customerId], references: [id])
   customerId String?   @map("customer_id") @db.Uuid
