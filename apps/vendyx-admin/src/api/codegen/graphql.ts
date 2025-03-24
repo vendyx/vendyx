@@ -202,6 +202,22 @@ export type CreateCollectionInput = {
   subCollections?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
+export type CreateDiscountInput = {
+  applicationMode: DiscountApplicationMode;
+  availableCombinations?: InputMaybe<Array<DiscountType>>;
+  discountValue: Scalars['Int']['input'];
+  discountValueType: DiscountValueType;
+  enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  endsAt?: InputMaybe<Scalars['Date']['input']>;
+  handle: Scalars['String']['input'];
+  metadata?: InputMaybe<Scalars['JSON']['input']>;
+  orderRequirementType?: InputMaybe<OrderRequirementType>;
+  orderRequirementValue?: InputMaybe<Scalars['Int']['input']>;
+  perCustomerLimit?: InputMaybe<Scalars['Int']['input']>;
+  startsAt: Scalars['Date']['input'];
+  type: DiscountType;
+};
+
 export type CreateOptionInput = {
   name: Scalars['String']['input'];
   order: Scalars['Int']['input'];
@@ -330,6 +346,99 @@ export type CustomerResult = {
   customer?: Maybe<Customer>;
 };
 
+/** A discount is a way to apply price discounts to your customer orders via a code or automatic rules. */
+export type Discount = Node & {
+  __typename?: 'Discount';
+  /** Indicates if the discount is applied via a code or automatically. */
+  applicationMode: DiscountApplicationMode;
+  /** List of available combinations for the discount. */
+  availableCombinations?: Maybe<Array<DiscountType>>;
+  createdAt: Scalars['Date']['output'];
+  /** the value that will be subtracted from the order total. (percentage or fixed amount) */
+  discountValue: Scalars['Int']['output'];
+  /** Indicates if the discount is applied as a percentage or a fixed amount. */
+  discountValueType: DiscountValueType;
+  /** Whether the discount is enabled or not. Disabled discounts can't be applied to orders. */
+  enabled: Scalars['Boolean']['output'];
+  /** Date when the discount stops to be applicable. */
+  endsAt?: Maybe<Scalars['Date']['output']>;
+  /** A human friendly unique identifier for the discount. could be used as a code or title. */
+  handle: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  /** Extra metadata needed for the discount. */
+  metadata?: Maybe<Scalars['JSON']['output']>;
+  /** Define the requirements that the order must meet to be eligible for the discount. */
+  orderRequirementType?: Maybe<OrderRequirementType>;
+  /** The value that the order must meet to be eligible for the discount. (minimum amount or minimum items) */
+  orderRequirementValue?: Maybe<Scalars['Int']['output']>;
+  /** The maximum number of times the discount can be used by a customer. */
+  perCustomerLimit?: Maybe<Scalars['Int']['output']>;
+  /** Date when the discount starts to be applicable. */
+  startsAt: Scalars['Date']['output'];
+  /**
+   * Define the type of the discount.
+   * Order: discount will be applied to the order total.
+   * Product: discount will be applied to the product price.
+   * Shipping: discount will be applied to the shipping cost.
+   * BuyXGetY: discount will be applied to the product price.
+   */
+  type: DiscountType;
+  updatedAt: Scalars['Date']['output'];
+};
+
+export enum DiscountApplicationMode {
+  Automatic = 'AUTOMATIC',
+  Code = 'CODE'
+}
+
+export enum DiscountErrorCode {
+  HandleAlreadyExists = 'HANDLE_ALREADY_EXISTS'
+}
+
+export type DiscountErrorResult = {
+  __typename?: 'DiscountErrorResult';
+  code: DiscountErrorCode;
+  message: Scalars['String']['output'];
+};
+
+export type DiscountFilters = {
+  handle?: InputMaybe<StringFilter>;
+};
+
+export type DiscountList = List & {
+  __typename?: 'DiscountList';
+  count: Scalars['Int']['output'];
+  items: Array<Discount>;
+  pageInfo: PageInfo;
+};
+
+export type DiscountListInput = {
+  /** Filters to apply */
+  filters?: InputMaybe<DiscountFilters>;
+  /** Skip the first n results */
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  /** takes n result from where the skip position is */
+  take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type DiscountResult = {
+  __typename?: 'DiscountResult';
+  apiErrors: Array<DiscountErrorResult>;
+  discount?: Maybe<Discount>;
+};
+
+export enum DiscountType {
+  BuyXGetY = 'BUY_X_GET_Y',
+  Order = 'ORDER',
+  Product = 'PRODUCT',
+  Shipping = 'SHIPPING'
+}
+
+export enum DiscountValueType {
+  FixedAmount = 'FIXED_AMOUNT',
+  Percentage = 'PERCENTAGE'
+}
+
 export type GenerateUserAccessTokenInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -376,6 +485,7 @@ export type Mutation = {
   cancelOrder: OrderResult;
   createCollection: Collection;
   createCustomerAddress: Address;
+  createDiscount: DiscountResult;
   createOption: Option;
   createPaymentMethod: PaymentMethodResult;
   createProduct: Product;
@@ -390,6 +500,7 @@ export type Mutation = {
   markOrderAsShipped: OrderResult;
   removeCollection: Scalars['Boolean']['output'];
   removeCustomerAddress: Address;
+  removeDiscounts?: Maybe<Scalars['Boolean']['output']>;
   removePaymentMethod: Scalars['Boolean']['output'];
   removeShippingMethod: Scalars['Boolean']['output'];
   removeZone: Scalars['Boolean']['output'];
@@ -400,6 +511,7 @@ export type Mutation = {
   updateCollection: Collection;
   updateCustomer: CustomerResult;
   updateCustomerAddress: Address;
+  updateDiscount: DiscountResult;
   updateOption: Option;
   updatePaymentMethod: PaymentMethod;
   updateProduct: Product;
@@ -420,6 +532,10 @@ export type MutationCreateCollectionArgs = {
 
 export type MutationCreateCustomerAddressArgs = {
   input: CreateAddressInput;
+};
+
+export type MutationCreateDiscountArgs = {
+  input: CreateDiscountInput;
 };
 
 export type MutationCreateOptionArgs = {
@@ -477,6 +593,10 @@ export type MutationRemoveCustomerAddressArgs = {
   addressId: Scalars['ID']['input'];
 };
 
+export type MutationRemoveDiscountsArgs = {
+  id: Array<Scalars['ID']['input']>;
+};
+
 export type MutationRemovePaymentMethodArgs = {
   id: Scalars['ID']['input'];
 };
@@ -518,6 +638,11 @@ export type MutationUpdateCustomerArgs = {
 export type MutationUpdateCustomerAddressArgs = {
   addressId: Scalars['ID']['input'];
   input: UpdateAddressInput;
+};
+
+export type MutationUpdateDiscountArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateDiscountInput;
 };
 
 export type MutationUpdateOptionArgs = {
@@ -641,7 +766,8 @@ export type OrderLine = Node & {
   __typename?: 'OrderLine';
   createdAt: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
-  linePrice: Scalars['Int']['output'];
+  lineSubtotal: Scalars['Int']['output'];
+  lineTotal: Scalars['Int']['output'];
   productVariant: Variant;
   quantity: Scalars['Int']['output'];
   unitPrice: Scalars['Int']['output'];
@@ -670,6 +796,11 @@ export type OrderListInput = {
   /** takes n result from where the skip position is */
   take?: InputMaybe<Scalars['Int']['input']>;
 };
+
+export enum OrderRequirementType {
+  MinimumAmount = 'MINIMUM_AMOUNT',
+  MinimumItems = 'MINIMUM_ITEMS'
+}
 
 /**  Results  */
 export type OrderResult = {
@@ -832,6 +963,8 @@ export type Query = {
   countries: Array<Country>;
   customer?: Maybe<Customer>;
   customers: CustomerList;
+  discount?: Maybe<Discount>;
+  discounts: DiscountList;
   order?: Maybe<Order>;
   orders: OrderList;
   paymentHandlers: Array<PaymentHandler>;
@@ -867,6 +1000,14 @@ export type QueryCustomerArgs = {
 
 export type QueryCustomersArgs = {
   input?: InputMaybe<CustomerListInput>;
+};
+
+export type QueryDiscountArgs = {
+  id: Scalars['ID']['input'];
+};
+
+export type QueryDiscountsArgs = {
+  input?: InputMaybe<DiscountListInput>;
 };
 
 export type QueryOrderArgs = {
@@ -1093,6 +1234,21 @@ export type UpdateCustomerInput = {
   firstName?: InputMaybe<Scalars['String']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateDiscountInput = {
+  availableCombinations?: InputMaybe<Array<DiscountType>>;
+  discountValue?: InputMaybe<Scalars['Int']['input']>;
+  discountValueType?: InputMaybe<DiscountValueType>;
+  enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  endsAt?: InputMaybe<Scalars['Date']['input']>;
+  handle?: InputMaybe<Scalars['String']['input']>;
+  metadata?: InputMaybe<Scalars['JSON']['input']>;
+  orderRequirementType?: InputMaybe<OrderRequirementType>;
+  orderRequirementValue?: InputMaybe<Scalars['Int']['input']>;
+  perCustomerLimit?: InputMaybe<Scalars['Int']['input']>;
+  startsAt?: InputMaybe<Scalars['Date']['input']>;
+  type?: InputMaybe<DiscountType>;
 };
 
 export type UpdateOptionInput = {
@@ -1634,7 +1790,8 @@ export type CommonOrderFragment = {
     items: Array<{
       __typename?: 'OrderLine';
       id: string;
-      linePrice: number;
+      lineSubtotal: number;
+      lineTotal: number;
       quantity: number;
       unitPrice: number;
       productVariant: {
@@ -2416,7 +2573,8 @@ export const CommonOrderFragmentDoc = new TypedDocumentString(
   lines {
     items {
       id
-      linePrice
+      lineSubtotal
+      lineTotal
       quantity
       unitPrice
       productVariant {
@@ -2987,7 +3145,8 @@ export const GetOrderbyIdQueryDocument = new TypedDocumentString(`
   lines {
     items {
       id
-      linePrice
+      lineSubtotal
+      lineTotal
       quantity
       unitPrice
       productVariant {

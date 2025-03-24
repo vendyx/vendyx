@@ -12,7 +12,8 @@ export const COMMON_ORDER_FRAGMENT = graphql(`
     lines {
       items {
         id
-        linePrice
+        lineSubtotal
+        lineTotal
         quantity
         unitPrice
         productVariant {

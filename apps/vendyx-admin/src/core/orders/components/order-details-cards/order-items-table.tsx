@@ -85,7 +85,7 @@ export const OrderItemsTable: FC<Props> = ({ order }) => {
                   </TableCell>
                   <TableCell>{formatPrice(line.unitPrice)}</TableCell>
                   <TableCell>{line.quantity}</TableCell>
-                  <TableCell>{formatPrice(line.linePrice)}</TableCell>
+                  <TableCell>{formatPrice(line.lineTotal)}</TableCell>
                 </TableRow>
               );
             })}
