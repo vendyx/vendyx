@@ -33,6 +33,7 @@ type Documents = {
   '\n  query GetAllCustomerOrdersQuery($id: ID!, $input: OrderListInput) {\n    customer(id: $id) {\n      orders(input: $input) {\n        count\n        items {\n          ...CommonCustomerOrder\n        }\n      }\n    }\n  }\n': typeof types.GetAllCustomerOrdersQueryDocument;
   '\n  query GetCustomerByIdQuery($id: ID!) {\n    customer(id: $id) {\n      ...CommonCustomer\n    }\n  }\n': typeof types.GetCustomerByIdQueryDocument;
   '\n  mutation UpdateCustomerMutation($customerId: ID!, $input: UpdateCustomerInput!) {\n    updateCustomer(id: $customerId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      customer {\n        id\n      }\n    }\n  }\n': typeof types.UpdateCustomerMutationDocument;
+  '\n  query GetAllDiscounts($input: DiscountListInput) {\n    discounts(input: $input) {\n      count\n      items {\n        id\n        handle\n        applicationMode\n        discountValueType\n        discountValue\n        enabled\n        startsAt\n        endsAt\n        type\n      }\n    }\n  }\n': typeof types.GetAllDiscountsDocument;
   '\n  fragment CommonMetricsResult on MetricsResult {\n    metrics {\n      key\n      value\n    }\n    total\n  }\n': typeof types.CommonMetricsResultFragmentDoc;
   '\n  query GetTotalSales($input: MetricsInput!) {\n    totalSales(input: $input) {\n      ...CommonMetricsResult\n    }\n  }\n': typeof types.GetTotalSalesDocument;
   '\n  query GetTotalOrders($input: MetricsInput!) {\n    totalOrders(input: $input) {\n      ...CommonMetricsResult\n    }\n  }\n': typeof types.GetTotalOrdersDocument;
@@ -128,6 +129,8 @@ const documents: Documents = {
     types.GetCustomerByIdQueryDocument,
   '\n  mutation UpdateCustomerMutation($customerId: ID!, $input: UpdateCustomerInput!) {\n    updateCustomer(id: $customerId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      customer {\n        id\n      }\n    }\n  }\n':
     types.UpdateCustomerMutationDocument,
+  '\n  query GetAllDiscounts($input: DiscountListInput) {\n    discounts(input: $input) {\n      count\n      items {\n        id\n        handle\n        applicationMode\n        discountValueType\n        discountValue\n        enabled\n        startsAt\n        endsAt\n        type\n      }\n    }\n  }\n':
+    types.GetAllDiscountsDocument,
   '\n  fragment CommonMetricsResult on MetricsResult {\n    metrics {\n      key\n      value\n    }\n    total\n  }\n':
     types.CommonMetricsResultFragmentDoc,
   '\n  query GetTotalSales($input: MetricsInput!) {\n    totalSales(input: $input) {\n      ...CommonMetricsResult\n    }\n  }\n':
@@ -354,6 +357,12 @@ export function graphql(
 export function graphql(
   source: '\n  mutation UpdateCustomerMutation($customerId: ID!, $input: UpdateCustomerInput!) {\n    updateCustomer(id: $customerId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      customer {\n        id\n      }\n    }\n  }\n'
 ): typeof import('./graphql').UpdateCustomerMutationDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetAllDiscounts($input: DiscountListInput) {\n    discounts(input: $input) {\n      count\n      items {\n        id\n        handle\n        applicationMode\n        discountValueType\n        discountValue\n        enabled\n        startsAt\n        endsAt\n        type\n      }\n    }\n  }\n'
+): typeof import('./graphql').GetAllDiscountsDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

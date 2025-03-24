@@ -1709,6 +1709,30 @@ export type UpdateCustomerMutationMutation = {
   };
 };
 
+export type GetAllDiscountsQueryVariables = Exact<{
+  input?: InputMaybe<DiscountListInput>;
+}>;
+
+export type GetAllDiscountsQuery = {
+  __typename?: 'Query';
+  discounts: {
+    __typename?: 'DiscountList';
+    count: number;
+    items: Array<{
+      __typename?: 'Discount';
+      id: string;
+      handle: string;
+      applicationMode: DiscountApplicationMode;
+      discountValueType: DiscountValueType;
+      discountValue: number;
+      enabled: boolean;
+      startsAt: any;
+      endsAt?: any | null;
+      type: DiscountType;
+    }>;
+  };
+};
+
 export type CommonMetricsResultFragment = {
   __typename?: 'MetricsResult';
   total: number;
@@ -3042,6 +3066,24 @@ export const UpdateCustomerMutationDocument = new TypedDocumentString(`
   UpdateCustomerMutationMutation,
   UpdateCustomerMutationMutationVariables
 >;
+export const GetAllDiscountsDocument = new TypedDocumentString(`
+    query GetAllDiscounts($input: DiscountListInput) {
+  discounts(input: $input) {
+    count
+    items {
+      id
+      handle
+      applicationMode
+      discountValueType
+      discountValue
+      enabled
+      startsAt
+      endsAt
+      type
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetAllDiscountsQuery, GetAllDiscountsQueryVariables>;
 export const GetTotalSalesDocument = new TypedDocumentString(`
     query GetTotalSales($input: MetricsInput!) {
   totalSales(input: $input) {
