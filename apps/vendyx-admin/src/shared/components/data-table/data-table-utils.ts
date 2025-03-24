@@ -25,6 +25,7 @@ export const getSkip = (page: number, size: number) => {
   return size * (page - 1);
 };
 
+// TODO: use `string | undefined` instead of optional parameter
 export type DataTableSearchParams = {
   page?: string;
   size?: string;

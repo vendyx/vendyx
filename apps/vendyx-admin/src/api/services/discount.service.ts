@@ -14,6 +14,6 @@ export class DiscountService {
       { tags: [DiscountService.Tags.discounts] }
     );
 
-    return discounts.items;
+    return discounts;
   }
 }

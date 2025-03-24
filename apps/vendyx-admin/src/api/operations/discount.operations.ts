@@ -3,6 +3,9 @@ import { graphql } from '../codegen';
 export const GET_ALL_DISCOUNTS_QUERY = graphql(`
   query GetAllDiscounts($input: DiscountListInput) {
     discounts(input: $input) {
+      pageInfo {
+        total
+      }
       count
       items {
         id

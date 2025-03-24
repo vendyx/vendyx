@@ -1718,6 +1718,7 @@ export type GetAllDiscountsQuery = {
   discounts: {
     __typename?: 'DiscountList';
     count: number;
+    pageInfo: { __typename?: 'PageInfo'; total: number };
     items: Array<{
       __typename?: 'Discount';
       id: string;
@@ -3069,6 +3070,9 @@ export const UpdateCustomerMutationDocument = new TypedDocumentString(`
 export const GetAllDiscountsDocument = new TypedDocumentString(`
     query GetAllDiscounts($input: DiscountListInput) {
   discounts(input: $input) {
+    pageInfo {
+      total
+    }
     count
     items {
       id
