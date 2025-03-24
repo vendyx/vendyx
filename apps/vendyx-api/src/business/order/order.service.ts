@@ -242,7 +242,7 @@ export class OrderService extends OrderFinders {
       return orderSaved;
     }
 
-    const applicableDiscounts = await this.applyDiscounts(orderSaved, automaticDiscounts);
+    // const applicableDiscounts = await this.applyDiscounts(orderSaved, automaticDiscounts);
     return orderSaved;
   }
 
@@ -585,7 +585,7 @@ export class OrderService extends OrderFinders {
   }
 
   private async applyDiscounts(
-    order: Order & {
+    orderProp: Order & {
       shipment: Shipment | null;
       customer?: Customer | null;
       lines: (OrderLine & { productVariant: Variant })[];
@@ -593,6 +593,7 @@ export class OrderService extends OrderFinders {
     discounts: Discount[]
   ) {
     let pastCustomerDiscounts: OrderDiscount[] = [];
+    const order = { ...orderProp };
 
     if (order.customer) {
       pastCustomerDiscounts = (
@@ -610,7 +611,7 @@ export class OrderService extends OrderFinders {
     }
 
     const applicableDiscounts = this.getApplicableDiscounts(
-      { ...order },
+      order,
       discounts,
       pastCustomerDiscounts.map(d => d.id)
     );
@@ -619,38 +620,39 @@ export class OrderService extends OrderFinders {
 
     const bestDiscounts = this.getBestDiscounts(order, combinations);
 
-    // apply the discounts
-    // for (const discount of bestDiscounts) {
-    //   const discountedPrice = this.getDiscountedPrice(order, discount);
+    for (const discount of bestDiscounts) {
+      const discountedPrice = this.getDiscountedPrice(order, discount);
 
-    //   if (discountedPrice.orderSubtotal !== undefined) {
-    //     order.subtotal = discountedPrice.orderSubtotal;
-    //     order.total = order.total + (order.shipment?.amount ?? 0);
-    //     continue;
-    //   } else if (Boolean(discountedPrice.lines?.details.length)) {
-    //     const originalSubtotalPrice = order.lines.reduce(
-    //       (acc, line) => acc + line.quantity * line.unitPrice,
-    //       0
-    //     );
+      if (discountedPrice.orderSubtotal !== undefined) {
+        order.subtotal = discountedPrice.orderSubtotal;
+        order.total = order.total + (order.shipment?.amount ?? 0);
+        continue;
+      } else if (Boolean(discountedPrice.lines?.details.length)) {
+        const originalSubtotalPrice = order.lines.reduce(
+          (acc, line) => acc + line.quantity * line.unitPrice,
+          0
+        );
 
-    //     for (const line of discountedPrice?.lines?.details ?? []) {
-    //       const lineToUpdate = order.lines.find(l => l.id === line.lineId);
-    //       if (lineToUpdate) {
-    //         lineToUpdate.lineTotal = line.linePrice;
-    //       }
-    //     }
+        for (const line of discountedPrice?.lines?.details ?? []) {
+          const lineToUpdate = order.lines.find(l => l.id === line.lineId);
+          if (lineToUpdate) {
+            lineToUpdate.lineTotal = line.linePrice;
+          }
+        }
 
-    //     const alreadyDiscountedFromSubtotal = originalSubtotalPrice - order.subtotal;
-    //     const newSubtotal = order.lines.reduce((acc, line) => acc + line.lineTotal, 0);
-    //     order.subtotal = newSubtotal - alreadyDiscountedFromSubtotal;
-    //     order.total = order.subtotal + (order.shipment?.amount ?? 0);
+        const alreadyDiscountedFromSubtotal = originalSubtotalPrice - order.subtotal;
+        const newSubtotal = order.lines.reduce((acc, line) => acc + line.lineTotal, 0);
+        order.subtotal = newSubtotal - alreadyDiscountedFromSubtotal;
+        order.total = order.subtotal + (order.shipment?.amount ?? 0);
 
-    //     continue;
-    //   } else if (discountedPrice.shipmentAmount && order.shipment) {
-    //     order.total = order.subtotal + discountedPrice.shipmentAmount;
-    //     continue;
-    //   }
-    // }
+        continue;
+      } else if (discountedPrice.shipmentAmount && order.shipment) {
+        order.total = order.subtotal + discountedPrice.shipmentAmount;
+        continue;
+      }
+    }
+
+    console.log(order);
   }
 
   private getApplicableDiscounts(
@@ -1100,7 +1102,7 @@ export class OrderService extends OrderFinders {
       return order;
     }
 
-    const applicableDiscounts = await this.applyDiscounts(order, automaticDiscounts);
+    // const applicableDiscounts = await this.applyDiscounts(order, automaticDiscounts);
     return order;
   }
 

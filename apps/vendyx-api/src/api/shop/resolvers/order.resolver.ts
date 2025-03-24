@@ -74,7 +74,6 @@ export class OrderResolver {
     @Args('input') input: CreateOrderAddressInput
   ) {
     const result = await this.orderService.addShippingAddress(orderId, input);
-    console.log(result);
 
     return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
   }
