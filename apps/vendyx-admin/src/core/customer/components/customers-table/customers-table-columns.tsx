@@ -40,7 +40,7 @@ export const CustomersTableColumns: ColumnDef<CustomersTableRow>[] = [
       return (
         <Link
           href={`customers/${row.original.id}`}
-          className="flex flex-col gap-2 w-full text-nowrap"
+          className="flex flex-col gap-1 w-full text-nowrap"
         >
           <span className="text-sm font-normal">{row.original.name}</span>
           <span className="text-sm font-normal text-muted-foreground">{row.original.email}</span>

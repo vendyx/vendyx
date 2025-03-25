@@ -1,3 +1,5 @@
+import { type DiscountType } from '../types';
+
 export type ID = string;
 export type Metadata = {
   key: string;
@@ -55,4 +57,33 @@ export type Arg =
 export type MetricRange = {
   startsAt: Date;
   endsAt: Date;
+};
+
+export type ProductDiscountMetadata = {
+  variants: ID[];
+};
+
+export type ShippingDiscountMetadata = {
+  countries: ID[];
+  allCountries: boolean;
+};
+
+export type BuyXGetYDiscountMetadata = {
+  buy: {
+    variants: ID[];
+    requirement: BuyXGetYDiscountMetadataRequirement;
+    requirementValue: number;
+  };
+  get: { variants: ID[]; quantity: number };
+};
+
+export enum BuyXGetYDiscountMetadataRequirement {
+  MIN_QUANTITY = 'MIN_QUANTITY',
+  MIN_AMOUNT = 'MIN_AMOUNT'
+}
+
+export type OrderDiscount = {
+  id: ID;
+  handler: string;
+  type: DiscountType;
 };

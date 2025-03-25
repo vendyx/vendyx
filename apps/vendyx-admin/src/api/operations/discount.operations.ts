@@ -17,6 +17,7 @@ export const GET_ALL_DISCOUNTS_QUERY = graphql(`
         startsAt
         endsAt
         type
+        metadata
       }
     }
   }

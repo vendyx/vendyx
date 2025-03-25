@@ -3,12 +3,12 @@
 import { type ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 
-import { DiscountApplicationMode, DiscountType, DiscountValueType } from '@/api/types';
+import { DiscountApplicationMode, DiscountType } from '@/api/types';
 import { DataTableColumnHeader } from '@/shared/components/data-table/data-table-column-header';
 import { Badge } from '@/shared/components/ui/badge';
 import { Checkbox } from '@/shared/components/ui/checkbox';
-import { formatPrice } from '@/shared/utils/formatters';
 
+import { DiscountDescription } from './discount-description';
 import { type DiscountsTableRow } from './discounts-table';
 
 export const DiscountsTableColumns: ColumnDef<DiscountsTableRow>[] = [
@@ -40,40 +40,10 @@ export const DiscountsTableColumns: ColumnDef<DiscountsTableRow>[] = [
       return (
         <Link
           href={`discounts/${row.original.id ?? ''}`}
-          className="flex flex-col gap-2 w-full text-nowrap"
+          className="flex flex-col gap-1 w-full text-nowrap"
         >
           <span className="text-nowrap font-normal">{row.original.handle}</span>
-          {row.original.type === DiscountType.Order && (
-            <span className="text-nowrap font-normal text-muted-foreground">
-              {row.original.discountValueType === DiscountValueType.Percentage
-                ? `${row.original.discountValue}% off for order`
-                : `${formatPrice(row.original.discountValue)} off for order`}
-            </span>
-          )}
-
-          {row.original.type === DiscountType.Product && (
-            <span className="text-nowrap font-normal text-muted-foreground">
-              {row.original.discountValueType === DiscountValueType.Percentage
-                ? `${row.original.discountValue}% off for selected products` // TODO: add exact number of products
-                : `${formatPrice(row.original.discountValue)} off for selected products`}
-            </span>
-          )}
-
-          {row.original.type === DiscountType.Shipping && (
-            <span className="text-nowrap font-normal text-muted-foreground">
-              {row.original.discountValueType === DiscountValueType.Percentage
-                ? `${row.original.discountValue}% off for shipping`
-                : `${formatPrice(row.original.discountValue)} off for shipping`}
-            </span>
-          )}
-
-          {row.original.type === DiscountType.BuyXGetY && (
-            <span className="text-nowrap font-normal text-muted-foreground">
-              {row.original.discountValueType === DiscountValueType.Percentage
-                ? `${row.original.discountValue}% off for selected products` // TODO: add format Buy 2 items, get 2 items at 10% off
-                : `${formatPrice(row.original.discountValue)} off for selected products`}
-            </span>
-          )}
+          <DiscountDescription discount={row.original} />
         </Link>
       );
     }

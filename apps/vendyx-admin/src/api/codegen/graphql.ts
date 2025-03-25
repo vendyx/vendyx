@@ -1730,6 +1730,7 @@ export type GetAllDiscountsQuery = {
       startsAt: any;
       endsAt?: any | null;
       type: DiscountType;
+      metadata?: any | null;
     }>;
   };
 };
@@ -3084,6 +3085,7 @@ export const GetAllDiscountsDocument = new TypedDocumentString(`
       startsAt
       endsAt
       type
+      metadata
     }
   }
 }

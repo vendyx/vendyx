@@ -57,6 +57,7 @@ export type DiscountsTableRow = {
   startsAt: Date;
   endsAt?: Date;
   type: DiscountType;
+  metadata?: unknown;
 };
 
 type Props = DataTableSearchParams;
