@@ -1,5 +1,8 @@
+import { addMonths, formatDate } from 'date-fns';
+
 import { DiscountApplicationMode } from '@/api/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import { FormDatePicker } from '@/shared/form/form-date-picker';
 import { FormInput } from '@/shared/form/form-input';
 import { FormRadioGroup } from '@/shared/form/form-radio-group';
 
@@ -42,6 +45,27 @@ export const DiscountDetails = () => {
             />
           </div>
           <DiscountValue />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Duration</CardTitle>
+        </CardHeader>
+
+        <CardContent className="flex gap-4">
+          <FormDatePicker
+            control={control}
+            name="startsAt"
+            label="Starts at"
+            placeholder={formatDate(new Date(), 'PPP')}
+          />
+          <FormDatePicker
+            control={control}
+            name="endsAt"
+            label="Ends at"
+            placeholder={formatDate(addMonths(new Date(), 1), 'PPP')}
+          />
         </CardContent>
       </Card>
     </div>
