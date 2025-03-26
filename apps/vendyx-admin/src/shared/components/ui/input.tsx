@@ -10,10 +10,11 @@ import { Button } from './button';
 export type InputProps = {
   isPrice?: boolean;
   isPassword?: boolean;
+  rightElement?: React.ReactNode;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, isPrice, isPassword, ...props }, ref) => {
+  ({ className, type, isPrice, isPassword, rightElement, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false);
 
     return (
@@ -30,22 +31,25 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-        {isPassword && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-            onClick={() => setShowPassword(prev => !prev)}
-          >
-            {showPassword ? (
-              <EyeIcon className="h-4 w-4" aria-hidden="true" />
-            ) : (
-              <EyeOffIcon className="h-4 w-4" aria-hidden="true" />
-            )}
-            <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
-          </Button>
-        )}
+        <div className="absolute right-0 top-0 h-full flex items-center">
+          {rightElement && <div className="px-3 py-2">{rightElement}</div>}
+          {isPassword && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="hover:bg-transparent px-3 py-2"
+              onClick={() => setShowPassword(prev => !prev)}
+            >
+              {showPassword ? (
+                <EyeIcon className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <EyeOffIcon className="h-4 w-4" aria-hidden="true" />
+              )}
+              <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
+            </Button>
+          )}
+        </div>
         {/* hides browsers password toggles */}
         <style>{`
 					.hide-password-toggle::-ms-reveal,

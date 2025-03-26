@@ -22,7 +22,11 @@ export const DiscountValue = () => {
           { label: 'Fixed amount', value: DiscountValueType.FixedAmount }
         ]}
       />
-      <FormInput control={control} name="discountValue" rightElement={isPercentage ? '%' : '$'} />
+      <FormInput
+        control={control}
+        name="discountValue"
+        rightElement={<span className="text-muted-foreground">{isPercentage ? '%' : '$'}</span>}
+      />
     </div>
   );
 };

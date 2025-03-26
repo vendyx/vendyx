@@ -59,31 +59,21 @@ export const ShopDetailsForm: FC<Props> = ({ shop }) => {
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <FormInput
-                control={form.control}
-                label="Shop ID"
-                name="shopId"
-                disabled
-                isPassword
-                rightElement={<CopyToClipboardButton variant="outline" value={shop.id} />}
-              />
+            <div className="flex items-end gap-2">
+              <FormInput control={form.control} label="Shop ID" name="shopId" disabled isPassword />
+              <CopyToClipboardButton variant="outline" value={shop.id} />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-end gap-2">
               <FormInput
                 control={form.control}
                 label="Shop Api key"
                 name="shopApiKey"
                 disabled
                 isPassword
-                rightElement={
-                  <>
-                    <CopyToClipboardButton variant="outline" value={shop.shopApiKey} />
-                    <GenerateShopApiKeyButton />
-                  </>
-                }
               />
+              <CopyToClipboardButton variant="outline" value={shop.shopApiKey} />
+              <GenerateShopApiKeyButton />
             </div>
           </div>
         </SettingsPageLayout>

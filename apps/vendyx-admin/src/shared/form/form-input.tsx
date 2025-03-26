@@ -17,7 +17,7 @@ export const FormInput = <
   type,
   isPrice,
   isPassword,
-  rightElement: RightElement,
+  rightElement,
   tooltip,
   className,
   ...rest
@@ -41,10 +41,10 @@ export const FormInput = <
                 placeholder={placeholder}
                 isPrice={isPrice}
                 isPassword={isPassword}
+                rightElement={rightElement}
                 {...field}
               />
             </FormControl>
-            {RightElement && RightElement}
           </div>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
