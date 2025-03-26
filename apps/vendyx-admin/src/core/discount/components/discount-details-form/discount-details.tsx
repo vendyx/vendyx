@@ -1,6 +1,6 @@
 import { addMonths, formatDate } from 'date-fns';
 
-import { DiscountApplicationMode } from '@/api/types';
+import { DiscountApplicationMode, OrderRequirementType } from '@/api/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Label } from '@/shared/components/ui/label';
 import { FormDatePicker } from '@/shared/form/form-date-picker';
@@ -68,6 +68,46 @@ export const DiscountDetails = () => {
               name="endsAt"
               label="Ends at"
               placeholder={formatDate(addMonths(new Date(), 1), 'PPP')}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Requirements</CardTitle>
+          </CardHeader>
+
+          <CardContent className="flex gap-4">
+            <FormRadioGroup
+              control={control}
+              name="orderRequirementType"
+              items={[
+                { label: 'There is no requirements', value: '' },
+                {
+                  label: 'Minimum purchase amount',
+                  value: OrderRequirementType.MinimumAmount,
+                  slot: (
+                    <FormInput
+                      control={control}
+                      name="orderRequirementValue"
+                      placeholder="0"
+                      type="number"
+                    />
+                  )
+                },
+                {
+                  label: 'Minimum purchase items',
+                  value: OrderRequirementType.MinimumItems,
+                  slot: (
+                    <FormInput
+                      control={control}
+                      name="orderRequirementValue"
+                      isPrice
+                      placeholder="$ 0.00"
+                    />
+                  )
+                }
+              ]}
             />
           </CardContent>
         </Card>

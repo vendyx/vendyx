@@ -84,7 +84,7 @@ export const DiscountsTableColumns: ColumnDef<DiscountsTableRow>[] = [
     cell: ({ row }) => {
       return (
         <Badge variant={row.original.enabled ? 'default' : 'secondary'}>
-          {row.original.enabled ? 'Enabled' : 'Disabled'}
+          {row.original.enabled ? 'Active' : 'Deactivated'}
         </Badge>
       );
     },
