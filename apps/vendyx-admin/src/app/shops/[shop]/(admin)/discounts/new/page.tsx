@@ -1,28 +1,11 @@
-import { DiscountType } from '@/api/types';
+import { type DiscountType } from '@/api/types';
+import { DiscountDetailsForm } from '@/core/discount/components/discount-details-form/discount-details-form';
 
 export default function NewDiscountPage({ searchParams }: Props) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const discountType = searchParams.type;
-  console.log({
-    searchParams
-  });
 
-  if (discountType === DiscountType.Order) {
-    return 'Order discount';
-  }
-
-  if (discountType === DiscountType.Product) {
-    return 'Product discount';
-  }
-
-  if (discountType === DiscountType.Shipping) {
-    return 'Shipping discount';
-  }
-
-  if (discountType === DiscountType.BuyXGetY) {
-    return 'Buy X Get Y discount';
-  }
-
-  return 'sopme';
+  return <DiscountDetailsForm />;
 }
 
 type Props = {

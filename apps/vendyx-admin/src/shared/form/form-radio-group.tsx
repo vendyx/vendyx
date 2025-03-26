@@ -1,6 +1,7 @@
 import { type FieldPath, type FieldValues } from 'react-hook-form';
 
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
+import { cn } from '../utils/theme';
 import {
   FormControl,
   FormDescription,
@@ -18,6 +19,7 @@ export const FormRadioGroup = <
   name,
   items,
   label,
+  className,
   ...rest
 }: Props<TFieldValues, TName>) => {
   return (
@@ -31,7 +33,7 @@ export const FormRadioGroup = <
             <RadioGroup
               onValueChange={field.onChange}
               defaultValue={field.value}
-              className="flex flex-col gap-4"
+              className={cn('flex flex-col gap-4', className)}
             >
               {items.map(item => (
                 <FormItem key={item.value} className="flex flex-col gap-1">
@@ -60,4 +62,5 @@ type Props<
 > = FormFieldProps<TFieldValues, TName> & {
   items: { label: string; value: string; description?: string }[];
   label?: string;
+  className?: string;
 };
