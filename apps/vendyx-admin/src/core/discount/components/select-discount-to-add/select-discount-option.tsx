@@ -5,10 +5,10 @@ import Link from 'next/link';
 
 import { DiscountType } from '@/api/types';
 
-export const AddDiscountOption: FC<Props> = ({ title, description, icon: Icon, type }) => {
+export const SelectDiscountOption: FC<Props> = ({ title, description, icon: Icon, type }) => {
   return (
     <Link
-      href={`/discounts/new?type=${type}`}
+      href={`discounts/new?type=${type}`}
       className="py-3 px-6 flex justify-between items-center hover:bg-muted/50"
     >
       <div>

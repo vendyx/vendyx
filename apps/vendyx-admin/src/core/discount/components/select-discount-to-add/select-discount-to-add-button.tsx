@@ -11,9 +11,9 @@ import {
   DialogTrigger
 } from '@/shared/components/ui/dialog';
 
-import { AddDiscountOption } from './add-discount-option';
+import { SelectDiscountOption } from './select-discount-option';
 
-export const AddDiscountButton = () => {
+export const SelectDiscountToAddButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -28,28 +28,28 @@ export const AddDiscountButton = () => {
         </DialogHeader>
 
         <div className="flex flex-col border-t divide-y">
-          <AddDiscountOption
+          <SelectDiscountOption
             title="Order discount"
             description="Apply a discount to the entire order."
             icon={ShoppingCartIcon}
             type={DiscountType.Order}
           />
 
-          <AddDiscountOption
+          <SelectDiscountOption
             title="Product discount"
             description="Apply a discount to specific products."
             icon={PackageIcon}
             type={DiscountType.Product}
           />
 
-          <AddDiscountOption
+          <SelectDiscountOption
             title="Shipping discount"
             description="Apply a discount to the shipping cost."
             icon={TruckIcon}
             type={DiscountType.Shipping}
           />
 
-          <AddDiscountOption
+          <SelectDiscountOption
             title="Buy x get y"
             description="Apply a discount based on customer's cart contents."
             icon={BoxesIcon}
