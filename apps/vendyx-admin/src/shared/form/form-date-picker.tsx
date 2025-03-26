@@ -1,12 +1,11 @@
-import { type ComponentProps, type HTMLInputTypeAttribute, type ReactNode } from 'react';
+import { type ComponentProps } from 'react';
 import { type FieldPath, type FieldValues } from 'react-hook-form';
 
-import { InfoTooltip } from '../components/tooltips/info-tooltip';
-import { Input } from '../components/ui/input';
+import { DatePicker } from '../components/ui/date-picker';
 import { cn } from '../utils/theme';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from './form';
 
-export const FormInput = <
+export const FormDatePicker = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
@@ -14,11 +13,6 @@ export const FormInput = <
   label,
   description,
   placeholder,
-  type,
-  isPrice,
-  isPassword,
-  rightElement,
-  tooltip,
   className,
   ...rest
 }: Props<TFieldValues, TName>) => {
@@ -31,22 +25,14 @@ export const FormInput = <
           {label && (
             <div className="flex items-center justify-between">
               <FormLabel className="flex items-center h-[14px]">{label}</FormLabel>
-              {tooltip && <InfoTooltip size={14} message={tooltip} />}
             </div>
           )}
-          {/* TODO: Can i remove this div right? */}
-          <div className="flex items-center gap-2 w-full">
-            <FormControl>
-              <Input
-                type={type}
-                placeholder={placeholder}
-                isPrice={isPrice}
-                isPassword={isPassword}
-                rightElement={rightElement}
-                {...field}
-              />
-            </FormControl>
-          </div>
+          <DatePicker
+            value={field.value}
+            onChange={field.onChange}
+            placeholder={placeholder}
+            formControl={FormControl}
+          />
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
         </FormItem>
@@ -65,10 +51,5 @@ type Props<
   label?: string;
   description?: string;
   placeholder?: string;
-  type?: HTMLInputTypeAttribute;
-  isPrice?: boolean;
-  isPassword?: boolean;
-  rightElement?: ReactNode;
   className?: string;
-  tooltip?: string;
 };
