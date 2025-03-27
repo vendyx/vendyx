@@ -81,8 +81,9 @@ export const DiscountDetails = () => {
             <FormRadioGroup
               control={control}
               name="orderRequirementType"
+              defaultValue={'None' as unknown as OrderRequirementType}
               items={[
-                { label: 'There is no requirements', value: '' },
+                { label: 'There is no requirements', value: 'None' },
                 {
                   label: 'Minimum purchase amount',
                   value: OrderRequirementType.MinimumAmount,

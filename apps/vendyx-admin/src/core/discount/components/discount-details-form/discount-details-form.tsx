@@ -17,7 +17,7 @@ export const DiscountDetailsForm = () => {
     <Form {...form}>
       <form onSubmit={form.onSubmit}>
         <AdminPageLayout
-          title={'New Discount'}
+          title={`Create Discount`}
           actions={<DiscountDetailsFormSubmitButton />}
           maxWidth
         >

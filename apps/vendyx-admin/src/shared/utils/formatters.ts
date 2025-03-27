@@ -1,3 +1,5 @@
+import { DiscountType } from '@/api/types';
+
 /**
  * Format phone number to 1234 567 890
  */
@@ -103,4 +105,19 @@ export const getFullName = (input: { firstName?: string; lastName: string }) => 
   }
 
   return `${input.firstName} ${input.lastName}`;
+};
+
+/**
+ * @description
+ * Get discount type name from the enum
+ */
+export const formatDiscountType = (type: DiscountType) => {
+  const NAMES = {
+    [DiscountType.Order]: 'Order',
+    [DiscountType.Product]: 'Product',
+    [DiscountType.Shipping]: 'Shipping',
+    [DiscountType.BuyXGetY]: 'Buy X Get Y'
+  };
+
+  return NAMES[type];
 };
