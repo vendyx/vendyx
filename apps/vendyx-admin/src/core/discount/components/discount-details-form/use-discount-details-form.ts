@@ -24,7 +24,7 @@ export const useDiscountDetailsForm = () => {
       enabled: true,
       discountValueType: DiscountValueType.Percentage,
       discountValue: 0,
-      startsAt: undefined,
+      startsAt: new Date(),
       endsAt: undefined,
       orderRequirementType: undefined,
       orderRequirementValue: undefined,
@@ -62,9 +62,10 @@ const schema = z.object({
   discountValue: z.number().min(0),
   startsAt: z.date(),
   endsAt: z.date().optional(),
-  orderRequirementType: z
-    .enum([OrderRequirementType.MinimumAmount, OrderRequirementType.MinimumItems])
-    .optional(),
+  orderRequirementType: z.preprocess(
+    val => (val === 'None' ? undefined : val),
+    z.enum([OrderRequirementType.MinimumAmount, OrderRequirementType.MinimumItems]).optional()
+  ),
   orderRequirementValue: z.number().min(0).optional(),
   perCustomerLimit: z.number().min(0).optional(),
   metadata: z.record(z.any(), z.any()),

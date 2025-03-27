@@ -1735,6 +1735,47 @@ export type GetAllDiscountsQuery = {
   };
 };
 
+export type CreateDiscountMutationVariables = Exact<{
+  input: CreateDiscountInput;
+}>;
+
+export type CreateDiscountMutation = {
+  __typename?: 'Mutation';
+  createDiscount: {
+    __typename?: 'DiscountResult';
+    apiErrors: Array<{
+      __typename?: 'DiscountErrorResult';
+      code: DiscountErrorCode;
+      message: string;
+    }>;
+    discount?: { __typename?: 'Discount'; id: string } | null;
+  };
+};
+
+export type UpdateDiscountMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: UpdateDiscountInput;
+}>;
+
+export type UpdateDiscountMutation = {
+  __typename?: 'Mutation';
+  updateDiscount: {
+    __typename?: 'DiscountResult';
+    apiErrors: Array<{
+      __typename?: 'DiscountErrorResult';
+      code: DiscountErrorCode;
+      message: string;
+    }>;
+    discount?: { __typename?: 'Discount'; id: string } | null;
+  };
+};
+
+export type RemoveDiscountMutationVariables = Exact<{
+  ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+}>;
+
+export type RemoveDiscountMutation = { __typename?: 'Mutation'; removeDiscounts?: boolean | null };
+
 export type CommonMetricsResultFragment = {
   __typename?: 'MetricsResult';
   total: number;
@@ -3090,6 +3131,37 @@ export const GetAllDiscountsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetAllDiscountsQuery, GetAllDiscountsQueryVariables>;
+export const CreateDiscountDocument = new TypedDocumentString(`
+    mutation CreateDiscount($input: CreateDiscountInput!) {
+  createDiscount(input: $input) {
+    apiErrors {
+      code
+      message
+    }
+    discount {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CreateDiscountMutation, CreateDiscountMutationVariables>;
+export const UpdateDiscountDocument = new TypedDocumentString(`
+    mutation UpdateDiscount($id: ID!, $input: UpdateDiscountInput!) {
+  updateDiscount(id: $id, input: $input) {
+    apiErrors {
+      code
+      message
+    }
+    discount {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<UpdateDiscountMutation, UpdateDiscountMutationVariables>;
+export const RemoveDiscountDocument = new TypedDocumentString(`
+    mutation RemoveDiscount($ids: [ID!]!) {
+  removeDiscounts(id: $ids)
+}
+    `) as unknown as TypedDocumentString<RemoveDiscountMutation, RemoveDiscountMutationVariables>;
 export const GetTotalSalesDocument = new TypedDocumentString(`
     query GetTotalSales($input: MetricsInput!) {
   totalSales(input: $input) {

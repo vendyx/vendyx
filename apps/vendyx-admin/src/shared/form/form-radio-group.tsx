@@ -37,7 +37,7 @@ export const FormRadioGroup = <
               className={cn('flex flex-col gap-4', className)}
             >
               {items.map(item => (
-                <FormItem key={item.value} className="flex flex-col gap-1">
+                <FormItem key={item.value + 'sosmo'} className="flex flex-col gap-1">
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center space-x-3 space-y-0">
                       <FormControl>

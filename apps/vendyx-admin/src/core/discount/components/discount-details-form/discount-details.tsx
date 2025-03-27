@@ -56,7 +56,7 @@ export const DiscountDetails = () => {
             <CardTitle>Duration</CardTitle>
           </CardHeader>
 
-          <CardContent className="flex gap-4">
+          <CardContent className="flex items-start gap-4">
             <FormDatePicker
               control={control}
               name="startsAt"
@@ -80,8 +80,8 @@ export const DiscountDetails = () => {
           <CardContent className="flex gap-4">
             <FormRadioGroup
               control={control}
-              name="orderRequirementType"
               defaultValue={'None' as unknown as OrderRequirementType}
+              name="orderRequirementType"
               items={[
                 { label: 'There is no requirements', value: 'None' },
                 {

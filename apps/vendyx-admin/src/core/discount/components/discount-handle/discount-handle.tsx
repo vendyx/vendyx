@@ -17,7 +17,7 @@ export const DiscountHandle = () => {
 
   if (applicationMode === DiscountApplicationMode.Code) {
     return (
-      <div className="flex gap-2 items-center w-full">
+      <div className="flex gap-2 items-top w-full">
         <FormInput
           control={control}
           name="handle"
@@ -25,7 +25,7 @@ export const DiscountHandle = () => {
           placeholder="0000"
           description="Customers must enter this code on the payment screen"
         />
-        <Button type="button" variant="secondary" className="-mt-[6px]" onClick={onGenerate}>
+        <Button type="button" variant="secondary" className="mt-[22px]" onClick={onGenerate}>
           Generate
         </Button>
       </div>
