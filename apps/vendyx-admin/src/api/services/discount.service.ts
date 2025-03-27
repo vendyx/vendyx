@@ -16,7 +16,8 @@ import { serviceGqlFetcher } from './service-fetchers/service-gql-fetchers';
 
 export class DiscountService {
   static Tags = {
-    discounts: 'discounts'
+    discounts: 'discounts',
+    discount: (id: ID) => `discount-${id}`
   };
 
   static async getAll(input?: DiscountListInput) {
