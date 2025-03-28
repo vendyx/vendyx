@@ -68,7 +68,7 @@ export const EntitySelector = <T,>({
                   <LoaderSpiner />
                 </div>
               ) : (
-                items.map(item => renderItem?.(item))
+                items.map(item => renderItem(item))
               )}
             </div>
           </div>
