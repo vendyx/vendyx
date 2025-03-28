@@ -82,6 +82,7 @@ export const CollectionService = {
     return collections ?? [];
   },
 
+  // TODO: rename to getCollectionsForSelector
   async getSubCollectionsForSelector(search: string) {
     const result = await serviceGqlFetcher(
       GET_ALL_SUB_COLLECTIONS_FOR_SELECTOR_QUERY,

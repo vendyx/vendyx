@@ -972,6 +972,12 @@ export type Query = {
   paymentMethods: Array<PaymentMethod>;
   product?: Maybe<Product>;
   products: ProductList;
+  /**
+   * Get a list of products by their variant IDs.
+   * Useful for fetching products win cases when you only have variant IDs like
+   * fetching products from a discount metadata
+   */
+  productsByVariantIds: ProductList;
   shippingHandlers: Array<ShippingHandler>;
   shippingMethods: Array<ShippingMethod>;
   shop?: Maybe<Shop>;
@@ -1029,6 +1035,11 @@ export type QueryProductArgs = {
 };
 
 export type QueryProductsArgs = {
+  input?: InputMaybe<ProductListInput>;
+};
+
+export type QueryProductsByVariantIdsArgs = {
+  ids: Array<Scalars['ID']['input']>;
   input?: InputMaybe<ProductListInput>;
 };
 
@@ -2150,6 +2161,21 @@ export type CommonEnhancedProductForSelectorFragment = {
   };
 } & { ' $fragmentName'?: 'CommonEnhancedProductForSelectorFragment' };
 
+export type CommonDiscountApplicableProductFragment = {
+  __typename?: 'Product';
+  id: string;
+  name: string;
+  slug: string;
+  variants: {
+    __typename?: 'VariantList';
+    items: Array<{
+      __typename?: 'Variant';
+      id: string;
+      optionValues: Array<{ __typename?: 'OptionValue'; id: string; name: string }>;
+    }>;
+  };
+} & { ' $fragmentName'?: 'CommonDiscountApplicableProductFragment' };
+
 export type GetProductsQueryVariables = Exact<{
   input?: InputMaybe<ProductListInput>;
 }>;
@@ -2213,6 +2239,26 @@ export type GetAllEnhancedProductsForSelectorQuery = {
       { __typename?: 'Product' } & {
         ' $fragmentRefs'?: {
           CommonEnhancedProductForSelectorFragment: CommonEnhancedProductForSelectorFragment;
+        };
+      }
+    >;
+  };
+};
+
+export type GetDiscountApplicableProductsQueryQueryVariables = Exact<{
+  ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+}>;
+
+export type GetDiscountApplicableProductsQueryQuery = {
+  __typename?: 'Query';
+  productsByVariantIds: {
+    __typename?: 'ProductList';
+    count: number;
+    pageInfo: { __typename?: 'PageInfo'; total: number };
+    items: Array<
+      { __typename?: 'Product' } & {
+        ' $fragmentRefs'?: {
+          CommonDiscountApplicableProductFragment: CommonDiscountApplicableProductFragment;
         };
       }
     >;
@@ -2847,6 +2893,25 @@ export const CommonEnhancedProductForSelectorFragmentDoc = new TypedDocumentStri
     `,
   { fragmentName: 'CommonEnhancedProductForSelector' }
 ) as unknown as TypedDocumentString<CommonEnhancedProductForSelectorFragment, unknown>;
+export const CommonDiscountApplicableProductFragmentDoc = new TypedDocumentString(
+  `
+    fragment CommonDiscountApplicableProduct on Product {
+  id
+  name
+  slug
+  variants {
+    items {
+      id
+      optionValues {
+        id
+        name
+      }
+    }
+  }
+}
+    `,
+  { fragmentName: 'CommonDiscountApplicableProduct' }
+) as unknown as TypedDocumentString<CommonDiscountApplicableProductFragment, unknown>;
 export const CommonShippingHandlersFragmentDoc = new TypedDocumentString(
   `
     fragment CommonShippingHandlers on ShippingHandler {
@@ -3576,6 +3641,35 @@ export const GetAllEnhancedProductsForSelectorDocument = new TypedDocumentString
 }`) as unknown as TypedDocumentString<
   GetAllEnhancedProductsForSelectorQuery,
   GetAllEnhancedProductsForSelectorQueryVariables
+>;
+export const GetDiscountApplicableProductsQueryDocument = new TypedDocumentString(`
+    query GetDiscountApplicableProductsQuery($ids: [ID!]!) {
+  productsByVariantIds(ids: $ids) {
+    count
+    pageInfo {
+      total
+    }
+    items {
+      ...CommonDiscountApplicableProduct
+    }
+  }
+}
+    fragment CommonDiscountApplicableProduct on Product {
+  id
+  name
+  slug
+  variants {
+    items {
+      id
+      optionValues {
+        id
+        name
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<
+  GetDiscountApplicableProductsQueryQuery,
+  GetDiscountApplicableProductsQueryQueryVariables
 >;
 export const GetProductDocument = new TypedDocumentString(`
     query GetProduct($id: ID) {

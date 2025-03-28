@@ -80,6 +80,23 @@ export const COMMON_ENHANCED_PRODUCT_FOR_SELECTOR = graphql(`
   }
 `);
 
+export const COMMON_DISCOUNT_APPLICABLE_PRODUCT_FRAGMENT = graphql(`
+  fragment CommonDiscountApplicableProduct on Product {
+    id
+    name
+    slug
+    variants {
+      items {
+        id
+        optionValues {
+          id
+          name
+        }
+      }
+    }
+  }
+`);
+
 export const GET_ALL_PRODUCTS_QUERY = graphql(`
   query GetProducts($input: ProductListInput) {
     products(input: $input) {
@@ -127,6 +144,20 @@ export const GET_ALL_ENHANCED_PRODUCTS_FOR_SELECTOR_QUERY = graphql(`
     products(input: $input) {
       items {
         ...CommonEnhancedProductForSelector
+      }
+    }
+  }
+`);
+
+export const GET_DISCOUNT_APPLICABLE_PRODUCTS_QUERY = graphql(`
+  query GetDiscountApplicableProductsQuery($ids: [ID!]!) {
+    productsByVariantIds(ids: $ids) {
+      count
+      pageInfo {
+        total
+      }
+      items {
+        ...CommonDiscountApplicableProduct
       }
     }
   }

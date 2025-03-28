@@ -5,6 +5,7 @@ import {
   type UpdateProductInput
 } from '../codegen/graphql';
 import {
+  COMMON_DISCOUNT_APPLICABLE_PRODUCT_FRAGMENT,
   COMMON_ENHANCED_PRODUCT_FOR_SELECTOR,
   COMMON_PRODUCT_FOR_SELECTOR,
   COMMON_PRODUCT_FRAGMENT,
@@ -12,10 +13,12 @@ import {
   GET_ALL_ENHANCED_PRODUCTS_FOR_SELECTOR_QUERY,
   GET_ALL_PRODUCTS_FOR_SELECTOR_QUERY,
   GET_ALL_PRODUCTS_QUERY,
+  GET_DISCOUNT_APPLICABLE_PRODUCTS_QUERY,
   GET_PRODUCT_BY_ID_QUERY,
   REMOVE_PRODUCT_MUTATION,
   UPDATE_PRODUCT_MUTATION
 } from '../operations/product.operations';
+import { type ID } from '../scalars/scalars.type';
 import { serviceGqlFetcher } from './service-fetchers/service-gql-fetchers';
 
 export const ProductService = {
@@ -62,6 +65,22 @@ export const ProductService = {
 
     return result.products.items.map(product =>
       getFragmentData(COMMON_ENHANCED_PRODUCT_FOR_SELECTOR, product)
+    );
+  },
+
+  /**
+   * @description
+   * Get all products by variant ids.
+   */
+  async getDiscountApplicableProductsByVariantIds(variantIds: ID[], input?: ProductListInput) {
+    const { productsByVariantIds } = await serviceGqlFetcher(
+      GET_DISCOUNT_APPLICABLE_PRODUCTS_QUERY,
+      { ids: variantIds, input },
+      { tags: [ProductService.Tags.products_for_selector] }
+    );
+
+    return productsByVariantIds.items.map(product =>
+      getFragmentData(COMMON_DISCOUNT_APPLICABLE_PRODUCT_FRAGMENT, product)
     );
   },
 
