@@ -6,10 +6,8 @@ import { restFetcher } from '@/api/fetchers/rest-fetcher';
 import { type CommonSubCollectionForSelectorFragment } from '@/api/types';
 import { type InternalApiResponse } from '@/api/utils/internal-api-response';
 
-export const useCollectionSubCollectionSelector = () => {
-  const [subCollections, setSubCollections] = useState<CommonSubCollectionForSelectorFragment[]>(
-    []
-  );
+export const useCollectionSelector = () => {
+  const [collections, setCollections] = useState<CommonSubCollectionForSelectorFragment[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const [refetch, setRefetch] = useState(0);
   const [search, setSearch] = useState('');
@@ -28,11 +26,11 @@ export const useCollectionSubCollectionSelector = () => {
 
       const result = await restFetcher<InternalApiSubCollectionsForSelector>('/collection', {
         queryParams: searchParams,
-        tags: ['sub-collections-for-selector'],
+        tags: ['collections-for-selector'],
         internal: true
       });
 
-      setSubCollections(result.data);
+      setCollections(result.data);
       setIsFetching(false);
     })();
   }, [search, refetch]);
@@ -40,7 +38,7 @@ export const useCollectionSubCollectionSelector = () => {
   return {
     isFetching,
     handleSearch,
-    subCollections,
+    collections,
     refetch: () => setRefetch(refetch + 1)
   };
 };

@@ -1,21 +1,20 @@
 import { type FC, useEffect, useMemo, useState } from 'react';
 
 import { type ID } from '@/api/scalars/scalars.type';
-import { type CommonCollectionSubCollectionFragment } from '@/api/types';
+import { type Collection } from '@/api/types';
 import { DefaultEntitySelectorRow } from '@/shared/components/entity-selector/default-entity-selector-row';
 import { EntitySelector } from '@/shared/components/entity-selector/entity-selector';
-import { notification } from '@/shared/notifications/notifications';
 
-import { addSubCollections } from '../../actions/add-sub-collections';
-import { useCollectionSubCollectionSelector } from './use-collection-sub-collection-selector';
+import { useCollectionSelector } from './use-collection-selector';
 
-export const CollectionSubCollectionsSelector: FC<Props> = ({
-  collectionId,
+export const CollectionSelector: FC<Props> = ({
+  onDone,
   defaultSelected,
-  onFinishSelection
+  title = 'Add collections',
+  description = 'Add collections to your entity',
+  triggerText = 'Add Collections'
 }) => {
-  const { subCollections, handleSearch, isFetching, refetch } =
-    useCollectionSubCollectionSelector();
+  const { collections, handleSearch, isFetching, refetch } = useCollectionSelector();
 
   const [selected, setSelected] = useState<string[]>(defaultSelected.map(p => p.id));
 
@@ -24,29 +23,27 @@ export const CollectionSubCollectionsSelector: FC<Props> = ({
   }, [defaultSelected]);
 
   const items = useMemo(() => {
-    return [...defaultSelected, ...subCollections]
+    return [...defaultSelected, ...collections]
       .sort((a, b) => {
         if (selected.includes(a.id)) return -1;
         if (selected.includes(b.id)) return 1;
         return 0;
       })
       .filter((item, index, self) => self.findIndex(i => i.id === item.id) === index);
-  }, [subCollections, defaultSelected]);
+  }, [collections, defaultSelected]);
 
   return (
     <EntitySelector
-      title="Add sub collections"
-      description="Add sub collections to your collection"
-      triggerText="Add Sub Collections"
+      title={title}
+      description={description}
+      triggerText={triggerText}
       items={items}
       isFetching={isFetching}
       isDoneAPromise
       onDone={async close => {
-        await addSubCollections(collectionId, selected);
+        await onDone(selected);
         refetch();
         close();
-        onFinishSelection();
-        notification.success('Content updated');
       }}
       onSearch={handleSearch}
       renderItem={collection => (
@@ -68,7 +65,9 @@ export const CollectionSubCollectionsSelector: FC<Props> = ({
 };
 
 type Props = {
-  collectionId: ID;
-  defaultSelected: CommonCollectionSubCollectionFragment[];
-  onFinishSelection: () => void;
+  defaultSelected: Pick<Collection, 'id' | 'name'>[];
+  onDone: (selected: ID[]) => Promise<void>;
+  title?: string;
+  description?: string;
+  triggerText?: string;
 };

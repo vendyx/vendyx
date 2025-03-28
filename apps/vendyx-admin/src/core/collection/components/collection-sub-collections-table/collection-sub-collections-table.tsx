@@ -1,10 +1,11 @@
 import { type FC } from 'react';
 
 import { type CommonCollectionFragment } from '@/api/types';
+import { CollectionSelector } from '@/shared/components/collection-selector/collection-selector';
 import { ItemsTable } from '@/shared/components/items-table/items-table';
 import { useBase } from '@/shared/hooks/use-base';
 
-import { CollectionSubCollectionsSelector } from '../collection-sub-collection-selector';
+import { addSubCollections } from '../../actions/add-sub-collections';
 import { CollectionSubCollectionsTableRow } from './collection-sub-collections-table-row';
 import { useCollectionSubCollectionsTable } from './use-collection-sub-collections-table';
 
@@ -29,10 +30,15 @@ export const CollectionSubCollectionsTable: FC<Props> = ({ collection }) => {
         />
       )}
       action={
-        <CollectionSubCollectionsSelector
-          collectionId={collection.id}
+        <CollectionSelector
+          title="Add sub collections"
+          description="Add sub collections to your collection"
+          triggerText="Add Sub Collections"
           defaultSelected={subCollections}
-          onFinishSelection={async () => await fetchSubCollections(1, '')}
+          onDone={async selected => {
+            await addSubCollections(collection.id, selected);
+            await fetchSubCollections(1, '');
+          }}
         />
       }
     />
