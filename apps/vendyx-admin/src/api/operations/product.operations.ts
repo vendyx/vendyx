@@ -58,6 +58,28 @@ export const COMMON_PRODUCT_FOR_SELECTOR = graphql(`
   }
 `);
 
+export const COMMON_ENHANCED_PRODUCT_FOR_SELECTOR = graphql(`
+  fragment CommonEnhancedProductForSelector on Product {
+    id
+    name
+    variants {
+      items {
+        id
+        optionValues {
+          id
+          name
+        }
+      }
+    }
+    assets(input: { take: 1 }) {
+      items {
+        id
+        source
+      }
+    }
+  }
+`);
+
 export const GET_ALL_PRODUCTS_QUERY = graphql(`
   query GetProducts($input: ProductListInput) {
     products(input: $input) {
@@ -95,6 +117,16 @@ export const GET_ALL_PRODUCTS_FOR_SELECTOR_QUERY = graphql(`
     products(input: $input) {
       items {
         ...CommonProductForSelector
+      }
+    }
+  }
+`);
+
+export const GET_ALL_ENHANCED_PRODUCTS_FOR_SELECTOR_QUERY = graphql(`
+  query GetAllEnhancedProductsForSelector($input: ProductListInput) {
+    products(input: $input) {
+      items {
+        ...CommonEnhancedProductForSelector
       }
     }
   }

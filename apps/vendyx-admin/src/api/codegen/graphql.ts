@@ -2132,6 +2132,24 @@ export type CommonProductForSelectorFragment = {
   };
 } & { ' $fragmentName'?: 'CommonProductForSelectorFragment' };
 
+export type CommonEnhancedProductForSelectorFragment = {
+  __typename?: 'Product';
+  id: string;
+  name: string;
+  variants: {
+    __typename?: 'VariantList';
+    items: Array<{
+      __typename?: 'Variant';
+      id: string;
+      optionValues: Array<{ __typename?: 'OptionValue'; id: string; name: string }>;
+    }>;
+  };
+  assets: {
+    __typename?: 'AssetList';
+    items: Array<{ __typename?: 'Asset'; id: string; source: string }>;
+  };
+} & { ' $fragmentName'?: 'CommonEnhancedProductForSelectorFragment' };
+
 export type GetProductsQueryVariables = Exact<{
   input?: InputMaybe<ProductListInput>;
 }>;
@@ -2178,6 +2196,24 @@ export type GetProductsForSelectorQuery = {
     items: Array<
       { __typename?: 'Product' } & {
         ' $fragmentRefs'?: { CommonProductForSelectorFragment: CommonProductForSelectorFragment };
+      }
+    >;
+  };
+};
+
+export type GetAllEnhancedProductsForSelectorQueryVariables = Exact<{
+  input?: InputMaybe<ProductListInput>;
+}>;
+
+export type GetAllEnhancedProductsForSelectorQuery = {
+  __typename?: 'Query';
+  products: {
+    __typename?: 'ProductList';
+    items: Array<
+      { __typename?: 'Product' } & {
+        ' $fragmentRefs'?: {
+          CommonEnhancedProductForSelectorFragment: CommonEnhancedProductForSelectorFragment;
+        };
       }
     >;
   };
@@ -2787,6 +2823,30 @@ export const CommonProductForSelectorFragmentDoc = new TypedDocumentString(
     `,
   { fragmentName: 'CommonProductForSelector' }
 ) as unknown as TypedDocumentString<CommonProductForSelectorFragment, unknown>;
+export const CommonEnhancedProductForSelectorFragmentDoc = new TypedDocumentString(
+  `
+    fragment CommonEnhancedProductForSelector on Product {
+  id
+  name
+  variants {
+    items {
+      id
+      optionValues {
+        id
+        name
+      }
+    }
+  }
+  assets(input: {take: 1}) {
+    items {
+      id
+      source
+    }
+  }
+}
+    `,
+  { fragmentName: 'CommonEnhancedProductForSelector' }
+) as unknown as TypedDocumentString<CommonEnhancedProductForSelectorFragment, unknown>;
 export const CommonShippingHandlersFragmentDoc = new TypedDocumentString(
   `
     fragment CommonShippingHandlers on ShippingHandler {
@@ -3486,6 +3546,36 @@ export const GetProductsForSelectorDocument = new TypedDocumentString(`
 }`) as unknown as TypedDocumentString<
   GetProductsForSelectorQuery,
   GetProductsForSelectorQueryVariables
+>;
+export const GetAllEnhancedProductsForSelectorDocument = new TypedDocumentString(`
+    query GetAllEnhancedProductsForSelector($input: ProductListInput) {
+  products(input: $input) {
+    items {
+      ...CommonEnhancedProductForSelector
+    }
+  }
+}
+    fragment CommonEnhancedProductForSelector on Product {
+  id
+  name
+  variants {
+    items {
+      id
+      optionValues {
+        id
+        name
+      }
+    }
+  }
+  assets(input: {take: 1}) {
+    items {
+      id
+      source
+    }
+  }
+}`) as unknown as TypedDocumentString<
+  GetAllEnhancedProductsForSelectorQuery,
+  GetAllEnhancedProductsForSelectorQueryVariables
 >;
 export const GetProductDocument = new TypedDocumentString(`
     query GetProduct($id: ID) {

@@ -5,9 +5,11 @@ import {
   type UpdateProductInput
 } from '../codegen/graphql';
 import {
+  COMMON_ENHANCED_PRODUCT_FOR_SELECTOR,
   COMMON_PRODUCT_FOR_SELECTOR,
   COMMON_PRODUCT_FRAGMENT,
   CREATE_PRODUCT_MUTATION,
+  GET_ALL_ENHANCED_PRODUCTS_FOR_SELECTOR_QUERY,
   GET_ALL_PRODUCTS_FOR_SELECTOR_QUERY,
   GET_ALL_PRODUCTS_QUERY,
   GET_PRODUCT_BY_ID_QUERY,
@@ -42,6 +44,24 @@ export const ProductService = {
 
     return result.products.items.map(product =>
       getFragmentData(COMMON_PRODUCT_FOR_SELECTOR, product)
+    );
+  },
+
+  /**
+   * @description
+   * Get all enabled products with variants.
+   * Can be filtered by name and only take 30 products per request, to avoid overloading the server,
+   * so maybe to get an specific you will need to pass the query with the name of the product.
+   */
+  async getAllEnhancedForSelector(query: string) {
+    const result = await serviceGqlFetcher(
+      GET_ALL_ENHANCED_PRODUCTS_FOR_SELECTOR_QUERY,
+      { input: { filters: { enabled: { equals: true }, name: { contains: query } }, take: 30 } },
+      { tags: [ProductService.Tags.products_for_selector] }
+    );
+
+    return result.products.items.map(product =>
+      getFragmentData(COMMON_ENHANCED_PRODUCT_FOR_SELECTOR, product)
     );
   },
 
