@@ -2,6 +2,7 @@ import { DiscountDurationCard } from '../discount-details-card/discount-duration
 import { DiscountGeneralCard } from '../discount-details-card/discount-general-card';
 import { DiscountRequirementsCard } from '../discount-details-card/discount-requirements-card';
 import { DiscountStatusCard } from '../discount-details-card/discount-status-card';
+import { ProductDiscountMetadata } from '../product-discount-metadata/product-discount-metadata';
 
 export const DiscountDetails = () => {
   return (
@@ -10,6 +11,8 @@ export const DiscountDetails = () => {
         <DiscountGeneralCard />
 
         <DiscountDurationCard />
+
+        <ProductDiscountMetadata />
 
         <DiscountRequirementsCard />
       </div>

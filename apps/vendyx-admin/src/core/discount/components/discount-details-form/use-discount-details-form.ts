@@ -25,6 +25,7 @@ export const useDiscountDetailsForm = () => {
       discountValueType: DiscountValueType.Percentage,
       discountValue: 0,
       startsAt: new Date(),
+      appliesTo: DiscountAppliesTo.Collections,
       endsAt: undefined,
       orderRequirementType: undefined,
       orderRequirementValue: undefined,
@@ -54,6 +55,11 @@ export const useDiscountDetailsForm = () => {
   };
 };
 
+export enum DiscountAppliesTo {
+  Products = 'PRODUCTS',
+  Collections = 'COLLECTIONS'
+}
+
 const schema = z.object({
   handle: z.string().min(1),
   enabled: z.boolean(),
@@ -78,7 +84,8 @@ const schema = z.object({
         DiscountType.Shipping
       ])
     )
-    .optional()
+    .optional(),
+  appliesTo: z.enum([DiscountAppliesTo.Products, DiscountAppliesTo.Collections])
 });
 
 export type DiscountDetailsFormInput = z.infer<typeof schema>;
