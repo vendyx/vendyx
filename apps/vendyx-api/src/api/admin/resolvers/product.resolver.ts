@@ -29,6 +29,16 @@ export class ProductResolver {
     return new ListResponse(result, result.length, { total });
   }
 
+  @Query('productsByVariantIds')
+  async productsByVariantIds(@Args('ids') ids: ID[], @Args('input') input?: ListInput) {
+    const [result, total] = await Promise.all([
+      this.productService.find(input, undefined, ids),
+      this.productService.count(input, undefined, ids)
+    ]);
+
+    return new ListResponse(result, result.length, { total });
+  }
+
   @Query('product')
   async product(@Args('id') id: ID, @Args('slug') slug: string) {
     return this.productService.findUnique(id, slug);

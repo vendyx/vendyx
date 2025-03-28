@@ -16,10 +16,12 @@ import { getSlugBy } from '../shared/utils/slug.utils';
 export class ProductService {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async find(input?: ProductListInput, byCollectionId?: ID) {
+  // TODO: Refactor to take an object for filters
+  async find(input?: ProductListInput, byCollectionId?: ID, byVariantIds?: ID[]) {
     return this.productRepository.findMany({
       ...input,
       collectionId: byCollectionId,
+      variantsIds: byVariantIds,
       filters: {
         archived: { equals: false },
         ...input?.filters
@@ -27,10 +29,12 @@ export class ProductService {
     });
   }
 
-  async count(input?: ProductListInput, byCollectionId?: ID) {
+  // TODO: Refactor to take an object for filters
+  async count(input?: ProductListInput, byCollectionId?: ID, byVariantIds?: ID[]) {
     return this.productRepository.count({
       ...input,
       collectionId: byCollectionId,
+      variantsIds: byVariantIds,
       filters: {
         archived: { equals: false },
         ...input?.filters

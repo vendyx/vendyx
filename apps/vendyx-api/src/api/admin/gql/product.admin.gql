@@ -1,5 +1,11 @@
 type Query {
   products(input: ProductListInput): ProductList!
+  """
+  Get a list of products by their variant IDs.
+  Useful for fetching products win cases when you only have variant IDs like
+  fetching products from a discount metadata
+  """
+  productsByVariantIds(ids: [ID!]!, input: ProductListInput): ProductList!
 }
 
 type Mutation {

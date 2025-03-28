@@ -13,7 +13,7 @@ import { ID } from '../types/scalars.type';
 export class ProductRepository {
   constructor(@Inject(PRISMA_FOR_SHOP) private readonly prisma: PrismaForShop) {}
 
-  async findMany(input?: ProductListInput & { collectionId?: ID }) {
+  async findMany(input?: ProductListInput & { collectionId?: ID; variantsIds?: ID[] }) {
     return await this.prisma.product.findMany({
       ...clean({ skip: input?.skip, take: input?.take }),
       where: {
@@ -21,8 +21,9 @@ export class ProductRepository {
         archived: clean(input?.filters?.archived ?? {}),
         enabled: clean(input?.filters?.enabled ?? {}),
         ProductCollection: input?.collectionId
-          ? { some: { collectionId: input?.collectionId } }
-          : undefined
+          ? { some: { collectionId: input.collectionId } }
+          : undefined,
+        variants: input?.variantsIds ? { some: { id: { in: input.variantsIds } } } : undefined
       },
       orderBy: { createdAt: 'asc' }
     });
@@ -50,7 +51,7 @@ export class ProductRepository {
     });
   }
 
-  count(input?: ProductListInput & { collectionId?: ID }) {
+  count(input?: ProductListInput & { collectionId?: ID; variantsIds?: ID[] }) {
     return this.prisma.product.count({
       ...clean({ skip: input?.skip, take: input?.take }),
       where: {
@@ -58,8 +59,9 @@ export class ProductRepository {
         archived: clean(input?.filters?.archived ?? {}),
         enabled: clean(input?.filters?.enabled ?? {}),
         ProductCollection: input?.collectionId
-          ? { some: { collectionId: input?.collectionId } }
-          : undefined
+          ? { some: { collectionId: input.collectionId } }
+          : undefined,
+        variants: input?.variantsIds ? { some: { id: { in: input.variantsIds } } } : undefined
       }
     });
   }
