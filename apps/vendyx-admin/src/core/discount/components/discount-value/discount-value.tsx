@@ -25,7 +25,7 @@ export const DiscountValue = () => {
       <FormInput
         control={control}
         name="discountValue"
-        isPrice={!isPercentage}
+        isPrice
         rightElement={<span className="text-muted-foreground">{isPercentage ? '%' : '$'}</span>}
       />
     </div>

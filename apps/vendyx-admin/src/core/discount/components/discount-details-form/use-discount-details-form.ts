@@ -13,8 +13,10 @@ import {
   OrderRequirementType
 } from '@/api/types';
 import { notification } from '@/shared/notifications/notifications';
+import { createDiscount } from '../../actions/create-discount';
+import { ProductDiscountMetadata } from '@/api/scalars/scalars.type';
 
-export const useDiscountDetailsForm = (discount?: CommonDiscountFragment) => {
+export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDiscountFragment) => {
   const [isLoading, startTransition] = useTransition();
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -37,16 +39,44 @@ export const useDiscountDetailsForm = (discount?: CommonDiscountFragment) => {
     }
   });
 
-  useEffect(() => {
-    if (!isLoading && isSuccess) {
-      notification.success('Discount saved');
-    }
-  }, [isSuccess, isLoading]);
-
   async function onSubmit(input: DiscountDetailsFormInput) {
     startTransition(async () => {
-      console.log(input);
-      setIsSuccess(true);
+      const isCreation = !discount;
+
+      if (!isCreation) return;
+
+      const generalInput = {
+        applicationMode: input.applicationMode,
+        handle: input.handle,
+        enabled: input.enabled,
+        discountValueType: input.discountValueType,
+        discountValue: input.discountValue,
+        startsAt: input.startsAt,
+        endsAt: input.endsAt,
+        orderRequirementType: input.orderRequirementType,
+        orderRequirementValue: input.orderRequirementValue,
+        perCustomerLimit: input.perCustomerLimit,
+        type,
+        availableCombinations: []
+      };
+
+      if (type === DiscountType.Order) {
+        await createDiscount(generalInput);
+      } else if (type === DiscountType.Product) {
+        const metadata = input.metadata as InMemoryProductDiscountMetadata;
+
+        const metadataToSave: ProductDiscountMetadata = {
+          variants: metadata.products
+            .map(p => p.variants.items)
+            .flat()
+            .map(v => v.id)
+        };
+
+        await createDiscount({
+          ...generalInput,
+          metadata: metadataToSave
+        });
+      }
     });
   }
 
@@ -67,7 +97,7 @@ const schema = z.object({
   enabled: z.boolean(),
   applicationMode: z.enum([DiscountApplicationMode.Automatic, DiscountApplicationMode.Code]),
   discountValueType: z.enum([DiscountValueType.FixedAmount, DiscountValueType.Percentage]),
-  discountValue: z.number().min(0),
+  discountValue: z.preprocess(v => Number(v), z.number().min(0)),
   startsAt: z.date(),
   endsAt: z.date().optional(),
   orderRequirementType: z.preprocess(

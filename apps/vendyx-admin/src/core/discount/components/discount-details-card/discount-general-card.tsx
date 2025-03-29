@@ -36,6 +36,7 @@ export const DiscountGeneralCard = () => {
           <DiscountHandle />
           <FormInput
             control={control}
+            type="number"
             name="perCustomerLimit"
             label="Per customer limit"
             className="w-full h-fit"

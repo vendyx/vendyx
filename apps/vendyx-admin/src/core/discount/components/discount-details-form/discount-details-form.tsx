@@ -14,7 +14,7 @@ import { DiscountDetailsFormSubmitButton } from './discount-details-form-submit-
 import { useDiscountDetailsForm } from './use-discount-details-form';
 
 export const DiscountDetailsForm: FC<Props> = ({ type, discount }) => {
-  const form = useDiscountDetailsForm(discount);
+  const form = useDiscountDetailsForm(type, discount);
   useParamNotification(ParamNotifications.EntityCreated, 'Discount created');
 
   return (

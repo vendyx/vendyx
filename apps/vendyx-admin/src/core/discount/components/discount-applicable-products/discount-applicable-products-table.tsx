@@ -1,6 +1,7 @@
 import { ItemsTable } from '@/shared/components/items-table/items-table';
 import { useBase } from '@/shared/hooks/use-base';
 
+import { useDiscountContext } from '../../contexts/discount-context';
 import {
   type InMemoryProductDiscountMetadata,
   useDiscountDetailsFormContext
@@ -11,6 +12,7 @@ import { useDiscountApplicableProducts } from './use-discount-applicable-product
 
 export const DiscountApplicableProductsTable = () => {
   const base = useBase();
+  const { discount } = useDiscountContext();
   const { watch } = useDiscountDetailsFormContext();
   const { products, isLoading, fetchProducts } = useDiscountApplicableProducts();
 
@@ -19,7 +21,7 @@ export const DiscountApplicableProductsTable = () => {
 
   return (
     <ItemsTable
-      hideMutators
+      hideMutators={!discount}
       title="Products"
       headers={['Product', '']}
       items={[...selectedProducts, ...products]}

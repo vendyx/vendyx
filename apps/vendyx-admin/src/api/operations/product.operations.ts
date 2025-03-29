@@ -156,8 +156,8 @@ export const GET_ALL_ENHANCED_PRODUCTS_FOR_SELECTOR_QUERY = graphql(`
 `);
 
 export const GET_DISCOUNT_APPLICABLE_PRODUCTS_QUERY = graphql(`
-  query GetDiscountApplicableProductsQuery($ids: [ID!]!) {
-    productsByVariantIds(ids: $ids) {
+  query GetDiscountApplicableProductsQuery($ids: [ID!]!, $input: ProductListInput) {
+    productsByVariantIds(ids: $ids, input: $input) {
       count
       pageInfo {
         total

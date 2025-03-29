@@ -2283,6 +2283,7 @@ export type GetAllEnhancedProductsForSelectorQuery = {
 
 export type GetDiscountApplicableProductsQueryQueryVariables = Exact<{
   ids: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+  input?: InputMaybe<ProductListInput>;
 }>;
 
 export type GetDiscountApplicableProductsQueryQuery = {
@@ -3730,8 +3731,8 @@ export const GetAllEnhancedProductsForSelectorDocument = new TypedDocumentString
   GetAllEnhancedProductsForSelectorQueryVariables
 >;
 export const GetDiscountApplicableProductsQueryDocument = new TypedDocumentString(`
-    query GetDiscountApplicableProductsQuery($ids: [ID!]!) {
-  productsByVariantIds(ids: $ids) {
+    query GetDiscountApplicableProductsQuery($ids: [ID!]!, $input: ProductListInput) {
+  productsByVariantIds(ids: $ids, input: $input) {
     count
     pageInfo {
       total

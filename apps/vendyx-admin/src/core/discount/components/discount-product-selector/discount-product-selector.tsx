@@ -4,14 +4,13 @@ import { type ID } from '@/api/scalars/scalars.type';
 import { AccordionEntitySelectorRow } from '@/shared/components/entity-selector/accordion-entity-selector-row';
 import { EntitySelector } from '@/shared/components/entity-selector/entity-selector';
 import { notification } from '@/shared/notifications/notifications';
-import { type THashMap } from '@/shared/utils/types';
 
+import { groupVariantsByProducts } from '../../utils/discount-products.utils';
 import {
   type InMemoryProductDiscountMetadata,
   useDiscountDetailsFormContext
 } from '../discount-details-form/use-discount-details-form';
 import { useDiscountProductSelector } from './use-discount-product-selector';
-import { groupVariantsByProducts } from '../../utils/discount-products.utils';
 
 export const DiscountProductSelector: FC<Props> = ({ defaultVariants }) => {
   const { products, handleSearch, isFetching } = useDiscountProductSelector();
