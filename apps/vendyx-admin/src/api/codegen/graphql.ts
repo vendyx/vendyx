@@ -1720,6 +1720,25 @@ export type UpdateCustomerMutationMutation = {
   };
 };
 
+export type CommonDiscountFragment = {
+  __typename?: 'Discount';
+  id: string;
+  createdAt: any;
+  handle: string;
+  applicationMode: DiscountApplicationMode;
+  availableCombinations?: Array<DiscountType> | null;
+  discountValueType: DiscountValueType;
+  discountValue: number;
+  enabled: boolean;
+  startsAt: any;
+  endsAt?: any | null;
+  orderRequirementType?: OrderRequirementType | null;
+  orderRequirementValue?: number | null;
+  perCustomerLimit?: number | null;
+  type: DiscountType;
+  metadata?: any | null;
+} & { ' $fragmentName'?: 'CommonDiscountFragment' };
+
 export type GetAllDiscountsQueryVariables = Exact<{
   input?: InputMaybe<DiscountListInput>;
 }>;
@@ -1744,6 +1763,19 @@ export type GetAllDiscountsQuery = {
       metadata?: any | null;
     }>;
   };
+};
+
+export type GetDiscountQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+export type GetDiscountQuery = {
+  __typename?: 'Query';
+  discount?:
+    | ({ __typename?: 'Discount' } & {
+        ' $fragmentRefs'?: { CommonDiscountFragment: CommonDiscountFragment };
+      })
+    | null;
 };
 
 export type CreateDiscountMutationVariables = Exact<{
@@ -2701,6 +2733,28 @@ export const CommonCustomerOrderFragmentDoc = new TypedDocumentString(
     `,
   { fragmentName: 'CommonCustomerOrder' }
 ) as unknown as TypedDocumentString<CommonCustomerOrderFragment, unknown>;
+export const CommonDiscountFragmentDoc = new TypedDocumentString(
+  `
+    fragment CommonDiscount on Discount {
+  id
+  createdAt
+  handle
+  applicationMode
+  availableCombinations
+  discountValueType
+  discountValue
+  enabled
+  startsAt
+  endsAt
+  orderRequirementType
+  orderRequirementValue
+  perCustomerLimit
+  type
+  metadata
+}
+    `,
+  { fragmentName: 'CommonDiscount' }
+) as unknown as TypedDocumentString<CommonDiscountFragment, unknown>;
 export const CommonMetricsResultFragmentDoc = new TypedDocumentString(
   `
     fragment CommonMetricsResult on MetricsResult {
@@ -3266,6 +3320,29 @@ export const GetAllDiscountsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetAllDiscountsQuery, GetAllDiscountsQueryVariables>;
+export const GetDiscountDocument = new TypedDocumentString(`
+    query GetDiscount($id: ID!) {
+  discount(id: $id) {
+    ...CommonDiscount
+  }
+}
+    fragment CommonDiscount on Discount {
+  id
+  createdAt
+  handle
+  applicationMode
+  availableCombinations
+  discountValueType
+  discountValue
+  enabled
+  startsAt
+  endsAt
+  orderRequirementType
+  orderRequirementValue
+  perCustomerLimit
+  type
+  metadata
+}`) as unknown as TypedDocumentString<GetDiscountQuery, GetDiscountQueryVariables>;
 export const CreateDiscountDocument = new TypedDocumentString(`
     mutation CreateDiscount($input: CreateDiscountInput!) {
   createDiscount(input: $input) {

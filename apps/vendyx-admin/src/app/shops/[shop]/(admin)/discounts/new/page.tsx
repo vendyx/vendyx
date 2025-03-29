@@ -5,7 +5,7 @@ export default function NewDiscountPage({ searchParams }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const discountType = searchParams.type;
 
-  return <DiscountDetailsForm />;
+  return <DiscountDetailsForm type={discountType} />;
 }
 
 type Props = {

@@ -1,7 +1,9 @@
 import { getDiscountError } from '../errors/discount.errors';
 import {
+  COMMON_DISCOUNT_FRAGMENT,
   CREATE_DISCOUNT_MUTATION,
   GET_ALL_DISCOUNTS_QUERY,
+  GET_DISCOUNT_BY_ID_QUERY,
   REMOVE_DISCOUNT_MUTATION,
   UPDATE_DISCOUNT_MUTATION
 } from '../operations/discount.operations';
@@ -10,6 +12,7 @@ import {
   type CreateDiscountInput,
   type DiscountErrorCode,
   type DiscountListInput,
+  getFragmentData,
   type UpdateDiscountInput
 } from '../types';
 import { serviceGqlFetcher } from './service-fetchers/service-gql-fetchers';
@@ -28,6 +31,18 @@ export class DiscountService {
     );
 
     return discounts;
+  }
+
+  static async getById(id: ID) {
+    const result = await serviceGqlFetcher(
+      GET_DISCOUNT_BY_ID_QUERY,
+      { id },
+      { tags: [DiscountService.Tags.discount(id)] }
+    );
+
+    const discount = getFragmentData(COMMON_DISCOUNT_FRAGMENT, result.discount);
+
+    return discount;
   }
 
   static async create(input: CreateDiscountInput): Promise<Result> {

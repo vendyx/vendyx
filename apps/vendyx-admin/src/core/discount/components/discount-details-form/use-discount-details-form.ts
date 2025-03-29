@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 import {
+  type CommonDiscountFragment,
   DiscountApplicationMode,
   DiscountType,
   DiscountValueType,
@@ -12,25 +13,25 @@ import {
 } from '@/api/types';
 import { notification } from '@/shared/notifications/notifications';
 
-export const useDiscountDetailsForm = () => {
+export const useDiscountDetailsForm = (discount?: CommonDiscountFragment) => {
   const [isLoading, startTransition] = useTransition();
   const [isSuccess, setIsSuccess] = useState(false);
 
   const form = useForm<DiscountDetailsFormInput>({
     resolver: zodResolver(schema),
     defaultValues: {
-      applicationMode: DiscountApplicationMode.Code,
-      handle: '',
-      enabled: true,
-      discountValueType: DiscountValueType.Percentage,
-      discountValue: 0,
-      startsAt: new Date(),
+      applicationMode: discount?.applicationMode ?? DiscountApplicationMode.Code,
+      handle: discount?.handle ?? '',
+      enabled: discount?.enabled ?? true,
+      discountValueType: discount?.discountValueType ?? DiscountValueType.Percentage,
+      discountValue: discount?.discountValue ?? 0,
+      startsAt: discount?.startsAt ?? new Date(),
       appliesTo: DiscountAppliesTo.Collections,
-      endsAt: undefined,
-      orderRequirementType: undefined,
-      orderRequirementValue: undefined,
-      perCustomerLimit: undefined,
-      metadata: {},
+      endsAt: discount?.endsAt,
+      orderRequirementType: discount?.orderRequirementType ?? undefined,
+      orderRequirementValue: discount?.orderRequirementValue ?? undefined,
+      perCustomerLimit: discount?.perCustomerLimit ?? undefined,
+      metadata: discount?.metadata ?? {},
       availableCombinations: []
     }
   });

@@ -33,7 +33,9 @@ type Documents = {
   '\n  query GetAllCustomerOrdersQuery($id: ID!, $input: OrderListInput) {\n    customer(id: $id) {\n      orders(input: $input) {\n        count\n        items {\n          ...CommonCustomerOrder\n        }\n      }\n    }\n  }\n': typeof types.GetAllCustomerOrdersQueryDocument;
   '\n  query GetCustomerByIdQuery($id: ID!) {\n    customer(id: $id) {\n      ...CommonCustomer\n    }\n  }\n': typeof types.GetCustomerByIdQueryDocument;
   '\n  mutation UpdateCustomerMutation($customerId: ID!, $input: UpdateCustomerInput!) {\n    updateCustomer(id: $customerId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      customer {\n        id\n      }\n    }\n  }\n': typeof types.UpdateCustomerMutationDocument;
+  '\n  fragment CommonDiscount on Discount {\n    id\n    createdAt\n    handle\n    applicationMode\n    availableCombinations\n    discountValueType\n    discountValue\n    enabled\n    startsAt\n    endsAt\n    orderRequirementType\n    orderRequirementValue\n    perCustomerLimit\n    type\n    metadata\n  }\n': typeof types.CommonDiscountFragmentDoc;
   '\n  query GetAllDiscounts($input: DiscountListInput) {\n    discounts(input: $input) {\n      pageInfo {\n        total\n      }\n      count\n      items {\n        id\n        handle\n        applicationMode\n        discountValueType\n        discountValue\n        enabled\n        startsAt\n        endsAt\n        type\n        metadata\n      }\n    }\n  }\n': typeof types.GetAllDiscountsDocument;
+  '\n  query GetDiscount($id: ID!) {\n    discount(id: $id) {\n      ...CommonDiscount\n    }\n  }\n': typeof types.GetDiscountDocument;
   '\n  mutation CreateDiscount($input: CreateDiscountInput!) {\n    createDiscount(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      discount {\n        id\n      }\n    }\n  }\n': typeof types.CreateDiscountDocument;
   '\n  mutation UpdateDiscount($id: ID!, $input: UpdateDiscountInput!) {\n    updateDiscount(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      discount {\n        id\n      }\n    }\n  }\n': typeof types.UpdateDiscountDocument;
   '\n  mutation RemoveDiscount($ids: [ID!]!) {\n    removeDiscounts(id: $ids)\n  }\n': typeof types.RemoveDiscountDocument;
@@ -136,8 +138,12 @@ const documents: Documents = {
     types.GetCustomerByIdQueryDocument,
   '\n  mutation UpdateCustomerMutation($customerId: ID!, $input: UpdateCustomerInput!) {\n    updateCustomer(id: $customerId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      customer {\n        id\n      }\n    }\n  }\n':
     types.UpdateCustomerMutationDocument,
+  '\n  fragment CommonDiscount on Discount {\n    id\n    createdAt\n    handle\n    applicationMode\n    availableCombinations\n    discountValueType\n    discountValue\n    enabled\n    startsAt\n    endsAt\n    orderRequirementType\n    orderRequirementValue\n    perCustomerLimit\n    type\n    metadata\n  }\n':
+    types.CommonDiscountFragmentDoc,
   '\n  query GetAllDiscounts($input: DiscountListInput) {\n    discounts(input: $input) {\n      pageInfo {\n        total\n      }\n      count\n      items {\n        id\n        handle\n        applicationMode\n        discountValueType\n        discountValue\n        enabled\n        startsAt\n        endsAt\n        type\n        metadata\n      }\n    }\n  }\n':
     types.GetAllDiscountsDocument,
+  '\n  query GetDiscount($id: ID!) {\n    discount(id: $id) {\n      ...CommonDiscount\n    }\n  }\n':
+    types.GetDiscountDocument,
   '\n  mutation CreateDiscount($input: CreateDiscountInput!) {\n    createDiscount(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      discount {\n        id\n      }\n    }\n  }\n':
     types.CreateDiscountDocument,
   '\n  mutation UpdateDiscount($id: ID!, $input: UpdateDiscountInput!) {\n    updateDiscount(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      discount {\n        id\n      }\n    }\n  }\n':
@@ -382,8 +388,20 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
+  source: '\n  fragment CommonDiscount on Discount {\n    id\n    createdAt\n    handle\n    applicationMode\n    availableCombinations\n    discountValueType\n    discountValue\n    enabled\n    startsAt\n    endsAt\n    orderRequirementType\n    orderRequirementValue\n    perCustomerLimit\n    type\n    metadata\n  }\n'
+): typeof import('./graphql').CommonDiscountFragmentDoc;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
   source: '\n  query GetAllDiscounts($input: DiscountListInput) {\n    discounts(input: $input) {\n      pageInfo {\n        total\n      }\n      count\n      items {\n        id\n        handle\n        applicationMode\n        discountValueType\n        discountValue\n        enabled\n        startsAt\n        endsAt\n        type\n        metadata\n      }\n    }\n  }\n'
 ): typeof import('./graphql').GetAllDiscountsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetDiscount($id: ID!) {\n    discount(id: $id) {\n      ...CommonDiscount\n    }\n  }\n'
+): typeof import('./graphql').GetDiscountDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
