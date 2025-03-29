@@ -1,9 +1,10 @@
-import { useEffect, useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
+import { type ProductDiscountMetadata } from '@/api/scalars/scalars.type';
 import {
   type CommonDiscountFragment,
   type CommonEnhancedProductForSelectorFragment,
@@ -12,13 +13,11 @@ import {
   DiscountValueType,
   OrderRequirementType
 } from '@/api/types';
-import { notification } from '@/shared/notifications/notifications';
+
 import { createDiscount } from '../../actions/create-discount';
-import { ProductDiscountMetadata } from '@/api/scalars/scalars.type';
 
 export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDiscountFragment) => {
   const [isLoading, startTransition] = useTransition();
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const form = useForm<DiscountDetailsFormInput>({
     resolver: zodResolver(schema),
@@ -66,7 +65,7 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
         const metadata = input.metadata as InMemoryProductDiscountMetadata;
 
         const metadataToSave: ProductDiscountMetadata = {
-          variants: metadata.products
+          variants: metadata.inMemoryProductsSelected
             .map(p => p.variants.items)
             .flat()
             .map(v => v.id)
@@ -125,5 +124,5 @@ export type DiscountDetailsFormInput = z.infer<typeof schema>;
 export const useDiscountDetailsFormContext = () => useFormContext<DiscountDetailsFormInput>();
 
 export type InMemoryProductDiscountMetadata = {
-  products: CommonEnhancedProductForSelectorFragment[];
+  inMemoryProductsSelected: CommonEnhancedProductForSelectorFragment[];
 };

@@ -40,7 +40,7 @@ export const DiscountProductSelector: FC<Props> = ({ defaultVariants }) => {
       isDoneAPromise
       onDone={async close => {
         setValue('metadata', {
-          products: groupVariantsByProducts(items, selectedVariants)
+          inMemoryProductsSelected: groupVariantsByProducts(items, selectedVariants)
         } satisfies InMemoryProductDiscountMetadata);
         close();
         notification.success('Content updated');

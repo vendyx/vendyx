@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { restFetcher } from '@/api/fetchers/rest-fetcher';
 import { type ProductDiscountMetadata } from '@/api/scalars/scalars.type';
@@ -13,29 +13,38 @@ export const useDiscountApplicableProducts = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<CommonDiscountApplicableProductFragment[]>([]);
 
-  const fetchProducts = useCallback(async (page: number, search: string) => {
-    setIsLoading(true);
-    const metadata = discount.metadata as ProductDiscountMetadata;
+  useEffect(() => {
+    void (async () => {
+      await fetchProducts(1, '');
+    })();
+  }, [discount]);
 
-    const searchParams = new URLSearchParams({
-      page: page.toString(),
-      size: PAGINATION_PAGE_SIZE.toString(),
-      search,
-      variantIds: JSON.stringify(metadata.variants)
-    });
+  const fetchProducts = useCallback(
+    async (page: number, search: string) => {
+      setIsLoading(true);
+      const metadata = discount?.metadata as ProductDiscountMetadata;
 
-    const { data: products } = await restFetcher<InternalApiProducts>(
-      '/product/discount-applicable-products',
-      {
-        queryParams: searchParams,
-        internal: true,
-        tags: ['discount-applicable-products', 'discount-id']
-      }
-    );
+      const searchParams = new URLSearchParams({
+        page: page.toString(),
+        size: PAGINATION_PAGE_SIZE.toString(),
+        search,
+        variantIds: JSON.stringify(metadata?.variants ?? [])
+      });
 
-    setProducts(products);
-    setIsLoading(false);
-  }, []);
+      const { data: products } = await restFetcher<InternalApiProducts>(
+        '/product/discount-applicable-products',
+        {
+          queryParams: searchParams,
+          internal: true,
+          tags: ['discount-applicable-products', discount?.id ?? '']
+        }
+      );
+
+      setProducts(products);
+      setIsLoading(false);
+    },
+    [discount]
+  );
 
   return {
     isLoading,
