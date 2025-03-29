@@ -19,8 +19,9 @@ export const DiscountApplicableProductsTable = () => {
 
   return (
     <ItemsTable
+      hideMutators
       title="Products"
-      headers={['Product']}
+      headers={['Product', '']}
       items={[...selectedProducts, ...products]}
       isLoading={isLoading}
       onChange={async (page, search) => await fetchProducts(page, search)}
