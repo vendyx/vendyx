@@ -81,6 +81,6 @@ export const UPDATE_DISCOUNT_MUTATION = graphql(`
 
 export const REMOVE_DISCOUNT_MUTATION = graphql(`
   mutation RemoveDiscount($ids: [ID!]!) {
-    removeDiscounts(id: $ids)
+    removeDiscounts(ids: $ids)
   }
 `);

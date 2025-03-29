@@ -114,9 +114,9 @@ export class DiscountService {
     });
   }
 
-  async remove(id: ID[]) {
+  async remove(ids: ID[]) {
     return this.prisma.discount.updateMany({
-      where: { id: { in: id } },
+      where: { id: { in: ids } },
       data: {
         deletedAt: new Date()
       }

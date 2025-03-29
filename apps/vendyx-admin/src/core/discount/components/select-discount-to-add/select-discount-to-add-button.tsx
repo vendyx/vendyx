@@ -1,4 +1,4 @@
-import { BoxesIcon, PackageIcon, ShoppingCartIcon, TruckIcon } from 'lucide-react';
+import { PackageIcon, ShoppingCartIcon } from 'lucide-react';
 
 import { DiscountType } from '@/api/types';
 import { Button } from '@/shared/components/ui/button';
@@ -42,7 +42,8 @@ export const SelectDiscountToAddButton = () => {
             type={DiscountType.Product}
           />
 
-          <SelectDiscountOption
+          {/* Coming soon */}
+          {/* <SelectDiscountOption
             title="Shipping discount"
             description="Apply a discount to the shipping cost."
             icon={TruckIcon}
@@ -54,7 +55,7 @@ export const SelectDiscountToAddButton = () => {
             description="Apply a discount based on customer's cart contents."
             icon={BoxesIcon}
             type={DiscountType.BuyXGetY}
-          />
+          /> */}
         </div>
       </DialogContent>
     </Dialog>

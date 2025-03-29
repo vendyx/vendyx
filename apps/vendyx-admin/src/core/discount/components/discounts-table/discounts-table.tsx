@@ -6,7 +6,6 @@ import {
   type DiscountType,
   type DiscountValueType
 } from '@/api/types';
-import { DataTable } from '@/shared/components/data-table/data-table';
 import {
   type DataTableSearchParams,
   getSkip,
@@ -14,7 +13,7 @@ import {
 } from '@/shared/components/data-table/data-table-utils';
 import { DataTableEmptyState } from '@/shared/components/empty-states/data-table-empty-state';
 
-import { DiscountsTableColumns } from './discounts-table-columns';
+import { DiscountsTableData } from './discounts-table-data';
 
 export const DiscountsTable: FC<Props> = async props => {
   const { page, search, size } = parseDataTableSearchParams({ ...props });
@@ -30,7 +29,7 @@ export const DiscountsTable: FC<Props> = async props => {
       <DataTableEmptyState
         title="You have no discounts"
         description="Create discounts for your products and start selling with discounted prices."
-        action={{ label: 'Add discount', to: '/collections/new' }}
+        action={{ label: 'Add discount', to: '/discounts/new' }}
       />
     );
   }
@@ -38,12 +37,7 @@ export const DiscountsTable: FC<Props> = async props => {
   const data: DiscountsTableRow[] = discounts?.map(d => d) ?? [];
 
   return (
-    <DataTable
-      columns={DiscountsTableColumns}
-      data={data}
-      defaults={{ page, search, size }}
-      totalRows={pageInfo.total}
-    />
+    <DiscountsTableData data={data} defaults={{ page, search, size }} totalRows={pageInfo.total} />
   );
 };
 

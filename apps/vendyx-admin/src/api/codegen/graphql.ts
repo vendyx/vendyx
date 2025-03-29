@@ -594,7 +594,7 @@ export type MutationRemoveCustomerAddressArgs = {
 };
 
 export type MutationRemoveDiscountsArgs = {
-  id: Array<Scalars['ID']['input']>;
+  ids: Array<Scalars['ID']['input']>;
 };
 
 export type MutationRemovePaymentMethodArgs = {
@@ -3372,7 +3372,7 @@ export const UpdateDiscountDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<UpdateDiscountMutation, UpdateDiscountMutationVariables>;
 export const RemoveDiscountDocument = new TypedDocumentString(`
     mutation RemoveDiscount($ids: [ID!]!) {
-  removeDiscounts(id: $ids)
+  removeDiscounts(ids: $ids)
 }
     `) as unknown as TypedDocumentString<RemoveDiscountMutation, RemoveDiscountMutationVariables>;
 export const GetTotalSalesDocument = new TypedDocumentString(`

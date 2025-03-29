@@ -38,7 +38,7 @@ type Documents = {
   '\n  query GetDiscount($id: ID!) {\n    discount(id: $id) {\n      ...CommonDiscount\n    }\n  }\n': typeof types.GetDiscountDocument;
   '\n  mutation CreateDiscount($input: CreateDiscountInput!) {\n    createDiscount(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      discount {\n        id\n      }\n    }\n  }\n': typeof types.CreateDiscountDocument;
   '\n  mutation UpdateDiscount($id: ID!, $input: UpdateDiscountInput!) {\n    updateDiscount(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      discount {\n        id\n      }\n    }\n  }\n': typeof types.UpdateDiscountDocument;
-  '\n  mutation RemoveDiscount($ids: [ID!]!) {\n    removeDiscounts(id: $ids)\n  }\n': typeof types.RemoveDiscountDocument;
+  '\n  mutation RemoveDiscount($ids: [ID!]!) {\n    removeDiscounts(ids: $ids)\n  }\n': typeof types.RemoveDiscountDocument;
   '\n  fragment CommonMetricsResult on MetricsResult {\n    metrics {\n      key\n      value\n    }\n    total\n  }\n': typeof types.CommonMetricsResultFragmentDoc;
   '\n  query GetTotalSales($input: MetricsInput!) {\n    totalSales(input: $input) {\n      ...CommonMetricsResult\n    }\n  }\n': typeof types.GetTotalSalesDocument;
   '\n  query GetTotalOrders($input: MetricsInput!) {\n    totalOrders(input: $input) {\n      ...CommonMetricsResult\n    }\n  }\n': typeof types.GetTotalOrdersDocument;
@@ -148,7 +148,7 @@ const documents: Documents = {
     types.CreateDiscountDocument,
   '\n  mutation UpdateDiscount($id: ID!, $input: UpdateDiscountInput!) {\n    updateDiscount(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      discount {\n        id\n      }\n    }\n  }\n':
     types.UpdateDiscountDocument,
-  '\n  mutation RemoveDiscount($ids: [ID!]!) {\n    removeDiscounts(id: $ids)\n  }\n':
+  '\n  mutation RemoveDiscount($ids: [ID!]!) {\n    removeDiscounts(ids: $ids)\n  }\n':
     types.RemoveDiscountDocument,
   '\n  fragment CommonMetricsResult on MetricsResult {\n    metrics {\n      key\n      value\n    }\n    total\n  }\n':
     types.CommonMetricsResultFragmentDoc,
@@ -418,7 +418,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation RemoveDiscount($ids: [ID!]!) {\n    removeDiscounts(id: $ids)\n  }\n'
+  source: '\n  mutation RemoveDiscount($ids: [ID!]!) {\n    removeDiscounts(ids: $ids)\n  }\n'
 ): typeof import('./graphql').RemoveDiscountDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
