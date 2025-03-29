@@ -9,6 +9,7 @@ import { Checkbox } from '../ui/checkbox';
  */
 export const AccordionEntitySelectorRow: FC<Props> = ({
   label,
+  image,
   value,
   checked,
   onCheckedChange,
@@ -21,6 +22,7 @@ export const AccordionEntitySelectorRow: FC<Props> = ({
           <Checkbox checked={checked} onCheckedChange={onCheckedChange} />
           <AccordionTrigger className="py-0 pr-6" containerClassName="w-full">
             <div className="flex items-center gap-4 px-6 py-4 cursor-pointer">
+              {image && <img src={image} alt={label} className="w-10 h-10 rounded object-cover" />}
               <p>{label}</p>
             </div>
           </AccordionTrigger>
@@ -53,6 +55,11 @@ type Props = {
    * Label for the accordion trigger.
    */
   label: string;
+  /**
+   * @description
+   * Image URL for the accordion item.
+   */
+  image?: string;
   /**
    * @description
    * Value for the accordion item (Should be unique).

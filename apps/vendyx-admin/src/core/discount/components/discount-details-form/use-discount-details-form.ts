@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import {
   type CommonDiscountFragment,
+  type CommonEnhancedProductForSelectorFragment,
   DiscountApplicationMode,
   DiscountType,
   DiscountValueType,
@@ -92,3 +93,7 @@ const schema = z.object({
 export type DiscountDetailsFormInput = z.infer<typeof schema>;
 
 export const useDiscountDetailsFormContext = () => useFormContext<DiscountDetailsFormInput>();
+
+export type InMemoryProductDiscountMetadata = {
+  products: CommonEnhancedProductForSelectorFragment[];
+};
