@@ -2166,6 +2166,10 @@ export type CommonDiscountApplicableProductFragment = {
   id: string;
   name: string;
   slug: string;
+  assets: {
+    __typename?: 'AssetList';
+    items: Array<{ __typename?: 'Asset'; id: string; source: string }>;
+  };
   variants: {
     __typename?: 'VariantList';
     items: Array<{
@@ -2899,6 +2903,12 @@ export const CommonDiscountApplicableProductFragmentDoc = new TypedDocumentStrin
   id
   name
   slug
+  assets(input: {take: 1}) {
+    items {
+      id
+      source
+    }
+  }
   variants {
     items {
       id
@@ -3658,6 +3668,12 @@ export const GetDiscountApplicableProductsQueryDocument = new TypedDocumentStrin
   id
   name
   slug
+  assets(input: {take: 1}) {
+    items {
+      id
+      source
+    }
+  }
   variants {
     items {
       id

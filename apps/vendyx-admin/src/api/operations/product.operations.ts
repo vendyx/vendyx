@@ -85,6 +85,12 @@ export const COMMON_DISCOUNT_APPLICABLE_PRODUCT_FRAGMENT = graphql(`
     id
     name
     slug
+    assets(input: { take: 1 }) {
+      items {
+        id
+        source
+      }
+    }
     variants {
       items {
         id

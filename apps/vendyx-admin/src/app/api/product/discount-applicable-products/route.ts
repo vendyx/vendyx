@@ -7,7 +7,7 @@ import { getSkip } from '@/shared/components/data-table/data-table-utils';
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
-  const variantIds = searchParams.get('variantIds') as unknown as string[];
+  const variantIds = JSON.parse(searchParams.get('variantIds') ?? '') as unknown as string[];
   const page = Number(searchParams.get('page'));
   const size = Number(searchParams.get('size'));
   const search = searchParams.get('search');
