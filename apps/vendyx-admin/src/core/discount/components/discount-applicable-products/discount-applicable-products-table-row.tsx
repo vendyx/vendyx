@@ -7,9 +7,28 @@ import {
   type CommonEnhancedProductForSelectorFragment
 } from '@/api/types';
 import { TableCell, TableRow } from '@/shared/components/ui/table';
+import { Button } from '@/shared/components/ui/button';
+import { XIcon } from 'lucide-react';
+import {
+  InMemoryProductDiscountMetadata,
+  useDiscountDetailsFormContext
+} from '../discount-details-form/use-discount-details-form';
 
 export const DiscountApplicableProductsTableRow: FC<Props> = ({ base, product }) => {
+  const { setValue, getValues } = useDiscountDetailsFormContext();
   const variants = product.variants.items;
+
+  const onRemove = () => {
+    const metadata = getValues('metadata') as InMemoryProductDiscountMetadata;
+    const products = metadata.products ?? [];
+
+    const newProducts = products.filter(p => p.id !== product.id);
+
+    setValue('metadata', {
+      ...metadata,
+      products: newProducts
+    } satisfies InMemoryProductDiscountMetadata);
+  };
 
   return (
     <TableRow key={product.id}>
@@ -27,6 +46,11 @@ export const DiscountApplicableProductsTableRow: FC<Props> = ({ base, product })
             {variants.length} {variants.length > 1 ? 'variants' : 'variant'} selected
           </span>
         </div>
+      </TableCell>
+      <TableCell className="text-right">
+        <Button size="icon" variant="link" onClick={onRemove}>
+          <XIcon className="w-4 h-4" />
+        </Button>
       </TableCell>
     </TableRow>
   );

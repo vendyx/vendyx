@@ -19,6 +19,10 @@ export const DiscountProductSelector: FC<Props> = ({ defaultVariants }) => {
 
   const [selectedVariants, setSelectedVariants] = useState<string[]>(defaultVariants);
 
+  useEffect(() => {
+    setSelectedVariants(defaultVariants);
+  }, [defaultVariants]);
+
   const items = useMemo(() => {
     return products.sort((a, b) => {
       if (selectedVariants.includes(a.id)) return -1;

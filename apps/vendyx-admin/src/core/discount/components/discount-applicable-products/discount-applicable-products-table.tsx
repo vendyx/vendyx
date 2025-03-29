@@ -27,7 +27,14 @@ export const DiscountApplicableProductsTable = () => {
       renderRow={product => (
         <DiscountApplicableProductsTableRow key={product.id} product={product} base={base} />
       )}
-      action={<DiscountProductSelector defaultVariants={[]} />}
+      action={
+        <DiscountProductSelector
+          defaultVariants={selectedProducts
+            .map(p => p.variants.items)
+            .flat()
+            .map(v => v.id)}
+        />
+      }
     />
   );
 };
