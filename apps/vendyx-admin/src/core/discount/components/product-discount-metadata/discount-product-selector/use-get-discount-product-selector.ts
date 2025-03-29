@@ -6,7 +6,7 @@ import { restFetcher } from '@/api/fetchers/rest-fetcher';
 import { type CommonEnhancedProductForSelectorFragment } from '@/api/types';
 import { type InternalApiResponse } from '@/api/utils/internal-api-response';
 
-export const useDiscountProductSelector = () => {
+export const useGetDiscountProductSelector = () => {
   const [products, setProducts] = useState<CommonEnhancedProductForSelectorFragment[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const [refetch, setRefetch] = useState(0);

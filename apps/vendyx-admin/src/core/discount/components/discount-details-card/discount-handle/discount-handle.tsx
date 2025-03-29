@@ -1,9 +1,9 @@
 import { DiscountApplicationMode } from '@/api/types';
+import { generateDiscountCode } from '@/core/discount/utils/generate-discount.utils';
 import { Button } from '@/shared/components/ui/button';
 import { FormInput } from '@/shared/form/form-input';
 
-import { generateDiscountCode } from '../../utils/generate-discount.utils';
-import { useDiscountDetailsFormContext } from '../discount-details-form/use-discount-details-form';
+import { useDiscountDetailsFormContext } from '../../discount-details-form/use-discount-details-form';
 
 export const DiscountHandle = () => {
   const { control, getValues, setValue } = useDiscountDetailsFormContext();

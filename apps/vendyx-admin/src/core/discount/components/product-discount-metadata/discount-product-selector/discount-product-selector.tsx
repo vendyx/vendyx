@@ -1,20 +1,23 @@
 import { type FC, useEffect, useMemo, useState } from 'react';
 
 import { type ID } from '@/api/scalars/scalars.type';
+import { useDiscountContext } from '@/core/discount/contexts/discount-context';
 import { AccordionEntitySelectorRow } from '@/shared/components/entity-selector/accordion-entity-selector-row';
 import { EntitySelector } from '@/shared/components/entity-selector/entity-selector';
-import { notification } from '@/shared/notifications/notifications';
 
 import { groupVariantsByProducts } from '../../../utils/discount-products.utils';
 import {
   type InMemoryProductDiscountMetadata,
   useDiscountDetailsFormContext
 } from '../../discount-details-form/use-discount-details-form';
-import { useDiscountProductSelector } from './use-discount-product-selector';
+import { useGetDiscountProductSelector } from './use-get-discount-product-selector';
+import { useSelectProductsForDiscount } from './use-select-products-for-discount';
 
 export const DiscountProductSelector: FC<Props> = ({ defaultVariants }) => {
-  const { products, handleSearch, isFetching } = useDiscountProductSelector();
+  const { products, handleSearch, isFetching } = useGetDiscountProductSelector();
+  const { onSelect } = useSelectProductsForDiscount();
   const { setValue } = useDiscountDetailsFormContext();
+  const { isCreating } = useDiscountContext();
 
   const [selectedVariants, setSelectedVariants] = useState<string[]>(defaultVariants);
 
@@ -37,13 +40,16 @@ export const DiscountProductSelector: FC<Props> = ({ defaultVariants }) => {
       triggerText="Add products"
       items={items}
       isFetching={isFetching}
-      isDoneAPromise
+      isDoneAPromise={!isCreating}
       onDone={async close => {
-        setValue('metadata', {
-          inMemoryProductsSelected: groupVariantsByProducts(items, selectedVariants)
-        } satisfies InMemoryProductDiscountMetadata);
-        close();
-        notification.success('Content updated');
+        if (isCreating) {
+          setValue('metadata', {
+            inMemoryProductsSelected: groupVariantsByProducts(items, selectedVariants)
+          } satisfies InMemoryProductDiscountMetadata);
+          close();
+        } else {
+          onSelect(selectedVariants, close);
+        }
       }}
       onSearch={handleSearch}
       renderItem={product => (

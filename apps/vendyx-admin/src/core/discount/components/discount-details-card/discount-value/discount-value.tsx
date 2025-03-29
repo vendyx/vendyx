@@ -2,7 +2,7 @@ import { DiscountValueType } from '@/api/types';
 import { FormInput } from '@/shared/form/form-input';
 import { FormSelect } from '@/shared/form/form-select';
 
-import { useDiscountDetailsFormContext } from '../discount-details-form/use-discount-details-form';
+import { useDiscountDetailsFormContext } from '../../discount-details-form/use-discount-details-form';
 
 export const DiscountValue = () => {
   const { control, getValues } = useDiscountDetailsFormContext();

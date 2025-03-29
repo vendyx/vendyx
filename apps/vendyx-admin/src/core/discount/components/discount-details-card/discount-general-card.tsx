@@ -4,8 +4,8 @@ import { FormInput } from '@/shared/form/form-input';
 import { FormRadioGroup } from '@/shared/form/form-radio-group';
 
 import { useDiscountDetailsFormContext } from '../discount-details-form/use-discount-details-form';
-import { DiscountHandle } from '../discount-handle/discount-handle';
-import { DiscountValue } from '../discount-value/discount-value';
+import { DiscountHandle } from './discount-handle/discount-handle';
+import { DiscountValue } from './discount-value/discount-value';
 
 export const DiscountGeneralCard = () => {
   const { control } = useDiscountDetailsFormContext();

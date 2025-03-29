@@ -1,4 +1,4 @@
-import { useTransition } from 'react';
+import { useEffect, useTransition } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,6 +37,24 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
       availableCombinations: []
     }
   });
+
+  useEffect(() => {
+    form.reset({
+      applicationMode: discount?.applicationMode ?? DiscountApplicationMode.Code,
+      handle: discount?.handle ?? '',
+      enabled: discount?.enabled ?? true,
+      discountValueType: discount?.discountValueType ?? DiscountValueType.Percentage,
+      discountValue: discount?.discountValue ?? 0,
+      startsAt: discount?.startsAt ?? new Date(),
+      appliesTo: DiscountAppliesTo.Collections,
+      endsAt: discount?.endsAt,
+      orderRequirementType: discount?.orderRequirementType ?? undefined,
+      orderRequirementValue: discount?.orderRequirementValue ?? undefined,
+      perCustomerLimit: discount?.perCustomerLimit ?? undefined,
+      metadata: discount?.metadata ?? {},
+      availableCombinations: []
+    });
+  }, [discount]);
 
   async function onSubmit(input: DiscountDetailsFormInput) {
     startTransition(async () => {
