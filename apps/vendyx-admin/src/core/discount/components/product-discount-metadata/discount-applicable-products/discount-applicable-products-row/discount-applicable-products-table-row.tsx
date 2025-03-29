@@ -11,9 +11,9 @@ import { Button } from '@/shared/components/ui/button';
 import { TableCell, TableRow } from '@/shared/components/ui/table';
 import { cn } from '@/shared/utils/theme';
 
-import { useDiscountContext } from '../../../contexts/discount-context';
-import { getVariantsInMetadata } from '../../../utils/discount-products.utils';
-import { useDiscountDetailsFormContext } from '../../discount-details-form/use-discount-details-form';
+import { useDiscountContext } from '../../../../contexts/discount-context';
+import { getVariantsInMetadata } from '../../../../utils/discount-products.utils';
+import { useDiscountDetailsFormContext } from '../../../discount-details-form/use-discount-details-form';
 import { useDiscountApplicableProductsTableRow } from './use-discount-applicable-products-table-row';
 
 export const DiscountApplicableProductsTableRow: FC<Props> = ({ base, product }) => {

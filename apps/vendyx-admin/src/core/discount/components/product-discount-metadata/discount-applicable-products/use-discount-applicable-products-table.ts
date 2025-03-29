@@ -6,7 +6,7 @@ import { type CommonDiscountApplicableProductFragment } from '@/api/types';
 import { type InternalApiResponse } from '@/api/utils/internal-api-response';
 import { PAGINATION_PAGE_SIZE } from '@/shared/hooks/use-pagination';
 
-import { useDiscountContext } from '../../contexts/discount-context';
+import { useDiscountContext } from '../../../contexts/discount-context';
 
 export const useDiscountApplicableProducts = () => {
   const { discount } = useDiscountContext();

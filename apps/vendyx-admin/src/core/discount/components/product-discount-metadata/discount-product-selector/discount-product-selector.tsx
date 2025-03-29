@@ -5,11 +5,11 @@ import { AccordionEntitySelectorRow } from '@/shared/components/entity-selector/
 import { EntitySelector } from '@/shared/components/entity-selector/entity-selector';
 import { notification } from '@/shared/notifications/notifications';
 
-import { groupVariantsByProducts } from '../../utils/discount-products.utils';
+import { groupVariantsByProducts } from '../../../utils/discount-products.utils';
 import {
   type InMemoryProductDiscountMetadata,
   useDiscountDetailsFormContext
-} from '../discount-details-form/use-discount-details-form';
+} from '../../discount-details-form/use-discount-details-form';
 import { useDiscountProductSelector } from './use-discount-product-selector';
 
 export const DiscountProductSelector: FC<Props> = ({ defaultVariants }) => {

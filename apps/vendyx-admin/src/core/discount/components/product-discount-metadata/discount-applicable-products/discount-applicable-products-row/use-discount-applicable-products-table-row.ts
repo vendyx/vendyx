@@ -12,7 +12,7 @@ import { notification } from '@/shared/notifications/notifications';
 import {
   type InMemoryProductDiscountMetadata,
   useDiscountDetailsFormContext
-} from '../../discount-details-form/use-discount-details-form';
+} from '../../../discount-details-form/use-discount-details-form';
 
 export const useDiscountApplicableProductsTableRow = (
   product: CommonDiscountApplicableProductFragment | CommonEnhancedProductForSelectorFragment

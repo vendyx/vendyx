@@ -1,12 +1,12 @@
 import { ItemsTable } from '@/shared/components/items-table/items-table';
 import { useBase } from '@/shared/hooks/use-base';
 
-import { useDiscountContext } from '../../contexts/discount-context';
-import { getVariantsInMetadata } from '../../utils/discount-products.utils';
+import { useDiscountContext } from '../../../contexts/discount-context';
+import { getVariantsInMetadata } from '../../../utils/discount-products.utils';
 import {
   type InMemoryProductDiscountMetadata,
   useDiscountDetailsFormContext
-} from '../discount-details-form/use-discount-details-form';
+} from '../../discount-details-form/use-discount-details-form';
 import { DiscountProductSelector } from '../discount-product-selector/discount-product-selector';
 import { DiscountApplicableProductsTableRow } from './discount-applicable-products-row/discount-applicable-products-table-row';
 import { useDiscountApplicableProducts } from './use-discount-applicable-products-table';
