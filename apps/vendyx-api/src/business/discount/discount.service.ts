@@ -89,7 +89,7 @@ export class DiscountService {
         }
       });
 
-      if (withTheSameHandle) {
+      if (withTheSameHandle && withTheSameHandle.id !== id) {
         return new HandleAlreadyExistsError(withTheSameHandle.applicationMode);
       }
     }
