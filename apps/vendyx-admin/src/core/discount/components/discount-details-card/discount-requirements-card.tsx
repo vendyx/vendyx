@@ -28,8 +28,8 @@ export const DiscountRequirementsCard = () => {
                 <FormInput
                   control={control}
                   name="orderRequirementValue"
-                  placeholder="0"
-                  type="number"
+                  placeholder="$0.00"
+                  isPrice
                 />
               )
             },
@@ -40,8 +40,8 @@ export const DiscountRequirementsCard = () => {
                 <FormInput
                   control={control}
                   name="orderRequirementValue"
-                  isPrice
-                  placeholder="$ 0.00"
+                  type="number"
+                  placeholder="0"
                 />
               )
             }

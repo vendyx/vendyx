@@ -1,4 +1,4 @@
-import { useEffect, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,11 +13,14 @@ import {
   DiscountValueType,
   OrderRequirementType
 } from '@/api/types';
+import { notification } from '@/shared/notifications/notifications';
 
 import { createDiscount } from '../../actions/create-discount';
+import { updateDiscount } from '../../actions/update-discount';
 
 export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDiscountFragment) => {
   const [isLoading, startTransition] = useTransition();
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const form = useForm<DiscountDetailsFormInput>({
     resolver: zodResolver(schema),
@@ -28,10 +31,15 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
       discountValueType: discount?.discountValueType ?? DiscountValueType.Percentage,
       discountValue: discount?.discountValue ?? 0,
       startsAt: discount?.startsAt ?? new Date(),
-      appliesTo: DiscountAppliesTo.Collections,
       endsAt: discount?.endsAt,
+      appliesTo: DiscountAppliesTo.Collections,
       orderRequirementType: discount?.orderRequirementType ?? undefined,
-      orderRequirementValue: discount?.orderRequirementValue ?? undefined,
+      orderRequirementValue:
+        discount?.orderRequirementType === OrderRequirementType.MinimumAmount
+          ? discount.orderRequirementValue
+            ? discount.orderRequirementValue / 100
+            : undefined
+          : (discount?.orderRequirementValue ?? undefined),
       perCustomerLimit: discount?.perCustomerLimit ?? undefined,
       metadata: discount?.metadata ?? {},
       availableCombinations: []
@@ -49,25 +57,37 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
       appliesTo: DiscountAppliesTo.Collections,
       endsAt: discount?.endsAt,
       orderRequirementType: discount?.orderRequirementType ?? undefined,
-      orderRequirementValue: discount?.orderRequirementValue ?? undefined,
+      orderRequirementValue:
+        discount?.orderRequirementType === OrderRequirementType.MinimumAmount
+          ? discount.orderRequirementValue
+            ? discount.orderRequirementValue / 100
+            : undefined
+          : (discount?.orderRequirementValue ?? undefined),
       perCustomerLimit: discount?.perCustomerLimit ?? undefined,
       metadata: discount?.metadata ?? {},
       availableCombinations: []
     });
   }, [discount]);
 
+  useEffect(() => {
+    if (isSuccess && !isLoading) {
+      notification.success('Discount updated');
+      setIsSuccess(false);
+    }
+  }, [isSuccess, isLoading]);
+
   async function onSubmit(input: DiscountDetailsFormInput) {
     startTransition(async () => {
-      const isCreation = !discount;
-
-      if (!isCreation) return;
-
       const generalInput = {
-        applicationMode: input.applicationMode,
         handle: input.handle,
         enabled: input.enabled,
         discountValueType: input.discountValueType,
-        discountValue: input.discountValue,
+        discountValue:
+          input.discountValueType === DiscountValueType.Percentage
+            ? input.discountValue > 100
+              ? 100
+              : input.discountValue
+            : input.discountValue,
         startsAt: input.startsAt,
         endsAt: input.endsAt,
         orderRequirementType: input.orderRequirementType,
@@ -77,22 +97,28 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
         availableCombinations: []
       };
 
-      if (type === DiscountType.Order) {
-        await createDiscount(generalInput);
-      } else if (type === DiscountType.Product) {
-        const metadata = input.metadata as InMemoryProductDiscountMetadata;
+      if (discount) {
+        await updateDiscount(discount.id, generalInput);
+        setIsSuccess(true);
+      } else {
+        if (type === DiscountType.Order) {
+          await createDiscount({ ...generalInput, applicationMode: input.applicationMode });
+        } else if (type === DiscountType.Product) {
+          const metadata = input.metadata as InMemoryProductDiscountMetadata;
 
-        const metadataToSave: ProductDiscountMetadata = {
-          variants: metadata.inMemoryProductsSelected
-            .map(p => p.variants.items)
-            .flat()
-            .map(v => v.id)
-        };
+          const metadataToSave: ProductDiscountMetadata = {
+            variants: metadata.inMemoryProductsSelected
+              .map(p => p.variants.items)
+              .flat()
+              .map(v => v.id)
+          };
 
-        await createDiscount({
-          ...generalInput,
-          metadata: metadataToSave
-        });
+          await createDiscount({
+            ...generalInput,
+            applicationMode: input.applicationMode,
+            metadata: metadataToSave
+          });
+        }
       }
     });
   }
@@ -115,13 +141,13 @@ const schema = z.object({
   applicationMode: z.enum([DiscountApplicationMode.Automatic, DiscountApplicationMode.Code]),
   discountValueType: z.enum([DiscountValueType.FixedAmount, DiscountValueType.Percentage]),
   discountValue: z.preprocess(v => Number(v), z.number().min(0)),
-  startsAt: z.date(),
-  endsAt: z.date().optional(),
+  startsAt: z.preprocess(val => new Date(val as Date), z.date()),
+  endsAt: z.preprocess(val => (val ? new Date(val as Date) : undefined), z.date().optional()),
   orderRequirementType: z.preprocess(
     val => (val === 'None' ? undefined : val),
     z.enum([OrderRequirementType.MinimumAmount, OrderRequirementType.MinimumItems]).optional()
   ),
-  orderRequirementValue: z.number().min(0).optional(),
+  orderRequirementValue: z.preprocess(val => Number(val), z.number().min(0).optional()),
   perCustomerLimit: z.number().min(0).optional(),
   metadata: z.record(z.any(), z.any()),
   availableCombinations: z
