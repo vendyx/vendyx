@@ -242,7 +242,7 @@ export class OrderService extends OrderFinders {
       return orderSaved;
     }
 
-    // const applicableDiscounts = await this.applyDiscounts(orderSaved, automaticDiscounts);
+    const applicableDiscounts = await this.applyDiscounts(orderSaved, automaticDiscounts);
     return orderSaved;
   }
 
@@ -625,7 +625,7 @@ export class OrderService extends OrderFinders {
 
       if (discountedPrice.orderSubtotal !== undefined) {
         order.subtotal = discountedPrice.orderSubtotal;
-        order.total = order.total + (order.shipment?.amount ?? 0);
+        order.total = order.subtotal + (order.shipment?.amount ?? 0);
         continue;
       } else if (Boolean(discountedPrice.lines?.details.length)) {
         const originalSubtotalPrice = order.lines.reduce(
@@ -652,7 +652,24 @@ export class OrderService extends OrderFinders {
       }
     }
 
+    // await this.prisma.order.update({
+    //   where: { id: order.id },
+    //   data: {
+    //     total: order.total,
+    //     subtotal: order.subtotal,
+    //     lines: {
+    //       updateMany: order.lines.map(line => ({
+    //         where: { id: line.id },
+    //         data: {
+    //           lineTotal: line.lineTotal
+    //         }
+    //       }))
+    //     }
+    //   }
+    // });
+
     console.log(order);
+    return order;
   }
 
   private getApplicableDiscounts(
@@ -1102,7 +1119,7 @@ export class OrderService extends OrderFinders {
       return order;
     }
 
-    // const applicableDiscounts = await this.applyDiscounts(order, automaticDiscounts);
+    const applicableDiscounts = await this.applyDiscounts(order, automaticDiscounts);
     return order;
   }
 
