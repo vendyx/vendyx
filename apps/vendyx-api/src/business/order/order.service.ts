@@ -43,7 +43,6 @@ import {
 import {
   BuyXGetYDiscountMetadata,
   BuyXGetYDiscountMetadataRequirement,
-  OrderDiscount,
   ProductDiscountMetadata,
   ShippingDiscountMetadata
 } from '@/persistence/types/discount-metadata';
@@ -419,7 +418,7 @@ export class OrderService extends OrderFinders {
         where: { id: orderId },
         data: {
           shipment: {
-            update: { amount: shippingPrice, method: method.name }
+            update: { amount: shippingPrice, total: shippingPrice, method: method.name }
           },
           total: order.total - order.shipment.amount + shippingPrice
         }
@@ -431,7 +430,7 @@ export class OrderService extends OrderFinders {
       where: { id: orderId },
       data: {
         shipment: {
-          create: { amount: shippingPrice, method: method.name }
+          create: { amount: shippingPrice, total: shippingPrice, method: method.name }
         },
         total: order.total + shippingPrice
       }
@@ -585,29 +584,45 @@ export class OrderService extends OrderFinders {
   }
 
   private async applyDiscounts(
-    orderProp: Order & {
+    orderParam: Order & {
       shipment: Shipment | null;
       customer?: Customer | null;
       lines: (OrderLine & { productVariant: Variant })[];
     },
-    discounts: Discount[]
+    couponCodeDiscounts: Discount[]
   ) {
-    let pastCustomerDiscounts: OrderDiscount[] = [];
-    const order = { ...orderProp };
+    const discounts = [
+      ...(await this.prisma.discount.findMany({
+        where: { applicationMode: DiscountApplicationMode.AUTOMATIC }
+      })),
+      ...couponCodeDiscounts
+    ];
+
+    let pastCustomerDiscounts: Discount[] = [];
+    const order = this.calculateOrderPricesBeforeDiscounts(orderParam);
 
     if (order.customer) {
       pastCustomerDiscounts = (
         await this.prisma.order.findMany({
           where: {
             customerId: order.customer.id,
-            state: { not: OrderState.MODIFYING }
+            state: { not: OrderState.MODIFYING },
+            discounts: {
+              some: {
+                discountId: { in: discounts.map(d => d.id) }
+              }
+            }
             // placedAt: { gte: discount.startsAt } // TODO: can use the minor discounts startsAt date
           },
-          select: {
-            discounts: true
+          include: {
+            discounts: {
+              include: {
+                discount: true
+              }
+            }
           }
         })
-      ).map(p => p.discounts) as OrderDiscount[];
+      ).flatMap(p => p.discounts.map(d => d.discount));
     }
 
     const applicableDiscounts = this.getApplicableDiscounts(
@@ -626,6 +641,8 @@ export class OrderService extends OrderFinders {
       if (discountedPrice.orderSubtotal !== undefined) {
         order.subtotal = discountedPrice.orderSubtotal;
         order.total = order.subtotal + (order.shipment?.amount ?? 0);
+        order.discountHandles = [...order.discountHandles, discount.handle];
+
         continue;
       } else if (Boolean(discountedPrice.lines?.details.length)) {
         const originalSubtotalPrice = order.lines.reduce(
@@ -637,6 +654,7 @@ export class OrderService extends OrderFinders {
           const lineToUpdate = order.lines.find(l => l.id === line.lineId);
           if (lineToUpdate) {
             lineToUpdate.lineTotal = line.linePrice;
+            lineToUpdate.discountHandles = [...lineToUpdate.discountHandles, discount.handle];
           }
         }
 
@@ -644,31 +662,44 @@ export class OrderService extends OrderFinders {
         const newSubtotal = order.lines.reduce((acc, line) => acc + line.lineTotal, 0);
         order.subtotal = newSubtotal - alreadyDiscountedFromSubtotal;
         order.total = order.subtotal + (order.shipment?.amount ?? 0);
+        order.discountHandles = [...order.discountHandles, discount.handle];
 
         continue;
       } else if (discountedPrice.shipmentAmount && order.shipment) {
+        order.shipment.total = discountedPrice.shipmentAmount;
         order.total = order.subtotal + discountedPrice.shipmentAmount;
+        order.shipment.discountHandles = [...order.shipment.discountHandles, discount.handle];
+
         continue;
       }
     }
 
-    // await this.prisma.order.update({
-    //   where: { id: order.id },
-    //   data: {
-    //     total: order.total,
-    //     subtotal: order.subtotal,
-    //     lines: {
-    //       updateMany: order.lines.map(line => ({
-    //         where: { id: line.id },
-    //         data: {
-    //           lineTotal: line.lineTotal
-    //         }
-    //       }))
-    //     }
-    //   }
-    // });
+    await this.prisma.order.update({
+      where: { id: order.id },
+      data: {
+        total: order.total,
+        subtotal: order.subtotal,
+        discountHandles: order.discountHandles,
+        lines: {
+          updateMany: order.lines.map(line => ({
+            where: { id: line.id },
+            data: {
+              lineTotal: line.lineTotal,
+              discountHandles: line.discountHandles
+            }
+          }))
+        },
+        ...(order.shipment && {
+          shipment: {
+            update: {
+              total: order.shipment.total,
+              discountHandles: order.shipment.discountHandles
+            }
+          }
+        })
+      }
+    });
 
-    console.log(order);
     return order;
   }
 
@@ -1120,6 +1151,33 @@ export class OrderService extends OrderFinders {
     }
 
     const applicableDiscounts = await this.applyDiscounts(order, automaticDiscounts);
+    return order;
+  }
+
+  /**
+   * @description
+   * Calculate the order prices before applying discounts
+   */
+  private calculateOrderPricesBeforeDiscounts(
+    orderParam: Order & {
+      shipment: Shipment | null;
+      customer?: Customer | null;
+      lines: (OrderLine & { productVariant: Variant })[];
+    }
+  ) {
+    const order = { ...orderParam };
+
+    for (const line of order.lines) {
+      line.lineTotal = line.lineSubtotal;
+    }
+    order.subtotal = order.lines.reduce((acc, line) => acc + line.lineTotal, 0);
+
+    if (order.shipment) {
+      order.shipment.total = order.shipment.amount;
+    }
+
+    order.total = order.subtotal + (order.shipment?.amount ?? 0);
+
     return order;
   }
 

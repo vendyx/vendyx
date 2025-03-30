@@ -58,19 +58,21 @@ model Discount {
   /// Extra metadata needed for the discount.
   metadata              Json?
 
+  orders DiscountOrder[]
+
   shop   Shop   @relation(fields: [shopId], references: [id])
   shopId String @default(dbgenerated("(current_setting('app.current_shop_id'::text))::uuid")) @map("shop_id") @db.Uuid
 
   @@map("discount")
 }
 
-// model DiscountOrder {
-//   discount   Discount @relation(fields: [discountId], references: [id])
-//   discountId String   @map("discount_id") @db.Uuid
+model DiscountOrder {
+  discount   Discount @relation(fields: [discountId], references: [id])
+  discountId String   @map("discount_id") @db.Uuid
 
-//   order   Order  @relation(fields: [orderId], references: [id])
-//   orderId String @map("order_id") @db.Uuid
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String @map("order_id") @db.Uuid
 
-//   @@id([discountId, orderId])
-//   @@map("discount_order")
-// }
+  @@id([discountId, orderId])
+  @@map("discount_order")
+}

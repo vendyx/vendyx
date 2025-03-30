@@ -6,15 +6,19 @@ model Shipment {
   deletedAt DateTime? @map("deleted_at")
 
   /// Amount of the shipment collected from the customer
-  amount       Int
-
-  discountedAmount Int? @map("discounted_amount")
+  amount          Int
+  /// The price of the shipment after discounts
+  total           Int      @map("discounted_amount")
   /// Method name that was used to create the shipment. We do not reference the ShippingMethod here because the method can be deleted.
-  method       String
+  method          String
   /// Tracking code of the shipment retrieved from the carrier
-  trackingCode String? @map("tracking_code")
+  trackingCode    String?  @map("tracking_code")
   /// Carrier name that was used to create the shipment
-  carrier      String?
+  carrier         String?
+  /// Array of all shipment-level discount handles applied to the shipment
+  /// Populated every time order shipment is modified.
+  /// Useful to identify which discounts are currently active in the shipment
+  discountHandles String[] @default([]) @map("discount_handles")
 
   Order Order[]
 
