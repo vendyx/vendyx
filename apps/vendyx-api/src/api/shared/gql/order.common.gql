@@ -47,6 +47,12 @@ type Order implements Node {
   """
   placedAt: Date
   totalQuantity: Int!
+  """
+  Array of all order-level discount handles applied to the order
+  Populated every time order is modified.
+  Useful to identify which discounts are currently active in the order
+  """
+  activeDiscounts: [ActiveDiscount!]!
 
   lines(input: ListInput): OrderLineList!
   customer: Customer
@@ -69,6 +75,17 @@ type AddressJson {
   phoneNumber: String!
   references: String
   isDefault: Boolean!
+}
+
+type ActiveDiscount {
+  id: ID!
+  handle: String!
+  applicationMode: DiscountApplicationMode!
+}
+
+enum DiscountApplicationMode {
+  CODE
+  AUTOMATIC
 }
 
 type OrderList implements List {

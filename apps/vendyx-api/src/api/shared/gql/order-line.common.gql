@@ -8,6 +8,13 @@ type OrderLine implements Node {
   lineSubtotal: Int!
   lineTotal: Int!
 
+  """
+  Array of all order-line-level discount handles applied to the line
+  Populated every time order line is modified.
+  Useful to identify which discounts are currently active in the line
+  """
+  activeDiscounts: [ActiveDiscount!]!
+
   productVariant: Variant!
 }
 
