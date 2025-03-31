@@ -14,11 +14,12 @@ import {
   OrderRequirementType
 } from '@/api/types';
 import { notification } from '@/shared/notifications/notifications';
+import { formatPrice, parsePrice } from '@/shared/utils/formatters';
 
 import { createDiscount } from '../../actions/create-discount';
 import { updateDiscount } from '../../actions/update-discount';
 
-// TODO: use different fields for discountValue and orderRequirementValue, one for percentage and other for price
+// TODO: use different fields for orderRequirementValue, one for percentage and other for price
 export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDiscountFragment) => {
   const [isLoading, startTransition] = useTransition();
   const [isSuccess, setIsSuccess] = useState(false);
@@ -30,12 +31,14 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
       handle: discount?.handle ?? '',
       enabled: discount?.enabled ?? true,
       discountValueType: discount?.discountValueType ?? DiscountValueType.Percentage,
-      discountValue:
-        discount?.discountValueType === DiscountValueType.FixedAmount
+      discountValueAmount:
+        discount?.discountValueType === DiscountValueType.FixedAmount && discount.discountValue
+          ? formatPrice(discount.discountValue)
+          : formatPrice(0),
+      discountValuePercentage:
+        discount?.discountValueType === DiscountValueType.Percentage && discount.discountValue
           ? discount.discountValue
-            ? discount.discountValue / 100
-            : undefined
-          : (discount?.discountValue ?? 0),
+          : 0,
       startsAt: discount?.startsAt ?? new Date(),
       endsAt: discount?.endsAt,
       appliesTo: DiscountAppliesTo.Collections,
@@ -58,12 +61,14 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
       handle: discount?.handle ?? '',
       enabled: discount?.enabled ?? true,
       discountValueType: discount?.discountValueType ?? DiscountValueType.Percentage,
-      discountValue:
-        discount?.discountValueType === DiscountValueType.FixedAmount
+      discountValueAmount:
+        discount?.discountValueType === DiscountValueType.FixedAmount && discount.discountValue
+          ? formatPrice(discount.discountValue)
+          : formatPrice(0),
+      discountValuePercentage:
+        discount?.discountValueType === DiscountValueType.Percentage && discount.discountValue
           ? discount.discountValue
-            ? discount.discountValue / 100
-            : undefined
-          : (discount?.discountValue ?? 0),
+          : 0,
       startsAt: discount?.startsAt ?? new Date(),
       appliesTo: DiscountAppliesTo.Collections,
       endsAt: discount?.endsAt,
@@ -89,16 +94,16 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
 
   async function onSubmit(input: DiscountDetailsFormInput) {
     startTransition(async () => {
+      const discountValue =
+        input.discountValueType === DiscountValueType.Percentage
+          ? input.discountValuePercentage
+          : parsePrice(input.discountValueAmount);
+
       const generalInput = {
         handle: input.handle,
         enabled: input.enabled,
         discountValueType: input.discountValueType,
-        discountValue:
-          input.discountValueType === DiscountValueType.Percentage
-            ? input.discountValue > 100
-              ? 100
-              : input.discountValue
-            : input.discountValue,
+        discountValue,
         startsAt: input.startsAt,
         endsAt: input.endsAt,
         orderRequirementType: input.orderRequirementType,
@@ -151,7 +156,8 @@ const schema = z.object({
   enabled: z.boolean(),
   applicationMode: z.enum([DiscountApplicationMode.Automatic, DiscountApplicationMode.Code]),
   discountValueType: z.enum([DiscountValueType.FixedAmount, DiscountValueType.Percentage]),
-  discountValue: z.preprocess(v => Number(v), z.number().min(0)),
+  discountValueAmount: z.string(),
+  discountValuePercentage: z.preprocess(val => Number(val ?? 0), z.number().int().min(0).max(100)),
   startsAt: z.preprocess(val => new Date(val as Date), z.date()),
   endsAt: z.preprocess(val => (val ? new Date(val as Date) : undefined), z.date().optional()),
   orderRequirementType: z.preprocess(
