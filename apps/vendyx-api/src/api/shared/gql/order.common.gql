@@ -63,6 +63,7 @@ type Order implements Node {
 
 type AddressJson {
   country: String!
+  countryId: String!
   fullName: String!
   streetLine1: String!
   streetLine2: String

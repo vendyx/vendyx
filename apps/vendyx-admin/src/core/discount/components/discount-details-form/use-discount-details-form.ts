@@ -147,7 +147,10 @@ const schema = z.object({
     val => (val === 'None' ? undefined : val),
     z.enum([OrderRequirementType.MinimumAmount, OrderRequirementType.MinimumItems]).optional()
   ),
-  orderRequirementValue: z.preprocess(val => Number(val), z.number().min(0).optional()),
+  orderRequirementValue: z.preprocess(
+    val => (val ? Number(val) : undefined),
+    z.number().min(0).optional()
+  ),
   perCustomerLimit: z.number().min(0).optional(),
   metadata: z.record(z.any(), z.any()),
   availableCombinations: z

@@ -5,7 +5,15 @@ type Shipment implements Node {
   trackingCode: String
   carrier: String
   amount: Int!
+  total: Int!
   method: String!
+
+  """
+  Array of all shipment-level discount handles applied to the shipment
+  Populated every time order shipment is modified.
+  Useful to identify which discounts are currently active in the shipment
+  """
+  activeDiscounts: [ActiveDiscount!]!
 
   order: Order!
 }

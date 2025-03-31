@@ -35,6 +35,8 @@ input AddCustomerToOrderInput {
 }
 
 input CreateOrderAddressInput {
+  fullName: String!
+  phoneNumber: String
   countryId: String!
   streetLine1: String!
   streetLine2: String

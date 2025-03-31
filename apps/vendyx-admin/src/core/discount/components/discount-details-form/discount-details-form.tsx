@@ -17,6 +17,10 @@ export const DiscountDetailsForm: FC<Props> = ({ type, discount }) => {
   const form = useDiscountDetailsForm(type, discount);
   useParamNotification(ParamNotifications.EntityCreated, 'Discount created');
 
+  console.log({
+    form: form.formState.errors
+  });
+
   return (
     <DiscountContextProvider value={{ discount, type, isCreating: !discount }}>
       <Form {...form}>

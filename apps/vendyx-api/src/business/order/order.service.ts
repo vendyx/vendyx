@@ -515,11 +515,8 @@ export class OrderService extends OrderFinders {
           state: OrderState.PAYMENT_ADDED,
           placedAt: new Date(),
           discounts: {
-            connect: discountIds.map(id => ({
-              discountId_orderId: {
-                discountId: id,
-                orderId
-              }
+            create: discountIds.map(id => ({
+              discountId: id
             }))
           }
         }
@@ -540,11 +537,8 @@ export class OrderService extends OrderFinders {
           state: OrderState.PAYMENT_AUTHORIZED,
           placedAt: new Date(),
           discounts: {
-            connect: discountIds.map(id => ({
-              discountId_orderId: {
-                discountId: id,
-                orderId
-              }
+            create: discountIds.map(id => ({
+              discountId: id
             }))
           }
         }
@@ -631,6 +625,7 @@ export class OrderService extends OrderFinders {
   /**
    * @description
    * Apply any available discounts to the given order
+   * Applies automatics discounts, coupon codes passed and discounts already applied to the order
    */
   private async applyDiscounts(
     orderParam: Order & {
@@ -661,24 +656,52 @@ export class OrderService extends OrderFinders {
       where: {
         id: {
           in: [...orderCouponCodes, ...orderLinesCouponCodes, ...shipmentCouponCodes].map(d => d.id)
-        }
+        },
+        enabled: true
       }
     });
 
     const discounts = [
       ...(await this.prisma.discount.findMany({
-        where: { applicationMode: DiscountApplicationMode.AUTOMATIC }
+        where: { applicationMode: DiscountApplicationMode.AUTOMATIC, enabled: true }
       })),
       ...couponCodesAlreadyInOrder,
       ...couponCodeDiscounts
     ];
 
+    const order = this.calculateOrderPricesBeforeDiscounts(orderParam);
+
     if (!discounts.length) {
-      return orderParam;
+      await this.prisma.order.update({
+        where: { id: order.id },
+        data: {
+          total: order.total,
+          subtotal: order.subtotal,
+          activeDiscounts: order.activeDiscounts as unknown as InputJsonArray,
+          lines: {
+            updateMany: order.lines.map(line => ({
+              where: { id: line.id },
+              data: {
+                lineTotal: line.lineTotal,
+                activeDiscounts: line.activeDiscounts as unknown as InputJsonArray
+              }
+            }))
+          },
+          ...(order.shipment && {
+            shipment: {
+              update: {
+                total: order.shipment.total,
+                activeDiscounts: order.shipment.activeDiscounts as unknown as InputJsonArray
+              }
+            }
+          })
+        }
+      });
+
+      return order;
     }
 
     let pastCustomerDiscounts: Discount[] = [];
-    const order = this.calculateOrderPricesBeforeDiscounts(orderParam);
 
     if (order.customer) {
       pastCustomerDiscounts = (
@@ -1040,10 +1063,10 @@ export class OrderService extends OrderFinders {
       const { discountValueType, discountValue } = discount;
 
       const isPercentage = discountValueType === DiscountValueType.PERCENTAGE;
-      const discountPrice = isPercentage ? (order.total * discountValue) / 100 : discountValue;
+      const discountPrice = isPercentage ? (order.subtotal * discountValue) / 100 : discountValue;
 
       return {
-        orderSubtotal: order.total - discountPrice
+        orderSubtotal: order.subtotal - discountPrice
       };
     }
 
