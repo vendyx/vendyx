@@ -14,6 +14,7 @@ import {
   Shipment,
   Variant
 } from '@prisma/client';
+import { InputJsonArray, JsonValue } from '@prisma/client/runtime/library';
 
 import {
   AddCustomerToOrderInput,
@@ -41,6 +42,7 @@ import {
   ConfigurablePropertyArgs
 } from '@/persistence/types/configurable-operation.type';
 import {
+  ActiveDiscount,
   BuyXGetYDiscountMetadata,
   BuyXGetYDiscountMetadataRequirement,
   ProductDiscountMetadata,
@@ -187,7 +189,7 @@ export class OrderService extends OrderFinders {
         return new NotEnoughStock();
       }
 
-      return await this.prisma.order.update({
+      const orderUpdated = await this.prisma.order.update({
         where: { id: orderId },
         data: {
           lines: {
@@ -209,8 +211,11 @@ export class OrderService extends OrderFinders {
           total: order.total - lineWithTheVariant.lineTotal + newLinePrice,
           // Increment the quantity because variant already exists
           totalQuantity: { increment: input.quantity }
-        }
+        },
+        include: { shipment: true, lines: { include: { productVariant: true } } }
       });
+
+      return await this.applyDiscounts(orderUpdated, []);
     }
 
     // Add a new line to the order
@@ -233,16 +238,7 @@ export class OrderService extends OrderFinders {
       include: { shipment: true, lines: { include: { productVariant: true } } }
     });
 
-    const automaticDiscounts = await this.prisma.discount.findMany({
-      where: { applicationMode: DiscountApplicationMode.AUTOMATIC }
-    });
-
-    if (!automaticDiscounts.length) {
-      return orderSaved;
-    }
-
-    const applicableDiscounts = await this.applyDiscounts(orderSaved, automaticDiscounts);
-    return orderSaved;
+    return await this.applyDiscounts(orderSaved, []);
   }
 
   async updateLine(lineId: ID, input: UpdateOrderLineInput) {
@@ -259,7 +255,7 @@ export class OrderService extends OrderFinders {
 
     // If the quantity 0, remove the line and recalculate the order stats
     if (input.quantity <= 0) {
-      return await this.prisma.order.update({
+      const orderUpdated = await this.prisma.order.update({
         where: { id: order.id },
         data: {
           lines: {
@@ -268,8 +264,11 @@ export class OrderService extends OrderFinders {
           subtotal: order.subtotal - line.lineTotal,
           total: order.total - line.lineTotal,
           totalQuantity: order.totalQuantity - line.quantity
-        }
+        },
+        include: { shipment: true, lines: { include: { productVariant: true } } }
       });
+
+      return await this.applyDiscounts(orderUpdated, []);
     }
 
     if (productVariant.stock < input.quantity) {
@@ -280,7 +279,7 @@ export class OrderService extends OrderFinders {
     const linePrice = unitPrice * input.quantity;
 
     // Update the line with the new quantity and line price and order stats
-    return await this.prisma.order.update({
+    const orderUpdated = await this.prisma.order.update({
       where: { id: order.id },
       data: {
         lines: {
@@ -297,8 +296,11 @@ export class OrderService extends OrderFinders {
         total: order.total - line.lineTotal + linePrice,
         subtotal: order.subtotal - line.lineTotal + linePrice,
         totalQuantity: order.totalQuantity - line.quantity + input.quantity
-      }
+      },
+      include: { shipment: true, lines: { include: { productVariant: true } } }
     });
+
+    return this.applyDiscounts(orderUpdated, []);
   }
 
   async removeLine(lineId: ID) {
@@ -311,7 +313,7 @@ export class OrderService extends OrderFinders {
       return new ForbiddenOrderAction(line.order.state);
     }
 
-    return await this.prisma.order.update({
+    const orderUpdated = await this.prisma.order.update({
       where: { id: line.order.id },
       data: {
         lines: {
@@ -320,8 +322,11 @@ export class OrderService extends OrderFinders {
         total: line.order.total - line.lineTotal,
         subtotal: line.order.subtotal - line.lineTotal,
         totalQuantity: line.order.totalQuantity - line.quantity
-      }
+      },
+      include: { shipment: true, lines: { include: { productVariant: true } } }
     });
+
+    return this.applyDiscounts(orderUpdated, []);
   }
 
   async addCustomer(orderId: ID, input: AddCustomerToOrderInput) {
@@ -343,12 +348,15 @@ export class OrderService extends OrderFinders {
       return new CustomerDisabled();
     }
 
-    return await this.prisma.order.update({
+    const orderUpdated = await this.prisma.order.update({
       where: { id: orderId },
       data: {
         customer: { connectOrCreate: { where: { email: input.email }, create: clean(input) } }
-      }
+      },
+      include: { shipment: true, lines: { include: { productVariant: true } } }
     });
+
+    return await this.applyDiscounts(orderUpdated, []);
   }
 
   async addShippingAddress(orderId: ID, input: CreateOrderAddressInput) {
@@ -365,10 +373,13 @@ export class OrderService extends OrderFinders {
       country: country.name
     };
 
-    return await this.prisma.order.update({
+    const orderUpdated = await this.prisma.order.update({
       where: { id: orderId },
-      data: { shippingAddress: addressToSave as unknown as Prisma.JsonObject }
+      data: { shippingAddress: addressToSave as unknown as Prisma.JsonObject },
+      include: { shipment: true, lines: { include: { productVariant: true } } }
     });
+
+    return await this.applyDiscounts(orderUpdated, []);
   }
 
   async addShipment(orderId: ID, input: AddShipmentToOrderInput) {
@@ -414,34 +425,41 @@ export class OrderService extends OrderFinders {
 
     // If the order already has a shipment, update the amount and method
     if (order.shipment) {
-      return await this.prisma.order.update({
+      const orderUpdated = await this.prisma.order.update({
         where: { id: orderId },
         data: {
           shipment: {
             update: { amount: shippingPrice, total: shippingPrice, method: method.name }
           },
           total: order.total - order.shipment.amount + shippingPrice
-        }
+        },
+        include: { shipment: true, lines: { include: { productVariant: true } } }
       });
+
+      return this.applyDiscounts(orderUpdated, []);
     }
 
     // If the order doesn't have a shipment, create a new one
-    return this.prisma.order.update({
+    const orderUpdated = await this.prisma.order.update({
       where: { id: orderId },
       data: {
         shipment: {
           create: { amount: shippingPrice, total: shippingPrice, method: method.name }
         },
         total: order.total + shippingPrice
-      }
+      },
+      include: { shipment: true, lines: { include: { productVariant: true } } }
     });
+
+    return this.applyDiscounts(orderUpdated, []);
   }
 
   async addPayment(orderId: ID, input: AddPaymentToOrderInput) {
-    const order = await this.prisma.order.findUniqueOrThrow({
+    const orderToIntend = await this.prisma.order.findUniqueOrThrow({
       where: { id: orderId },
       include: { customer: true, shipment: true, lines: { include: { productVariant: true } } }
     });
+    const order = await this.applyDiscounts(orderToIntend, []);
 
     if (!this.canPerformAction(order, 'add_payment')) {
       return new ForbiddenOrderAction(order.state);
@@ -475,6 +493,17 @@ export class OrderService extends OrderFinders {
     }
 
     let orderToReturn: Order = order;
+    const orderLevelDiscounts = order.activeDiscounts as unknown as ActiveDiscount[];
+    const shipmentLevelDiscounts = order.shipment?.activeDiscounts as unknown as ActiveDiscount[];
+    const orderLineLevelDiscounts = order.lines.flatMap(
+      line => line.activeDiscounts as unknown as ActiveDiscount[]
+    );
+
+    const discountIds = [
+      ...orderLevelDiscounts.map(d => d.id),
+      ...(shipmentLevelDiscounts?.map(d => d.id) ?? []),
+      ...orderLineLevelDiscounts.map(d => d.id)
+    ].filter((d, index, self) => index === self.findIndex(d2 => d2 === d));
 
     if (paymentHandlerResult.status === 'created') {
       orderToReturn = await this.prisma.order.update({
@@ -484,7 +513,15 @@ export class OrderService extends OrderFinders {
             create: { amount: paymentHandlerResult.amount, method: handlerName }
           },
           state: OrderState.PAYMENT_ADDED,
-          placedAt: new Date()
+          placedAt: new Date(),
+          discounts: {
+            connect: discountIds.map(id => ({
+              discountId_orderId: {
+                discountId: id,
+                orderId
+              }
+            }))
+          }
         }
       });
     }
@@ -501,7 +538,15 @@ export class OrderService extends OrderFinders {
             }
           },
           state: OrderState.PAYMENT_AUTHORIZED,
-          placedAt: new Date()
+          placedAt: new Date(),
+          discounts: {
+            connect: discountIds.map(id => ({
+              discountId_orderId: {
+                discountId: id,
+                orderId
+              }
+            }))
+          }
         }
       });
     }
@@ -583,6 +628,10 @@ export class OrderService extends OrderFinders {
     });
   }
 
+  /**
+   * @description
+   * Apply any available discounts to the given order
+   */
   private async applyDiscounts(
     orderParam: Order & {
       shipment: Shipment | null;
@@ -591,12 +640,42 @@ export class OrderService extends OrderFinders {
     },
     couponCodeDiscounts: Discount[]
   ) {
+    const orderCouponCodes = (orderParam.activeDiscounts as unknown as ActiveDiscount[]).filter(
+      d => d.applicationMode === DiscountApplicationMode.CODE
+    );
+    const orderLinesCouponCodes = orderParam.lines
+      .flatMap(line => line.activeDiscounts as unknown as ActiveDiscount[])
+      .filter(
+        (lineDiscount, index, self) =>
+          index ===
+          self.findIndex(d => d.id === lineDiscount.id && d.handle === lineDiscount.handle)
+      )
+      .filter(d => d.applicationMode === DiscountApplicationMode.CODE);
+    const shipmentCouponCodes = orderParam.shipment
+      ? (orderParam.shipment.activeDiscounts as unknown as ActiveDiscount[]).filter(
+          d => d.applicationMode === DiscountApplicationMode.CODE
+        )
+      : [];
+
+    const couponCodesAlreadyInOrder = await this.prisma.discount.findMany({
+      where: {
+        id: {
+          in: [...orderCouponCodes, ...orderLinesCouponCodes, ...shipmentCouponCodes].map(d => d.id)
+        }
+      }
+    });
+
     const discounts = [
       ...(await this.prisma.discount.findMany({
         where: { applicationMode: DiscountApplicationMode.AUTOMATIC }
       })),
+      ...couponCodesAlreadyInOrder,
       ...couponCodeDiscounts
     ];
+
+    if (!discounts.length) {
+      return orderParam;
+    }
 
     let pastCustomerDiscounts: Discount[] = [];
     const order = this.calculateOrderPricesBeforeDiscounts(orderParam);
@@ -641,7 +720,10 @@ export class OrderService extends OrderFinders {
       if (discountedPrice.orderSubtotal !== undefined) {
         order.subtotal = discountedPrice.orderSubtotal;
         order.total = order.subtotal + (order.shipment?.amount ?? 0);
-        order.discountHandles = [...order.discountHandles, discount.handle];
+        order.activeDiscounts = [
+          ...(order.activeDiscounts as unknown as ActiveDiscount[]),
+          new ActiveDiscount(discount.id, discount.handle, discount.applicationMode)
+        ] as unknown as JsonValue;
 
         continue;
       } else if (Boolean(discountedPrice.lines?.details.length)) {
@@ -654,7 +736,10 @@ export class OrderService extends OrderFinders {
           const lineToUpdate = order.lines.find(l => l.id === line.lineId);
           if (lineToUpdate) {
             lineToUpdate.lineTotal = line.linePrice;
-            lineToUpdate.discountHandles = [...lineToUpdate.discountHandles, discount.handle];
+            lineToUpdate.activeDiscounts = [
+              ...(lineToUpdate.activeDiscounts as unknown as ActiveDiscount[]),
+              new ActiveDiscount(discount.id, discount.handle, discount.applicationMode)
+            ] as unknown as JsonValue;
           }
         }
 
@@ -662,13 +747,15 @@ export class OrderService extends OrderFinders {
         const newSubtotal = order.lines.reduce((acc, line) => acc + line.lineTotal, 0);
         order.subtotal = newSubtotal - alreadyDiscountedFromSubtotal;
         order.total = order.subtotal + (order.shipment?.amount ?? 0);
-        order.discountHandles = [...order.discountHandles, discount.handle];
 
         continue;
       } else if (discountedPrice.shipmentAmount && order.shipment) {
         order.shipment.total = discountedPrice.shipmentAmount;
         order.total = order.subtotal + discountedPrice.shipmentAmount;
-        order.shipment.discountHandles = [...order.shipment.discountHandles, discount.handle];
+        order.shipment.activeDiscounts = [
+          ...(order.shipment.activeDiscounts as unknown as ActiveDiscount[]),
+          new ActiveDiscount(discount.id, discount.handle, discount.applicationMode)
+        ] as unknown as JsonValue;
 
         continue;
       }
@@ -679,13 +766,13 @@ export class OrderService extends OrderFinders {
       data: {
         total: order.total,
         subtotal: order.subtotal,
-        discountHandles: order.discountHandles,
+        activeDiscounts: order.activeDiscounts as unknown as InputJsonArray,
         lines: {
           updateMany: order.lines.map(line => ({
             where: { id: line.id },
             data: {
               lineTotal: line.lineTotal,
-              discountHandles: line.discountHandles
+              activeDiscounts: line.activeDiscounts as unknown as InputJsonArray
             }
           }))
         },
@@ -693,7 +780,7 @@ export class OrderService extends OrderFinders {
           shipment: {
             update: {
               total: order.shipment.total,
-              discountHandles: order.shipment.discountHandles
+              activeDiscounts: order.shipment.activeDiscounts as unknown as InputJsonArray
             }
           }
         })
@@ -1123,35 +1210,12 @@ export class OrderService extends OrderFinders {
   }
 
   private async _create(input: Prisma.OrderCreateInput) {
-    // useful for per customer limit validation
-    // const pastDiscounts = await this.prisma.order.findMany({
-    //   where: {
-    //     customerId: '',
-    //     state: { not: OrderState.MODIFYING },
-    //     placedAt: { gte: discount.startsAt }
-    //   },
-    //   select: {
-    //     discounts: {
-    //       where: { discountId: discount.id }
-    //     }
-    //   }
-    // });
-
     const order = await this.prisma.order.create({
       data: input,
       include: { shipment: true, lines: { include: { productVariant: true } } }
     });
 
-    const automaticDiscounts = await this.prisma.discount.findMany({
-      where: { applicationMode: DiscountApplicationMode.AUTOMATIC }
-    });
-
-    if (!automaticDiscounts.length) {
-      return order;
-    }
-
-    const applicableDiscounts = await this.applyDiscounts(order, automaticDiscounts);
-    return order;
+    return await this.applyDiscounts(order, []);
   }
 
   /**
@@ -1164,7 +1228,11 @@ export class OrderService extends OrderFinders {
       customer?: Customer | null;
       lines: (OrderLine & { productVariant: Variant })[];
     }
-  ) {
+  ): Order & {
+    shipment: Shipment | null;
+    customer?: Customer | null;
+    lines: (OrderLine & { productVariant: Variant })[];
+  } {
     const order = { ...orderParam };
 
     for (const line of order.lines) {
@@ -1178,7 +1246,15 @@ export class OrderService extends OrderFinders {
 
     order.total = order.subtotal + (order.shipment?.amount ?? 0);
 
-    return order;
+    return {
+      ...order,
+      activeDiscounts: [],
+      lines: order.lines.map(line => ({
+        ...line,
+        activeDiscounts: []
+      })),
+      ...(order.shipment && { shipment: { ...order.shipment, activeDiscounts: [] } })
+    };
   }
 
   private async findOrderOrThrow(id: ID) {

@@ -36,7 +36,8 @@ model Order {
   /// Array of all order-level discount handles applied to the order
   /// Populated every time order is modified.
   /// Useful to identify which discounts are currently active in the order
-  discountHandles String[]   @default([]) @map("discount_handles")
+  /// Type: ActiveDiscount[]
+  activeDiscounts Json       @default("[]") @map("active_discounts") @db.Json
 
   /// Any-level Discounts applied to the order, only populated when the order is paid
   discounts DiscountOrder[]
@@ -63,17 +64,18 @@ model OrderLine {
   deletedAt DateTime? @map("deleted_at")
 
   /// The price of the variant at the time of adding the line
-  unitPrice       Int      @default(0) @map("unit_price")
+  unitPrice       Int  @default(0) @map("unit_price")
   /// The quantity of the variant in the line
-  quantity        Int      @default(0) @db.SmallInt
+  quantity        Int  @default(0) @db.SmallInt
   /// The price of the line (unitPrice * quantity) before discounts
-  lineSubtotal    Int      @default(0) @map("line_subtotal")
+  lineSubtotal    Int  @default(0) @map("line_subtotal")
   /// The price of the line after discounts
-  lineTotal       Int      @default(0) @map("line_total")
+  lineTotal       Int  @default(0) @map("line_total")
   /// Array of all order-line-level discount handles applied to the line
   /// Populated every time order line is modified.
   /// Useful to identify which discounts are currently active in the line
-  discountHandles String[] @default([]) @map("discount_handles")
+  /// Type: ActiveDiscount[]
+  activeDiscounts Json @default("[]") @map("active_discounts") @db.Json
 
   order            Order   @relation(fields: [orderId], references: [id])
   orderId          String  @map("order_id") @db.Uuid

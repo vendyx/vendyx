@@ -1,4 +1,4 @@
-import { DiscountType } from '@prisma/client';
+import { DiscountApplicationMode } from '@prisma/client';
 
 import { ID } from './scalars.type';
 
@@ -25,8 +25,10 @@ export enum BuyXGetYDiscountMetadataRequirement {
   MIN_AMOUNT = 'MIN_AMOUNT'
 }
 
-export type OrderDiscount = {
-  id: ID;
-  handler: string;
-  type: DiscountType;
-};
+export class ActiveDiscount {
+  constructor(
+    public id: ID,
+    public handle: string,
+    public applicationMode: DiscountApplicationMode
+  ) {}
+}
