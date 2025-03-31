@@ -627,14 +627,7 @@ export class OrderService extends OrderFinders {
    * Apply any available discounts to the given order
    * Applies automatics discounts, coupon codes passed and discounts already applied to the order
    */
-  private async applyDiscounts(
-    orderParam: Order & {
-      shipment: Shipment | null;
-      customer?: Customer | null;
-      lines: (OrderLine & { productVariant: Variant })[];
-    },
-    couponCodeDiscounts: Discount[]
-  ) {
+  private async applyDiscounts(orderParam: OrderForDiscount, couponCodeDiscounts: Discount[]) {
     const orderCouponCodes = (orderParam.activeDiscounts as unknown as ActiveDiscount[]).filter(
       d => d.applicationMode === DiscountApplicationMode.CODE
     );
@@ -743,7 +736,7 @@ export class OrderService extends OrderFinders {
       if (discountedPrice.orderSubtotal !== undefined) {
         const discountedAmount = order.subtotal - discountedPrice.orderSubtotal;
 
-        order.subtotal = discountedPrice.orderSubtotal;
+        order.subtotal = discountedPrice.orderSubtotal < 0 ? 0 : discountedPrice.orderSubtotal;
         order.total = order.subtotal + (order.shipment?.amount ?? 0);
         order.activeDiscounts = [
           ...(order.activeDiscounts as unknown as ActiveDiscount[]),
@@ -767,7 +760,7 @@ export class OrderService extends OrderFinders {
           if (lineToUpdate) {
             const discountedAmount = lineToUpdate.lineTotal - line.linePrice;
 
-            lineToUpdate.lineTotal = line.linePrice;
+            lineToUpdate.lineTotal = line.linePrice < 0 ? 0 : line.linePrice;
             lineToUpdate.activeDiscounts = [
               ...(lineToUpdate.activeDiscounts as unknown as ActiveDiscount[]),
               new ActiveDiscount(
@@ -789,8 +782,9 @@ export class OrderService extends OrderFinders {
       } else if (discountedPrice.shipmentAmount && order.shipment) {
         const discountedAmount = order.shipment.total - discountedPrice.shipmentAmount;
 
-        order.shipment.total = discountedPrice.shipmentAmount;
-        order.total = order.subtotal + discountedPrice.shipmentAmount;
+        order.shipment.total =
+          discountedPrice.shipmentAmount < 0 ? 0 : discountedPrice.shipmentAmount;
+        order.total = order.subtotal + order.shipment.total;
         order.shipment.activeDiscounts = [
           ...(order.shipment.activeDiscounts as unknown as ActiveDiscount[]),
           new ActiveDiscount(
@@ -834,11 +828,12 @@ export class OrderService extends OrderFinders {
     return order;
   }
 
+  /**
+   * @description
+   * Get the applicable discounts for the given order
+   */
   private getApplicableDiscounts(
-    order: Order & {
-      shipment: Shipment | null;
-      lines: (OrderLine & { productVariant: Variant })[];
-    },
+    order: OrderForDiscount,
     discounts: Discount[],
     pastDiscounts: ID[]
   ) {
@@ -956,6 +951,10 @@ export class OrderService extends OrderFinders {
     return applicableDiscounts;
   }
 
+  /**
+   * @description
+   * Get all possible combinations for the given discounts
+   */
   private getDiscountsCombinations(discounts: Discount[]): Discount[][] {
     const combinations: Discount[][] = [];
 
@@ -1001,13 +1000,7 @@ export class OrderService extends OrderFinders {
    * @description
    * Get the best discount combinations for the given order
    */
-  private getBestDiscounts(
-    order: Order & {
-      shipment: Shipment | null;
-      lines: (OrderLine & { productVariant: Variant })[];
-    },
-    discounts: Discount[][]
-  ) {
+  private getBestDiscounts(order: OrderForDiscount, discounts: Discount[][]) {
     const newPrices: { total: number; discount: Discount }[][] = [];
 
     for (const discount of discounts) {
@@ -1021,20 +1014,14 @@ export class OrderService extends OrderFinders {
         a.reduce((acc, curr) => acc + (order.total - curr.total), 0)
     );
 
-    return bestDiscounts[0].map(d => d.discount);
+    return bestDiscounts?.[0]?.map(d => d.discount) ?? [];
   }
 
   /**
    * @description
    * Get the new order totals with the given discounts
    */
-  private getOrderTotalsWithDiscounts(
-    order: Order & {
-      shipment: Shipment | null;
-      lines: (OrderLine & { productVariant: Variant })[];
-    },
-    discounts: Discount[]
-  ) {
+  private getOrderTotalsWithDiscounts(order: OrderForDiscount, discounts: Discount[]) {
     const discountsWithPrices: { total: number; discount: Discount }[] = [];
 
     for (const discount of discounts) {
@@ -1073,13 +1060,7 @@ export class OrderService extends OrderFinders {
    * @description
    * Get the {@link DiscountPrice} for the given order and discount
    */
-  private getDiscountedPrice(
-    order: Order & {
-      shipment: Shipment | null;
-      lines: (OrderLine & { productVariant: Variant })[];
-    },
-    discount: Discount
-  ): DiscountPrice {
+  private getDiscountedPrice(order: OrderForDiscount, discount: Discount): DiscountPrice {
     if (discount.type === DiscountType.ORDER) {
       const { discountValueType, discountValue } = discount;
 
@@ -1266,17 +1247,7 @@ export class OrderService extends OrderFinders {
    * @description
    * Calculate the order prices before applying discounts
    */
-  private calculateOrderPricesBeforeDiscounts(
-    orderParam: Order & {
-      shipment: Shipment | null;
-      customer?: Customer | null;
-      lines: (OrderLine & { productVariant: Variant })[];
-    }
-  ): Order & {
-    shipment: Shipment | null;
-    customer?: Customer | null;
-    lines: (OrderLine & { productVariant: Variant })[];
-  } {
+  private calculateOrderPricesBeforeDiscounts(orderParam: OrderForDiscount): OrderForDiscount {
     const order = { ...orderParam };
 
     for (const line of order.lines) {
@@ -1327,4 +1298,10 @@ type DiscountPrice = {
     details: { lineId: ID; linePrice: number }[];
     total: number;
   };
+};
+
+export type OrderForDiscount = Order & {
+  shipment: Shipment | null;
+  customer?: Customer | null;
+  lines: (OrderLine & { productVariant: Variant })[];
 };
