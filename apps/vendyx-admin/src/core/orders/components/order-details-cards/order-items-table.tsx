@@ -1,11 +1,13 @@
 'use client';
 import { type FC } from 'react';
 
+import { TagIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import { type CommonOrderFragment } from '@/api/types';
 import { ImagePlaceholder } from '@/shared/components/placeholders/image-placeholder';
 import { OrderStatusBadge } from '@/shared/components/status-badges/order-status-badge';
+import { InfoTooltip } from '@/shared/components/tooltips/info-tooltip';
 import { Badge } from '@/shared/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import {
@@ -18,6 +20,7 @@ import {
   TableRow
 } from '@/shared/components/ui/table';
 import { useBase } from '@/shared/hooks/use-base';
+import { isFirst } from '@/shared/utils/arrays';
 import { formatPrice } from '@/shared/utils/formatters';
 import { cn } from '@/shared/utils/theme';
 
@@ -25,7 +28,8 @@ export const OrderItemsTable: FC<Props> = ({ order }) => {
   const base = useBase();
 
   const lines = order.lines.items;
-  const { shipment } = order;
+  const { shipment, discounts } = order;
+  const subtotalBeforeDiscounts = lines.reduce((acc, line) => acc + line.lineTotal, 0);
 
   return (
     <Card>
@@ -54,6 +58,10 @@ export const OrderItemsTable: FC<Props> = ({ order }) => {
               const itemImage = variantImage ?? productImage;
 
               const productUrl = `${base}/products/${product.id}`;
+
+              const lineDiscountsMsg = line.discounts
+                .map(d => `${d.handle} (-$${formatPrice(d.discountedAmount)})`)
+                .join(', ');
 
               return (
                 <TableRow key={line.id}>
@@ -84,25 +92,21 @@ export const OrderItemsTable: FC<Props> = ({ order }) => {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>{formatPrice(line.unitPrice)}</TableCell>
+                  <TableCell>{formatPrice(line.unitPrice, { withCurrencyIcon: true })}</TableCell>
                   <TableCell>{line.quantity}</TableCell>
-                  <TableCell>{formatPrice(line.lineTotal)}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <span>{formatPrice(line.lineTotal, { withCurrencyIcon: true })}</span>
+                      {!!line.discounts.length && (
+                        <InfoTooltip message={lineDiscountsMsg}>
+                          <TagIcon size={16} className="text-muted-foreground" />
+                        </InfoTooltip>
+                      )}
+                    </div>
+                  </TableCell>
                 </TableRow>
               );
             })}
-
-            {/* {!!orderLevelDiscounts.length && (
-              <TableRow className="border-transparent">
-                <TableCell>Discounts</TableCell>
-                <TableCell>
-                  {orderLevelDiscounts.map(d => (
-                    <span key={d.id}>{d.handle}</span>
-                  ))}
-                </TableCell>
-                <TableCell></TableCell>
-                <TableCell>{formatPrice(order.subtotal)}</TableCell>
-              </TableRow>
-            )} */}
 
             <TableRow className="border-transparent">
               <TableCell>Subtotal</TableCell>
@@ -110,14 +114,32 @@ export const OrderItemsTable: FC<Props> = ({ order }) => {
                 {order.totalQuantity} {order.totalQuantity === 1 ? 'Product' : 'Products'}
               </TableCell>
               <TableCell></TableCell>
-              <TableCell>{formatPrice(order.subtotal)}</TableCell>
+              <TableCell>
+                {formatPrice(subtotalBeforeDiscounts, { withCurrencyIcon: true })}
+              </TableCell>
             </TableRow>
+
+            {discounts.map((d, i) => (
+              <TableRow key={d.handle} className="border-transparent">
+                <TableCell>{isFirst(i) && 'Discounts'}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    <TagIcon size={16} />
+                    <span>{d.handle}</span>
+                  </div>
+                </TableCell>
+                <TableCell></TableCell>
+                <TableCell>
+                  -{formatPrice(d.discountedAmount, { withCurrencyIcon: true })}
+                </TableCell>
+              </TableRow>
+            ))}
 
             <TableRow className="border-transparent">
               <TableCell>Shipment</TableCell>
               <TableCell>{shipment?.method ?? ''}</TableCell>
               <TableCell></TableCell>
-              <TableCell>{formatPrice(shipment?.amount ?? 0)}</TableCell>
+              <TableCell>{formatPrice(shipment?.total ?? 0, { withCurrencyIcon: true })}</TableCell>
             </TableRow>
 
             <TableRow className="border-transparent">

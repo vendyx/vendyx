@@ -26,6 +26,7 @@ export type Scalars = {
 export type ActiveDiscount = {
   __typename?: 'ActiveDiscount';
   applicationMode: DiscountApplicationMode;
+  discountedAmount: Scalars['Int']['output'];
   handle: Scalars['String']['output'];
   id: Scalars['ID']['output'];
 };
@@ -729,16 +730,15 @@ export type OptionValue = Node & {
 
 export type Order = Node & {
   __typename?: 'Order';
-  /**
-   * Array of all order-level discount handles applied to the order
-   * Populated every time order is modified.
-   * Useful to identify which discounts are currently active in the order
-   */
-  activeDiscounts: Array<ActiveDiscount>;
   code: Scalars['String']['output'];
   createdAt: Scalars['Date']['output'];
   customer?: Maybe<Customer>;
-  discounts: Array<Discount>;
+  /**
+   * Array of all order-level discount handles applied to the order
+   * Populated every time order is modified.
+   * Use this field to show data of current discounts applied to the order
+   */
+  discounts: Array<ActiveDiscount>;
   id: Scalars['ID']['output'];
   lines: OrderLineList;
   payment?: Maybe<Payment>;
@@ -779,13 +779,13 @@ export type OrderFilters = {
 
 export type OrderLine = Node & {
   __typename?: 'OrderLine';
+  createdAt: Scalars['Date']['output'];
   /**
    * Array of all order-line-level discount handles applied to the line
    * Populated every time order line is modified.
-   * Useful to identify which discounts are currently active in the line
+   * Use this field to show data of current discounts applied to the order line
    */
-  activeDiscounts: Array<ActiveDiscount>;
-  createdAt: Scalars['Date']['output'];
+  discounts: Array<ActiveDiscount>;
   id: Scalars['ID']['output'];
   lineSubtotal: Scalars['Int']['output'];
   lineTotal: Scalars['Int']['output'];
@@ -1090,15 +1090,15 @@ export type QueryZoneArgs = {
 
 export type Shipment = Node & {
   __typename?: 'Shipment';
-  /**
-   * Array of all shipment-level discount handles applied to the shipment
-   * Populated every time order shipment is modified.
-   * Useful to identify which discounts are currently active in the shipment
-   */
-  activeDiscounts: Array<ActiveDiscount>;
   amount: Scalars['Int']['output'];
   carrier?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['Date']['output'];
+  /**
+   * Array of all shipment-level discount handles applied to the shipment
+   * Populated every time order shipment is modified.
+   * Use this field to show data of current discounts applied to the shipment
+   */
+  discounts: Array<ActiveDiscount>;
   id: Scalars['ID']['output'];
   method: Scalars['String']['output'];
   order: Order;
@@ -1923,6 +1923,12 @@ export type CommonOrderFragment = {
   subtotal: number;
   total: number;
   totalQuantity: number;
+  discounts: Array<{
+    __typename?: 'ActiveDiscount';
+    handle: string;
+    applicationMode: DiscountApplicationMode;
+    discountedAmount: number;
+  }>;
   lines: {
     __typename?: 'OrderLineList';
     items: Array<{
@@ -1932,6 +1938,12 @@ export type CommonOrderFragment = {
       lineTotal: number;
       quantity: number;
       unitPrice: number;
+      discounts: Array<{
+        __typename?: 'ActiveDiscount';
+        handle: string;
+        applicationMode: DiscountApplicationMode;
+        discountedAmount: number;
+      }>;
       productVariant: {
         __typename?: 'Variant';
         id: string;
@@ -1973,9 +1985,16 @@ export type CommonOrderFragment = {
     __typename?: 'Shipment';
     id: string;
     amount: number;
+    total: number;
     carrier?: string | null;
     method: string;
     trackingCode?: string | null;
+    discounts: Array<{
+      __typename?: 'ActiveDiscount';
+      handle: string;
+      applicationMode: DiscountApplicationMode;
+      discountedAmount: number;
+    }>;
   } | null;
   payment?: {
     __typename?: 'Payment';
@@ -2806,6 +2825,11 @@ export const CommonOrderFragmentDoc = new TypedDocumentString(
   subtotal
   total
   totalQuantity
+  discounts {
+    handle
+    applicationMode
+    discountedAmount
+  }
   lines {
     items {
       id
@@ -2813,6 +2837,11 @@ export const CommonOrderFragmentDoc = new TypedDocumentString(
       lineTotal
       quantity
       unitPrice
+      discounts {
+        handle
+        applicationMode
+        discountedAmount
+      }
       productVariant {
         id
         sku
@@ -2857,9 +2886,15 @@ export const CommonOrderFragmentDoc = new TypedDocumentString(
   shipment {
     id
     amount
+    total
     carrier
     method
     trackingCode
+    discounts {
+      handle
+      applicationMode
+      discountedAmount
+    }
   }
   payment {
     id
@@ -3503,6 +3538,11 @@ export const GetOrderbyIdQueryDocument = new TypedDocumentString(`
   subtotal
   total
   totalQuantity
+  discounts {
+    handle
+    applicationMode
+    discountedAmount
+  }
   lines {
     items {
       id
@@ -3510,6 +3550,11 @@ export const GetOrderbyIdQueryDocument = new TypedDocumentString(`
       lineTotal
       quantity
       unitPrice
+      discounts {
+        handle
+        applicationMode
+        discountedAmount
+      }
       productVariant {
         id
         sku
@@ -3554,9 +3599,15 @@ export const GetOrderbyIdQueryDocument = new TypedDocumentString(`
   shipment {
     id
     amount
+    total
     carrier
     method
     trackingCode
+    discounts {
+      handle
+      applicationMode
+      discountedAmount
+    }
   }
   payment {
     id

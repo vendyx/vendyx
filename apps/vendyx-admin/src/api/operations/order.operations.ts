@@ -9,6 +9,11 @@ export const COMMON_ORDER_FRAGMENT = graphql(`
     subtotal
     total
     totalQuantity
+    discounts {
+      handle
+      applicationMode
+      discountedAmount
+    }
     lines {
       items {
         id
@@ -16,6 +21,11 @@ export const COMMON_ORDER_FRAGMENT = graphql(`
         lineTotal
         quantity
         unitPrice
+        discounts {
+          handle
+          applicationMode
+          discountedAmount
+        }
         productVariant {
           id
           sku
@@ -60,9 +70,15 @@ export const COMMON_ORDER_FRAGMENT = graphql(`
     shipment {
       id
       amount
+      total
       carrier
       method
       trackingCode
+      discounts {
+        handle
+        applicationMode
+        discountedAmount
+      }
     }
     payment {
       id

@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { Parent, ResolveField } from '@nestjs/graphql';
+import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
 
 import {
   PRISMA_FOR_SHOP,
@@ -8,6 +8,7 @@ import {
 
 import { Shipment } from '../types/gql.types';
 
+@Resolver('Shipment')
 export class ShipmentFieldResolver {
   constructor(@Inject(PRISMA_FOR_SHOP) private readonly prisma: PrismaForShop) {}
 

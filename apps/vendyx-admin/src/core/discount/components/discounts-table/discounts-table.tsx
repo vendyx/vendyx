@@ -29,7 +29,8 @@ export const DiscountsTable: FC<Props> = async props => {
       <DataTableEmptyState
         title="You have no discounts"
         description="Create discounts for your products and start selling with discounted prices."
-        action={{ label: 'Add discount', to: '/discounts/new' }}
+        // TODO: Add action to create discount <SelectDiscountType />
+        // action={{ label: 'Add discount', to: '/discounts/new?' }}
       />
     );
   }
