@@ -23,7 +23,7 @@ export const DiscountDetailsForm: FC<Props> = ({ type, discount }) => {
         <form onSubmit={form.onSubmit}>
           <AdminPageLayout
             title={discount ? discount.handle : 'Create discount'}
-            actions={<DiscountDetailsFormSubmitButton />}
+            actions={<DiscountDetailsFormSubmitButton discount={discount} />}
             maxWidth
           >
             <DiscountDetails />

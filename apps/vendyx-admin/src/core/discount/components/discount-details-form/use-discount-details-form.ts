@@ -18,6 +18,7 @@ import { notification } from '@/shared/notifications/notifications';
 import { createDiscount } from '../../actions/create-discount';
 import { updateDiscount } from '../../actions/update-discount';
 
+// TODO: use different fields for discountValue and orderRequirementValue, one for percentage and other for price
 export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDiscountFragment) => {
   const [isLoading, startTransition] = useTransition();
   const [isSuccess, setIsSuccess] = useState(false);
@@ -29,7 +30,12 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
       handle: discount?.handle ?? '',
       enabled: discount?.enabled ?? true,
       discountValueType: discount?.discountValueType ?? DiscountValueType.Percentage,
-      discountValue: discount?.discountValue ?? 0,
+      discountValue:
+        discount?.discountValueType === DiscountValueType.FixedAmount
+          ? discount.discountValue
+            ? discount.discountValue / 100
+            : undefined
+          : (discount?.discountValue ?? 0),
       startsAt: discount?.startsAt ?? new Date(),
       endsAt: discount?.endsAt,
       appliesTo: DiscountAppliesTo.Collections,
@@ -52,7 +58,12 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
       handle: discount?.handle ?? '',
       enabled: discount?.enabled ?? true,
       discountValueType: discount?.discountValueType ?? DiscountValueType.Percentage,
-      discountValue: discount?.discountValue ?? 0,
+      discountValue:
+        discount?.discountValueType === DiscountValueType.FixedAmount
+          ? discount.discountValue
+            ? discount.discountValue / 100
+            : undefined
+          : (discount?.discountValue ?? 0),
       startsAt: discount?.startsAt ?? new Date(),
       appliesTo: DiscountAppliesTo.Collections,
       endsAt: discount?.endsAt,
