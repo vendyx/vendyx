@@ -50,9 +50,9 @@ type Order implements Node {
   """
   Array of all order-level discount handles applied to the order
   Populated every time order is modified.
-  Useful to identify which discounts are currently active in the order
+  Use this field to show data of current discounts applied to the order
   """
-  activeDiscounts: [ActiveDiscount!]!
+  discounts: [ActiveDiscount!]!
 
   lines(input: ListInput): OrderLineList!
   customer: Customer
@@ -82,6 +82,7 @@ type ActiveDiscount {
   id: ID!
   handle: String!
   applicationMode: DiscountApplicationMode!
+  discountedAmount: Int!
 }
 
 enum DiscountApplicationMode {

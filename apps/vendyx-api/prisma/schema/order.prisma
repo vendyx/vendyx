@@ -35,11 +35,14 @@ model Order {
   shippingAddress Json?      @map("shipping_address")
   /// Array of all order-level discount handles applied to the order
   /// Populated every time order is modified.
-  /// Useful to identify which discounts are currently active in the order
+  /// Use this field to show data of current discounts applied to the order
   /// Type: ActiveDiscount[]
+  ///
+  /// NOTE: this field is exposed in the api as `discounts`
   activeDiscounts Json       @default("[]") @map("active_discounts") @db.Json
 
   /// Any-level Discounts applied to the order, only populated when the order is paid
+  /// Use this field for querying the order discounts, not the `activeDiscounts` field
   discounts DiscountOrder[]
 
   lines OrderLine[]
@@ -73,8 +76,10 @@ model OrderLine {
   lineTotal       Int  @default(0) @map("line_total")
   /// Array of all order-line-level discount handles applied to the line
   /// Populated every time order line is modified.
-  /// Useful to identify which discounts are currently active in the line
+  /// Use this field to show data of current discounts applied to the order line
   /// Type: ActiveDiscount[]
+  ///
+  /// NOTE: this field is exposed in the api as `discounts`
   activeDiscounts Json @default("[]") @map("active_discounts") @db.Json
 
   order            Order   @relation(fields: [orderId], references: [id])

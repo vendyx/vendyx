@@ -23,6 +23,13 @@ export type Scalars = {
   JSON: { input: any; output: any };
 };
 
+export type ActiveDiscount = {
+  __typename?: 'ActiveDiscount';
+  applicationMode: DiscountApplicationMode;
+  handle: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+};
+
 export type Address = Node & {
   __typename?: 'Address';
   city: Scalars['String']['output'];
@@ -45,6 +52,7 @@ export type AddressJson = {
   __typename?: 'AddressJson';
   city: Scalars['String']['output'];
   country: Scalars['String']['output'];
+  countryId: Scalars['String']['output'];
   fullName: Scalars['String']['output'];
   isDefault: Scalars['Boolean']['output'];
   phoneNumber: Scalars['String']['output'];
@@ -721,9 +729,16 @@ export type OptionValue = Node & {
 
 export type Order = Node & {
   __typename?: 'Order';
+  /**
+   * Array of all order-level discount handles applied to the order
+   * Populated every time order is modified.
+   * Useful to identify which discounts are currently active in the order
+   */
+  activeDiscounts: Array<ActiveDiscount>;
   code: Scalars['String']['output'];
   createdAt: Scalars['Date']['output'];
   customer?: Maybe<Customer>;
+  discounts: Array<Discount>;
   id: Scalars['ID']['output'];
   lines: OrderLineList;
   payment?: Maybe<Payment>;
@@ -764,6 +779,12 @@ export type OrderFilters = {
 
 export type OrderLine = Node & {
   __typename?: 'OrderLine';
+  /**
+   * Array of all order-line-level discount handles applied to the line
+   * Populated every time order line is modified.
+   * Useful to identify which discounts are currently active in the line
+   */
+  activeDiscounts: Array<ActiveDiscount>;
   createdAt: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
   lineSubtotal: Scalars['Int']['output'];
@@ -1069,12 +1090,19 @@ export type QueryZoneArgs = {
 
 export type Shipment = Node & {
   __typename?: 'Shipment';
+  /**
+   * Array of all shipment-level discount handles applied to the shipment
+   * Populated every time order shipment is modified.
+   * Useful to identify which discounts are currently active in the shipment
+   */
+  activeDiscounts: Array<ActiveDiscount>;
   amount: Scalars['Int']['output'];
   carrier?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
   method: Scalars['String']['output'];
   order: Order;
+  total: Scalars['Int']['output'];
   trackingCode?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['Date']['output'];
 };

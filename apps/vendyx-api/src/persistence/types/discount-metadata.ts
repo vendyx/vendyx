@@ -29,6 +29,7 @@ export class ActiveDiscount {
   constructor(
     public id: ID,
     public handle: string,
-    public applicationMode: DiscountApplicationMode
+    public applicationMode: DiscountApplicationMode,
+    public discountedAmount: number
   ) {}
 }

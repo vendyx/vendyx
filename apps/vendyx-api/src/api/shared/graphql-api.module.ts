@@ -1,6 +1,6 @@
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Logger, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 
@@ -28,13 +28,19 @@ export class GraphqlApiModule {
         typePaths: options.typePaths,
         include: options.include,
         // Al unhandled http error comes here (executed after filters)
+        // TODO: if a prisma error is thrown in the resolver, it will be not caught by the filter
         formatError: error => {
           const originalError = error.extensions?.originalError as OriginalError;
 
           // Http exception throw by nestjs
           if (!originalError) {
+            const isInternalServerError = error.extensions?.code === 'INTERNAL_SERVER_ERROR';
+            Logger.error({
+              type: 'NESTJS_ERROR',
+              ...error
+            });
             return {
-              message: error.message,
+              message: isInternalServerError ? 'Internal server error' : error.message,
               code: error.extensions?.code
             };
           }

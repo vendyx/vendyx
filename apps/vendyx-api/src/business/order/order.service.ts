@@ -741,11 +741,18 @@ export class OrderService extends OrderFinders {
       const discountedPrice = this.getDiscountedPrice(order, discount);
 
       if (discountedPrice.orderSubtotal !== undefined) {
+        const discountedAmount = order.subtotal - discountedPrice.orderSubtotal;
+
         order.subtotal = discountedPrice.orderSubtotal;
         order.total = order.subtotal + (order.shipment?.amount ?? 0);
         order.activeDiscounts = [
           ...(order.activeDiscounts as unknown as ActiveDiscount[]),
-          new ActiveDiscount(discount.id, discount.handle, discount.applicationMode)
+          new ActiveDiscount(
+            discount.id,
+            discount.handle,
+            discount.applicationMode,
+            discountedAmount
+          )
         ] as unknown as JsonValue;
 
         continue;
@@ -758,10 +765,17 @@ export class OrderService extends OrderFinders {
         for (const line of discountedPrice?.lines?.details ?? []) {
           const lineToUpdate = order.lines.find(l => l.id === line.lineId);
           if (lineToUpdate) {
+            const discountedAmount = lineToUpdate.lineTotal - line.linePrice;
+
             lineToUpdate.lineTotal = line.linePrice;
             lineToUpdate.activeDiscounts = [
               ...(lineToUpdate.activeDiscounts as unknown as ActiveDiscount[]),
-              new ActiveDiscount(discount.id, discount.handle, discount.applicationMode)
+              new ActiveDiscount(
+                discount.id,
+                discount.handle,
+                discount.applicationMode,
+                discountedAmount
+              )
             ] as unknown as JsonValue;
           }
         }
@@ -773,11 +787,18 @@ export class OrderService extends OrderFinders {
 
         continue;
       } else if (discountedPrice.shipmentAmount && order.shipment) {
+        const discountedAmount = order.shipment.total - discountedPrice.shipmentAmount;
+
         order.shipment.total = discountedPrice.shipmentAmount;
         order.total = order.subtotal + discountedPrice.shipmentAmount;
         order.shipment.activeDiscounts = [
           ...(order.shipment.activeDiscounts as unknown as ActiveDiscount[]),
-          new ActiveDiscount(discount.id, discount.handle, discount.applicationMode)
+          new ActiveDiscount(
+            discount.id,
+            discount.handle,
+            discount.applicationMode,
+            discountedAmount
+          )
         ] as unknown as JsonValue;
 
         continue;

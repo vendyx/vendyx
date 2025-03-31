@@ -11,9 +11,9 @@ type OrderLine implements Node {
   """
   Array of all order-line-level discount handles applied to the line
   Populated every time order line is modified.
-  Useful to identify which discounts are currently active in the line
+  Use this field to show data of current discounts applied to the order line
   """
-  activeDiscounts: [ActiveDiscount!]!
+  discounts: [ActiveDiscount!]!
 
   productVariant: Variant!
 }

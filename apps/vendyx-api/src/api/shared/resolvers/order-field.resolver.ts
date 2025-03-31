@@ -68,4 +68,14 @@ export class OrderFieldResolver {
 
     return formatOrderCode(code);
   }
+
+  @ResolveField('discounts')
+  async discounts(@Parent() order: Order) {
+    const result = await this.prisma.order.findUnique({
+      where: { id: order.id },
+      select: { activeDiscounts: true }
+    });
+
+    return result?.activeDiscounts;
+  }
 }

@@ -22,9 +22,10 @@ import { formatPrice } from '@/shared/utils/formatters';
 import { cn } from '@/shared/utils/theme';
 
 export const OrderItemsTable: FC<Props> = ({ order }) => {
+  const base = useBase();
+
   const lines = order.lines.items;
   const { shipment } = order;
-  const base = useBase();
 
   return (
     <Card>
@@ -89,6 +90,19 @@ export const OrderItemsTable: FC<Props> = ({ order }) => {
                 </TableRow>
               );
             })}
+
+            {/* {!!orderLevelDiscounts.length && (
+              <TableRow className="border-transparent">
+                <TableCell>Discounts</TableCell>
+                <TableCell>
+                  {orderLevelDiscounts.map(d => (
+                    <span key={d.id}>{d.handle}</span>
+                  ))}
+                </TableCell>
+                <TableCell></TableCell>
+                <TableCell>{formatPrice(order.subtotal)}</TableCell>
+              </TableRow>
+            )} */}
 
             <TableRow className="border-transparent">
               <TableCell>Subtotal</TableCell>

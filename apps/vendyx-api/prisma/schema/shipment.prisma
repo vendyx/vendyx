@@ -17,8 +17,10 @@ model Shipment {
   carrier         String?
   /// Array of all shipment-level discount handles applied to the shipment
   /// Populated every time order shipment is modified.
-  /// Useful to identify which discounts are currently active in the shipment
+  /// Use this field to show data of current discounts applied to the shipment
   /// Type: ActiveDiscount[]
+  ///
+  /// NOTE: this field is exposed in the api as `discounts`
   activeDiscounts Json    @default("[]") @map("active_discounts") @db.Json
 
   Order Order[]
