@@ -25,7 +25,7 @@ export class ProductRepository {
           : undefined,
         variants: input?.variantsIds ? { some: { id: { in: input.variantsIds } } } : undefined
       },
-      orderBy: { createdAt: 'asc' }
+      orderBy: { createdAt: 'desc' }
     });
   }
 
