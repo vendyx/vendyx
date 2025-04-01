@@ -3,7 +3,7 @@
 import { type FC } from 'react';
 import { type DeepPartial, useFormContext, useWatch } from 'react-hook-form';
 
-import { type CommonDiscountFragment, DiscountValueType } from '@/api/types';
+import { type CommonDiscountFragment, DiscountValueType, OrderRequirementType } from '@/api/types';
 import BlockerWhenDirty from '@/shared/components/blocker-when-dirty/blocker-when-dirty';
 import { Button } from '@/shared/components/ui/button';
 import { formatPrice, parsePrice } from '@/shared/utils/formatters';
@@ -45,8 +45,7 @@ const valuesHasChanged = (
     startsAt: formInput.startsAt,
     endsAt: formInput.endsAt,
     discountValueType: formInput.discountValueType,
-    orderRequirementType: formInput.orderRequirementType,
-    orderRequirementValue: formInput.orderRequirementValue ?? null
+    orderRequirementType: formInput.orderRequirementType
   };
 
   const baseValuesHasChanged = Object.keys(form).some(key => {
@@ -58,7 +57,12 @@ const valuesHasChanged = (
       ? discount.discountValue !== Number(formInput.discountValuePercentage)
       : discount.discountValue !== parsePrice(formInput.discountValueAmount ?? formatPrice(0));
 
-  return baseValuesHasChanged || discountValueHasChanged;
+  const orderRequirementValueHasChanged =
+    formInput.orderRequirementType === OrderRequirementType.MinimumAmount
+      ? discount.orderRequirementValue !== (formInput.orderRequirementValue ?? 0) * 100
+      : discount.orderRequirementValue !== (formInput.orderRequirementValue ?? null);
+
+  return baseValuesHasChanged || discountValueHasChanged || orderRequirementValueHasChanged;
 };
 
 type Props = {
