@@ -411,6 +411,7 @@ export type DiscountErrorResult = {
 };
 
 export type DiscountFilters = {
+  enabled?: InputMaybe<BooleanFilter>;
   handle?: InputMaybe<StringFilter>;
 };
 

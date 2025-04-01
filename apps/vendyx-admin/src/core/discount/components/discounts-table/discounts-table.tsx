@@ -15,13 +15,13 @@ import { DataTableEmptyState } from '@/shared/components/empty-states/data-table
 
 import { DiscountsTableData } from './discounts-table-data';
 
-export const DiscountsTable: FC<Props> = async props => {
+export const DiscountsTable: FC<Props> = async ({ enabled, ...props }) => {
   const { page, search, size } = parseDataTableSearchParams({ ...props });
 
   const { items: discounts, pageInfo } = await DiscountService.getAll({
     skip: getSkip(page, size),
     take: size,
-    filters: { handle: { contains: search } }
+    filters: { handle: { contains: search }, enabled: { equals: enabled } }
   });
 
   if (!discounts.length && !search) {
@@ -55,4 +55,6 @@ export type DiscountsTableRow = {
   metadata?: unknown;
 };
 
-type Props = DataTableSearchParams;
+type Props = DataTableSearchParams & {
+  enabled?: boolean;
+};

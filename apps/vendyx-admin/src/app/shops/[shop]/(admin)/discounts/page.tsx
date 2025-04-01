@@ -5,13 +5,28 @@ import { SelectDiscountToAddButton } from '@/core/discount/components/select-dis
 import { type DataTableSearchParams } from '@/shared/components/data-table/data-table-utils';
 import { AdminPageLayout } from '@/shared/components/layout/admin-page-layout/admin-page-layout';
 import { DataTableSkeleton } from '@/shared/components/skeletons/data-table-skeletons';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 
 export default function DiscountsPage({ searchParams }: Props) {
   return (
     <AdminPageLayout title="Discounts" actions={<SelectDiscountToAddButton />}>
-      <Suspense fallback={<DataTableSkeleton />}>
-        <DiscountsTable {...searchParams} />
-      </Suspense>
+      <Tabs defaultValue="all">
+        <TabsList>
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="active">Active</TabsTrigger>
+        </TabsList>
+        <TabsContent value="all">
+          <Suspense fallback={<DataTableSkeleton />}>
+            <DiscountsTable {...searchParams} />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="active">
+          <Suspense fallback={<DataTableSkeleton />}>
+            <DiscountsTable {...searchParams} enabled />
+          </Suspense>
+        </TabsContent>
+      </Tabs>
     </AdminPageLayout>
   );
 }

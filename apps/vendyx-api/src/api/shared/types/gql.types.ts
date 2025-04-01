@@ -198,6 +198,7 @@ export class DiscountListInput {
 }
 
 export class DiscountFilters {
+    enabled?: Nullable<BooleanFilter>;
     handle?: Nullable<StringFilter>;
 }
 
@@ -593,6 +594,8 @@ export abstract class IMutation {
     abstract addPaymentToOrder(orderId: string, input: AddPaymentToOrderInput): OrderResult | Promise<OrderResult>;
 
     abstract addDiscountCodeToOrder(orderId: string, code: string): OrderResult | Promise<OrderResult>;
+
+    abstract removeDiscountCodeFromOrder(orderId: string, code: string): OrderResult | Promise<OrderResult>;
 
     abstract createPaypalOrder(orderId: string): PaypalResult | Promise<PaypalResult>;
 }

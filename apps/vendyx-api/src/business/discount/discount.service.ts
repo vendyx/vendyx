@@ -25,9 +25,13 @@ export class DiscountService {
     return this.prisma.discount.findMany({
       ...clean({ skip: input?.skip, take: input?.take }),
       where: {
+        ...clean(input?.filters ?? {}),
         handle: input?.filters?.handle
           ? { ...clean(input.filters.handle), mode: 'insensitive' }
           : {}
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
   }
