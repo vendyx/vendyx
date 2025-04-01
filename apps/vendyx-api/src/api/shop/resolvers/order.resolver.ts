@@ -113,4 +113,18 @@ export class OrderResolver {
 
     return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
   }
+
+  @Mutation('addDiscountCodeToOrder')
+  async addDiscountCodeToOrder(@Args('orderId') orderId: ID, @Args('code') code: string) {
+    const result = await this.orderService.addDiscountCode(orderId, code);
+
+    return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
+  }
+
+  @Mutation('removeDiscountCodeFromOrder')
+  async removeDiscountCodeFromOrder(@Args('orderId') orderId: ID, @Args('code') code: string) {
+    const result = await this.orderService.removeDiscountCode(orderId, code);
+
+    return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
+  }
 }

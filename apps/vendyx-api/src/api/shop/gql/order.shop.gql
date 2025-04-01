@@ -7,6 +7,14 @@ type Mutation {
   addShippingAddressToOrder(orderId: ID!, input: CreateOrderAddressInput!): OrderResult!
   addShipmentToOrder(orderId: ID!, input: AddShipmentToOrderInput!): OrderResult!
   addPaymentToOrder(orderId: ID!, input: AddPaymentToOrderInput!): OrderResult!
+  """
+  Add a discount code to the order.
+  """
+  addDiscountCodeToOrder(orderId: ID!, code: String!): OrderResult!
+  """
+  Remove a discount code from the order.
+  """
+  removeDiscountCodeFromOrder(orderId: ID!, code: String!): OrderResult!
 }
 
 type Query {
@@ -76,6 +84,17 @@ enum OrderErrorCode {
   PAYMENT_METHOD_NOT_FOUND
   PAYMENT_DECLINED
   ORDER_TRANSITION_ERROR
+  """
+  Error thrown when trying to add a discount code to an order and the discount code provided
+  | does not exist
+  | is not enabled
+  """
+  INVALID_DISCOUNT_CODE
+  """
+  Error thrown when the discount code is not applicable to the order
+  due to validation rules but the discount code itself is active
+  """
+  DISCOUNT_CODE_NOT_APPLICABLE
   """
   Payment failed due to an unexpected error in the payment handler
   """

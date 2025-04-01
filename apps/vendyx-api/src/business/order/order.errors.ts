@@ -85,6 +85,29 @@ export class PaymentDeclined extends ErrorResult<OrderErrorCode> {
   }
 }
 
+/**
+ * @description
+ * Error thrown when trying to add a discount code to an order and the discount code provided
+ * | does not exist
+ * | is not enabled
+ */
+export class InvalidDiscountCode extends ErrorResult<OrderErrorCode> {
+  constructor() {
+    super(OrderErrorCode.INVALID_DISCOUNT_CODE, 'Invalid discount code');
+  }
+}
+
+/**
+ * @description
+ * Error thrown when trying to add a discount code to an order and the discount code provided
+ * is not applicable to the order due to validation rules but the discount code itself is active
+ */
+export class DiscountCodeNotApplicable extends ErrorResult<OrderErrorCode> {
+  constructor() {
+    super(OrderErrorCode.DISCOUNT_CODE_NOT_APPLICABLE, 'Discount code not applicable');
+  }
+}
+
 export class FailedAddingShippingMethod extends ErrorResult<OrderErrorCode> {
   constructor(reason: string) {
     super(OrderErrorCode.FAILED_ADDING_SHIPPING_METHOD, reason);

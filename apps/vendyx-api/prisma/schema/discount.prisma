@@ -30,7 +30,7 @@ model Discount {
   /// Indicates if the discount is applied via a code or automatically.
   applicationMode       DiscountApplicationMode @map("application_mode")
   /// A human friendly unique identifier for the discount. could be used as a code or title.
-  handle                String
+  handle                String                  @unique
   /// Indicates if the discount is applied as a percentage or a fixed amount.
   discountValueType     DiscountValueType       @map("discount_value_type")
   /// the value that will be subtracted from the order total. (percentage or fixed amount)

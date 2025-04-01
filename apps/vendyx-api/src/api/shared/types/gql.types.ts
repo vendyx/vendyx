@@ -53,6 +53,8 @@ export enum OrderErrorCode {
     PAYMENT_METHOD_NOT_FOUND = "PAYMENT_METHOD_NOT_FOUND",
     PAYMENT_DECLINED = "PAYMENT_DECLINED",
     ORDER_TRANSITION_ERROR = "ORDER_TRANSITION_ERROR",
+    INVALID_DISCOUNT_CODE = "INVALID_DISCOUNT_CODE",
+    DISCOUNT_CODE_NOT_APPLICABLE = "DISCOUNT_CODE_NOT_APPLICABLE",
     PAYMENT_FAILED = "PAYMENT_FAILED",
     FORBIDDEN_ORDER_ACTION = "FORBIDDEN_ORDER_ACTION"
 }
@@ -454,6 +456,8 @@ export class AddCustomerToOrderInput {
 }
 
 export class CreateOrderAddressInput {
+    fullName: string;
+    phoneNumber?: Nullable<string>;
     countryId: string;
     streetLine1: string;
     streetLine2?: Nullable<string>;
@@ -496,7 +500,7 @@ export abstract class IMutation {
 
     abstract updateDiscount(id: string, input: UpdateDiscountInput): DiscountResult | Promise<DiscountResult>;
 
-    abstract removeDiscounts(id: string[]): Nullable<boolean> | Promise<Nullable<boolean>>;
+    abstract removeDiscounts(ids: string[]): Nullable<boolean> | Promise<Nullable<boolean>>;
 
     abstract createOption(productId: string, input: CreateOptionInput): Option | Promise<Option>;
 
@@ -588,6 +592,8 @@ export abstract class IMutation {
 
     abstract addPaymentToOrder(orderId: string, input: AddPaymentToOrderInput): OrderResult | Promise<OrderResult>;
 
+    abstract addDiscountCodeToOrder(orderId: string, code: string): OrderResult | Promise<OrderResult>;
+
     abstract createPaypalOrder(orderId: string): PaypalResult | Promise<PaypalResult>;
 }
 
@@ -615,6 +621,8 @@ export abstract class IQuery {
     abstract paymentHandlers(): PaymentHandler[] | Promise<PaymentHandler[]>;
 
     abstract products(input?: Nullable<ProductListInput>): ProductList | Promise<ProductList>;
+
+    abstract productsByVariantIds(ids: string[], input?: Nullable<ProductListInput>): ProductList | Promise<ProductList>;
 
     abstract shippingMethods(): ShippingMethod[] | Promise<ShippingMethod[]>;
 
@@ -993,6 +1001,7 @@ export class OrderLine implements Node {
     quantity: number;
     lineSubtotal: number;
     lineTotal: number;
+    discounts: ActiveDiscount[];
     productVariant: Variant;
 }
 
@@ -1012,6 +1021,7 @@ export class Order implements Node {
     subtotal: number;
     placedAt?: Nullable<Date>;
     totalQuantity: number;
+    discounts: ActiveDiscount[];
     lines?: OrderLineList;
     customer?: Nullable<Customer>;
     shippingAddress?: Nullable<AddressJson>;
@@ -1021,6 +1031,7 @@ export class Order implements Node {
 
 export class AddressJson {
     country: string;
+    countryId: string;
     fullName: string;
     streetLine1: string;
     streetLine2?: Nullable<string>;
@@ -1030,6 +1041,13 @@ export class AddressJson {
     phoneNumber: string;
     references?: Nullable<string>;
     isDefault: boolean;
+}
+
+export class ActiveDiscount {
+    id: string;
+    handle: string;
+    applicationMode: DiscountApplicationMode;
+    discountedAmount: number;
 }
 
 export class OrderList implements List {
@@ -1074,7 +1092,9 @@ export class Shipment implements Node {
     trackingCode?: Nullable<string>;
     carrier?: Nullable<string>;
     amount: number;
+    total: number;
     method: string;
+    discounts: ActiveDiscount[];
     order: Order;
 }
 
