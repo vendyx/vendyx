@@ -114,7 +114,10 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
       };
 
       if (discount) {
-        await updateDiscount(discount.id, generalInput);
+        await updateDiscount(discount.id, {
+          ...generalInput,
+          orderRequirementType: input.orderRequirementType ?? null
+        });
         setIsSuccess(true);
       } else {
         if (type === DiscountType.Order) {

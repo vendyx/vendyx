@@ -108,8 +108,9 @@ export class DiscountService {
       where: { id },
       data: {
         ...clean(input),
-        discountValue,
-        orderRequirementValue
+        orderRequirementType: input.orderRequirementType,
+        orderRequirementValue: input.orderRequirementType !== null ? orderRequirementValue : null,
+        discountValue
       }
     });
   }

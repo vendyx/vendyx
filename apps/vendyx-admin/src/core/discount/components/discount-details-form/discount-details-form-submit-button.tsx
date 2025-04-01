@@ -45,6 +45,7 @@ const valuesHasChanged = (
     startsAt: formInput.startsAt,
     endsAt: formInput.endsAt,
     discountValueType: formInput.discountValueType,
+    orderRequirementType: formInput.orderRequirementType,
     orderRequirementValue: formInput.orderRequirementValue ?? null
   };
 
