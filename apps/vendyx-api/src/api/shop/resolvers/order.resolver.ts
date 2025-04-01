@@ -89,6 +89,27 @@ export class OrderResolver {
     return shippingMethods;
   }
 
+  @Mutation('addDiscountCodeToOrder')
+  async addDiscountCodeToOrder(@Args('orderId') orderId: ID, @Args('code') code: string) {
+    const result = await this.orderService.addDiscountCode(orderId, code);
+
+    return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
+  }
+
+  @Mutation('removeDiscountCodeFromOrder')
+  async removeDiscountCodeFromOrder(@Args('orderId') orderId: ID, @Args('code') code: string) {
+    const result = await this.orderService.removeDiscountCode(orderId, code);
+
+    return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
+  }
+
+  @Mutation('recalculateDiscounts')
+  async recalculateDiscounts(@Args('orderId') orderId: ID) {
+    const result = await this.orderService.recalculateDiscounts(orderId);
+
+    return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
+  }
+
   @Query('availablePaymentMethods')
   async availablePaymentMethods() {
     return this.orderService.findAvailablePaymentMethods();
@@ -110,20 +131,6 @@ export class OrderResolver {
     @Args('input') input: AddPaymentToOrderInput
   ) {
     const result = await this.orderService.addPayment(orderId, input);
-
-    return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
-  }
-
-  @Mutation('addDiscountCodeToOrder')
-  async addDiscountCodeToOrder(@Args('orderId') orderId: ID, @Args('code') code: string) {
-    const result = await this.orderService.addDiscountCode(orderId, code);
-
-    return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
-  }
-
-  @Mutation('removeDiscountCodeFromOrder')
-  async removeDiscountCodeFromOrder(@Args('orderId') orderId: ID, @Args('code') code: string) {
-    const result = await this.orderService.removeDiscountCode(orderId, code);
 
     return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
   }

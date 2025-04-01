@@ -456,6 +456,79 @@ export class OrderService extends OrderFinders {
     return this.applyDiscounts(orderUpdated, []);
   }
 
+  /**
+   * @description
+   * Add a discount code to the order
+   * If the discount is not found or disabled, return `InvalidDiscountCode` error
+   * If the discount is not applicable to the order, return `DiscountCodeNotApplicable` error
+   * If the discount is applicable, apply it to the order and return the updated order
+   */
+  async addDiscountCode(orderId: ID, code: string) {
+    const order = await this.prisma.order.findUniqueOrThrow({
+      where: { id: orderId },
+      include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
+    });
+
+    if (!this.canPerformAction(order, 'modify_discounts')) {
+      return new ForbiddenOrderAction(order.state);
+    }
+
+    const discount = await this.prisma.discount.findUnique({
+      where: { handle: code }
+    });
+
+    if (!discount?.enabled) {
+      return new InvalidDiscountCode();
+    }
+
+    const orderWithDiscounts = await this.applyDiscounts(order, [discount]);
+
+    const activeDiscounts = this.getActiveDiscounts(orderWithDiscounts);
+
+    const wasDiscountApplied = activeDiscounts.some(d => d.handle === code);
+
+    if (!wasDiscountApplied) {
+      return new DiscountCodeNotApplicable();
+    }
+
+    return orderWithDiscounts;
+  }
+
+  /**
+   * @description
+   * Remove a discount code from the order
+   */
+  async removeDiscountCode(orderId: ID, code: string) {
+    const order = await this.prisma.order.findUniqueOrThrow({
+      where: { id: orderId },
+      include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
+    });
+
+    if (!this.canPerformAction(order, 'modify_discounts')) {
+      return new ForbiddenOrderAction(order.state);
+    }
+
+    return this.applyDiscounts(order, [], [code]);
+  }
+
+  /**
+   * Re calculate the order discounts.
+   * This is useful when you need to show a most up to date order without the need to modify the order.
+   * (discounts only recalculate when order is mutated)
+   */
+  async recalculateDiscounts(orderId: ID) {
+    const order = await this.prisma.order.findUniqueOrThrow({
+      where: { id: orderId },
+      include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
+    });
+
+    if (!this.canPerformAction(order, 'modify_discounts')) {
+      return new ForbiddenOrderAction(order.state);
+    }
+
+    return this.applyDiscounts(order);
+  }
+
   async addPayment(orderId: ID, input: AddPaymentToOrderInput) {
     const orderToIntend = await this.prisma.order.findUniqueOrThrow({
       where: { id: orderId },
@@ -560,61 +633,6 @@ export class OrderService extends OrderFinders {
     this.eventBus.emit(new OrderPaidEvent(orderToReturn.id));
 
     return orderToReturn;
-  }
-
-  /**
-   * @description
-   * Add a discount code to the order
-   * If the discount is not found or disabled, return `InvalidDiscountCode` error
-   * If the discount is not applicable to the order, return `DiscountCodeNotApplicable` error
-   * If the discount is applicable, apply it to the order and return the updated order
-   */
-  async addDiscountCode(orderId: ID, code: string) {
-    const order = await this.prisma.order.findUniqueOrThrow({
-      where: { id: orderId },
-      include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
-    });
-
-    if (!this.canPerformAction(order, 'modify_discounts')) {
-      return new ForbiddenOrderAction(order.state);
-    }
-
-    const discount = await this.prisma.discount.findUnique({
-      where: { handle: code }
-    });
-
-    if (!discount?.enabled) {
-      return new InvalidDiscountCode();
-    }
-
-    const orderWithDiscounts = await this.applyDiscounts(order, [discount]);
-
-    const activeDiscounts = this.getActiveDiscounts(orderWithDiscounts);
-
-    const wasDiscountApplied = activeDiscounts.some(d => d.handle === code);
-
-    if (!wasDiscountApplied) {
-      return new DiscountCodeNotApplicable();
-    }
-
-    return orderWithDiscounts;
-  }
-
-  /**
-   * @description
-   * Remove a discount code from the order
-   */
-  async removeDiscountCode(orderId: ID, code: string) {
-    const order = await this.prisma.order.findUniqueOrThrow({
-      where: { id: orderId },
-      include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
-    });
-
-    if (!this.canPerformAction(order, 'modify_discounts')) {
-      return new ForbiddenOrderAction(order.state);
-    }
-
-    return this.applyDiscounts(order, [], [code]);
   }
 
   async markAsShipped(orderId: ID, input: MarkOrderAsShippedInput) {

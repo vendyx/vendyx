@@ -6,7 +6,6 @@ type Mutation {
   addCustomerToOrder(orderId: ID!, input: AddCustomerToOrderInput!): OrderResult!
   addShippingAddressToOrder(orderId: ID!, input: CreateOrderAddressInput!): OrderResult!
   addShipmentToOrder(orderId: ID!, input: AddShipmentToOrderInput!): OrderResult!
-  addPaymentToOrder(orderId: ID!, input: AddPaymentToOrderInput!): OrderResult!
   """
   Add a discount code to the order.
   """
@@ -15,6 +14,13 @@ type Mutation {
   Remove a discount code from the order.
   """
   removeDiscountCodeFromOrder(orderId: ID!, code: String!): OrderResult!
+  """
+  Re calculate the order discounts.
+  This is useful when you need to show a most up to date order without the need to modify the order.
+  (discounts only recalculate when order is mutated)
+  """
+  recalculateDiscounts(orderId: ID!): OrderResult!
+  addPaymentToOrder(orderId: ID!, input: AddPaymentToOrderInput!): OrderResult!
 }
 
 type Query {
