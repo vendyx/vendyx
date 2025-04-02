@@ -48,9 +48,15 @@ type Order implements Node {
   placedAt: Date
   totalQuantity: Int!
   """
-  Array of all order-level discount handles applied to the order
+  Array of all order-level discounts applied to the order
   Populated every time order is modified.
   Use this field to show data of current discounts applied to the order
+
+  Note1: Vendyx allows to add shipping discounts before a shipping method is selected for the order (`order.shipment` is null)
+  so for that cases this field will contain that shipping discounts.
+
+  Note2: When the order already has a shipping method selected (`order.shipment` is not null), this filed will now contain only order-level discounts
+  and the shipping discounts will be placed in `order.shipment`.
   """
   discounts: [ActiveDiscount!]!
 
@@ -76,18 +82,6 @@ type AddressJson {
   phoneNumber: String!
   references: String
   isDefault: Boolean!
-}
-
-type ActiveDiscount {
-  id: ID!
-  handle: String!
-  applicationMode: DiscountApplicationMode!
-  discountedAmount: Int!
-}
-
-enum DiscountApplicationMode {
-  CODE
-  AUTOMATIC
 }
 
 type OrderList implements List {

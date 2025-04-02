@@ -1,4 +1,4 @@
-import { DiscountApplicationMode } from '@prisma/client';
+import { DiscountApplicationMode, DiscountType } from '@prisma/client';
 
 import { ID } from './scalars.type';
 
@@ -30,6 +30,7 @@ export class ActiveDiscount {
     public id: ID,
     public handle: string,
     public applicationMode: DiscountApplicationMode,
+    public type: DiscountType,
     public discountedAmount: number
   ) {}
 }

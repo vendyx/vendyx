@@ -9,7 +9,7 @@ type Shipment implements Node {
   method: String!
 
   """
-  Array of all shipment-level discount handles applied to the shipment
+  Array of all shipment-level discounts applied to the shipment
   Populated every time order shipment is modified.
   Use this field to show data of current discounts applied to the shipment
   """

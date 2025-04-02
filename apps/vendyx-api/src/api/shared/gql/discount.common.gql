@@ -1,0 +1,19 @@
+enum DiscountApplicationMode {
+  CODE
+  AUTOMATIC
+}
+
+enum DiscountType {
+  ORDER
+  PRODUCT
+  SHIPPING
+  BUY_X_GET_Y
+}
+
+type ActiveDiscount {
+  id: ID!
+  handle: String!
+  applicationMode: DiscountApplicationMode!
+  discountType: DiscountType!
+  discountedAmount: Int!
+}

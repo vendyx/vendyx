@@ -1,18 +1,6 @@
-enum DiscountApplicationMode {
-  CODE
-  AUTOMATIC
-}
-
 enum DiscountValueType {
   PERCENTAGE
   FIXED_AMOUNT
-}
-
-enum DiscountType {
-  ORDER
-  PRODUCT
-  SHIPPING
-  BUY_X_GET_Y
 }
 
 enum OrderRequirementType {

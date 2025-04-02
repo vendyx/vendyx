@@ -828,6 +828,7 @@ export class OrderService extends OrderFinders {
             discount.id,
             discount.handle,
             discount.applicationMode,
+            discount.type,
             discountedAmount
           )
         ] as unknown as JsonValue;
@@ -851,6 +852,7 @@ export class OrderService extends OrderFinders {
                 discount.id,
                 discount.handle,
                 discount.applicationMode,
+                discount.type,
                 discountedAmount
               )
             ] as unknown as JsonValue;
@@ -863,7 +865,7 @@ export class OrderService extends OrderFinders {
         order.total = order.subtotal + (order.shipment?.amount ?? 0);
 
         continue;
-      } else if (discountedPrice.shipmentAmount && order.shipment) {
+      } else if (discountedPrice.shipmentAmount !== undefined && order.shipment) {
         const discountedAmount = order.shipment.total - discountedPrice.shipmentAmount;
 
         order.shipment.total =
@@ -875,6 +877,7 @@ export class OrderService extends OrderFinders {
             discount.id,
             discount.handle,
             discount.applicationMode,
+            discount.type,
             discountedAmount
           )
         ] as unknown as JsonValue;
@@ -976,7 +979,14 @@ export class OrderService extends OrderFinders {
 
         const shippingAddress = order.shippingAddress as unknown as OrderAddressJson;
 
-        if (!shippingAddress) continue;
+        // If order doesn't have a shipping address, the discount will be added
+        // at order level, not at shipping level with a discount amount of 0 taking no effect
+        // After the order has a shipment, the discount will now take effect and
+        // will be moved to shipment level
+        if (!shippingAddress) {
+          applicableDiscounts.push(discount);
+          continue;
+        }
 
         const hasCountry = countries.some(countryId => shippingAddress.countryId === countryId);
 
@@ -1128,7 +1138,7 @@ export class OrderService extends OrderFinders {
           discount
         });
         continue;
-      } else if (discountedPrice.shipmentAmount && order.shipment) {
+      } else if (discountedPrice.shipmentAmount !== undefined && order.shipment) {
         discountsWithPrices.push({
           total: order.subtotal + discountedPrice.shipmentAmount,
           discount
@@ -1182,6 +1192,11 @@ export class OrderService extends OrderFinders {
       };
     }
 
+    // If the discount is a shipping discount, but the order doesn't have a shipment,
+    // the discount will be placed at order level with a discount amount of 0 taking no effect.
+    // After the order has a shipment, the discount will now take effect and will be moved to shipment level.
+    // This is to persist any shipping discount code applied to the order before the order has a shipment
+    // and to avoid having to apply the discount again when the order has a shipment.
     if (discount.type === DiscountType.SHIPPING && order.shipment) {
       const isPercentage = discount.discountValueType === DiscountValueType.PERCENTAGE;
       const discountPrice = isPercentage
