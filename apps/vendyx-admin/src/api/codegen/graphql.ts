@@ -1640,6 +1640,12 @@ export type CommonCountryFragment = {
   states: Array<{ __typename?: 'State'; id: string; name: string }>;
 } & { ' $fragmentName'?: 'CommonCountryFragment' };
 
+export type CommonCountryForSelectorFragment = {
+  __typename?: 'Country';
+  id: string;
+  name: string;
+} & { ' $fragmentName'?: 'CommonCountryForSelectorFragment' };
+
 export type GetCountriesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetCountriesQuery = {
@@ -1647,6 +1653,17 @@ export type GetCountriesQuery = {
   countries: Array<
     { __typename?: 'Country' } & {
       ' $fragmentRefs'?: { CommonCountryFragment: CommonCountryFragment };
+    }
+  >;
+};
+
+export type GetCountriesForSelectorQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetCountriesForSelectorQuery = {
+  __typename?: 'Query';
+  countries: Array<
+    { __typename?: 'Country' } & {
+      ' $fragmentRefs'?: { CommonCountryForSelectorFragment: CommonCountryForSelectorFragment };
     }
   >;
 };
@@ -2749,6 +2766,15 @@ export const CommonCountryFragmentDoc = new TypedDocumentString(
     `,
   { fragmentName: 'CommonCountry' }
 ) as unknown as TypedDocumentString<CommonCountryFragment, unknown>;
+export const CommonCountryForSelectorFragmentDoc = new TypedDocumentString(
+  `
+    fragment CommonCountryForSelector on Country {
+  id
+  name
+}
+    `,
+  { fragmentName: 'CommonCountryForSelector' }
+) as unknown as TypedDocumentString<CommonCountryForSelectorFragment, unknown>;
 export const CommonCustomerFragmentDoc = new TypedDocumentString(
   `
     fragment CommonCustomer on Customer {
@@ -3277,6 +3303,19 @@ export const GetCountriesDocument = new TypedDocumentString(`
     name
   }
 }`) as unknown as TypedDocumentString<GetCountriesQuery, GetCountriesQueryVariables>;
+export const GetCountriesForSelectorDocument = new TypedDocumentString(`
+    query GetCountriesForSelector {
+  countries {
+    ...CommonCountryForSelector
+  }
+}
+    fragment CommonCountryForSelector on Country {
+  id
+  name
+}`) as unknown as TypedDocumentString<
+  GetCountriesForSelectorQuery,
+  GetCountriesForSelectorQueryVariables
+>;
 export const GetAllCustomersQueryDocument = new TypedDocumentString(`
     query GetAllCustomersQuery($input: CustomerListInput) {
   customers(input: $input) {

@@ -26,7 +26,9 @@ type Documents = {
   '\n  mutation UpdateCollection($id: ID!, $input: UpdateCollectionInput!) {\n    updateCollection(id: $id, input: $input) {\n      id\n    }\n  }\n': typeof types.UpdateCollectionDocument;
   '\n  mutation RemoveCollection($ids: [ID!]!) {\n    removeCollection(ids: $ids)\n  }\n': typeof types.RemoveCollectionDocument;
   '\n  fragment CommonCountry on Country {\n    id\n    name\n    states {\n      id\n      name\n    }\n  }\n': typeof types.CommonCountryFragmentDoc;
+  '\n  fragment CommonCountryForSelector on Country {\n    id\n    name\n  }\n': typeof types.CommonCountryForSelectorFragmentDoc;
   '\n  query GetCountries {\n    countries {\n      ...CommonCountry\n    }\n  }\n': typeof types.GetCountriesDocument;
+  '\n  query GetCountriesForSelector {\n    countries {\n      ...CommonCountryForSelector\n    }\n  }\n': typeof types.GetCountriesForSelectorDocument;
   '\n  fragment CommonCustomer on Customer {\n    id\n    createdAt\n    firstName\n    lastName\n    email\n    phoneNumber\n    enabled\n    totalSpent\n    orders {\n      count\n    }\n  }\n': typeof types.CommonCustomerFragmentDoc;
   '\n  fragment CommonCustomerOrder on Order {\n    id\n    code\n    placedAt\n    state\n    total\n    shipment {\n      method\n    }\n  }\n': typeof types.CommonCustomerOrderFragmentDoc;
   '\n  query GetAllCustomersQuery($input: CustomerListInput) {\n    customers(input: $input) {\n      count\n      pageInfo {\n        total\n      }\n      items {\n        id\n        firstName\n        lastName\n        email\n        enabled\n        totalSpent\n        orders {\n          count\n        }\n      }\n    }\n  }\n': typeof types.GetAllCustomersQueryDocument;
@@ -124,8 +126,12 @@ const documents: Documents = {
     types.RemoveCollectionDocument,
   '\n  fragment CommonCountry on Country {\n    id\n    name\n    states {\n      id\n      name\n    }\n  }\n':
     types.CommonCountryFragmentDoc,
+  '\n  fragment CommonCountryForSelector on Country {\n    id\n    name\n  }\n':
+    types.CommonCountryForSelectorFragmentDoc,
   '\n  query GetCountries {\n    countries {\n      ...CommonCountry\n    }\n  }\n':
     types.GetCountriesDocument,
+  '\n  query GetCountriesForSelector {\n    countries {\n      ...CommonCountryForSelector\n    }\n  }\n':
+    types.GetCountriesForSelectorDocument,
   '\n  fragment CommonCustomer on Customer {\n    id\n    createdAt\n    firstName\n    lastName\n    email\n    phoneNumber\n    enabled\n    totalSpent\n    orders {\n      count\n    }\n  }\n':
     types.CommonCustomerFragmentDoc,
   '\n  fragment CommonCustomerOrder on Order {\n    id\n    code\n    placedAt\n    state\n    total\n    shipment {\n      method\n    }\n  }\n':
@@ -346,8 +352,20 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
+  source: '\n  fragment CommonCountryForSelector on Country {\n    id\n    name\n  }\n'
+): typeof import('./graphql').CommonCountryForSelectorFragmentDoc;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
   source: '\n  query GetCountries {\n    countries {\n      ...CommonCountry\n    }\n  }\n'
 ): typeof import('./graphql').GetCountriesDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetCountriesForSelector {\n    countries {\n      ...CommonCountryForSelector\n    }\n  }\n'
+): typeof import('./graphql').GetCountriesForSelectorDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -1,12 +1,17 @@
 import { type PropsWithChildren } from 'react';
 
-import { type CommonDiscountFragment, type DiscountType } from '@/api/types';
+import {
+  type CommonCountryForSelectorFragment,
+  type CommonDiscountFragment,
+  type DiscountType
+} from '@/api/types';
 import { EntityProvider, useEntityContext } from '@/shared/contexts/entity-context';
 
 export type DiscountContext = {
   type: DiscountType;
   discount: CommonDiscountFragment | undefined;
   isCreating: boolean;
+  countries?: CommonCountryForSelectorFragment[];
 };
 
 export const useDiscountContext = () => {

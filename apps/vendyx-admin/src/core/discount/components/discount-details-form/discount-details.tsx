@@ -7,6 +7,7 @@ import { DiscountRequirementsCard } from '../discount-details-card/discount-requ
 import { DiscountStatusCard } from '../discount-details-card/discount-status-card';
 import { ProductDiscountMetadata } from '../product-discount-metadata/product-discount-metadata';
 import { RemoveDiscountButton } from '../remove-discount-button/remove-discount-button';
+import { ShippingDiscountMetadata } from '../shipping-discount-metadata/shipping-discount-metadata';
 import { DiscountDetailsFormSubmitButton } from './discount-details-form-submit-button';
 
 export const DiscountDetails = () => {
@@ -20,6 +21,7 @@ export const DiscountDetails = () => {
         <DiscountDurationCard />
 
         {type === DiscountType.Product && <ProductDiscountMetadata />}
+        {type === DiscountType.Shipping && <ShippingDiscountMetadata />}
 
         <DiscountRequirementsCard />
         {discount && (

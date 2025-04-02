@@ -142,6 +142,12 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
             applicationMode: input.applicationMode,
             metadata: metadataToSave
           });
+        } else if (type === DiscountType.Shipping) {
+          await createDiscount({
+            ...generalInput,
+            applicationMode: input.applicationMode,
+            metadata: input.metadata
+          });
         }
       }
     });

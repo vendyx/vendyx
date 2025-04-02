@@ -115,7 +115,7 @@ type Props<T> = {
    * @description
    * The function to call when the page or search changes.
    */
-  onChange: (page: number, search: string) => void;
+  onChange?: (page: number, search: string) => void;
   /**
    * @description
    * When true, search bar and pagination buttons are hidden.

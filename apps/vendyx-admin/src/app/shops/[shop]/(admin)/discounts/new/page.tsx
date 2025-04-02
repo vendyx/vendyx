@@ -1,11 +1,14 @@
-import { type DiscountType } from '@/api/types';
+import { CountryService } from '@/api/services/country.service';
+import { DiscountType } from '@/api/types';
 import { DiscountDetailsForm } from '@/core/discount/components/discount-details-form/discount-details-form';
 
-export default function NewDiscountPage({ searchParams }: Props) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default async function NewDiscountPage({ searchParams }: Props) {
   const discountType = searchParams.type;
 
-  return <DiscountDetailsForm type={discountType} />;
+  const countries =
+    discountType === DiscountType.Shipping ? await CountryService.getAllForSelector() : [];
+
+  return <DiscountDetailsForm type={discountType} countries={countries} />;
 }
 
 type Props = {

@@ -24,7 +24,8 @@ export const useDiscountApplicableProductsTableRow = (
 
   useEffect(() => {
     if (isSuccess && !isLoading) {
-      notification.success('Products removed from discount');
+      notification.success('Discount updated');
+      setIsSuccess(false);
     }
   }, [isSuccess, isLoading]);
 
