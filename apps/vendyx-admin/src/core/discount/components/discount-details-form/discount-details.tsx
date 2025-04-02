@@ -6,9 +6,11 @@ import { DiscountGeneralCard } from '../discount-details-card/discount-general-c
 import { DiscountRequirementsCard } from '../discount-details-card/discount-requirements-card';
 import { DiscountStatusCard } from '../discount-details-card/discount-status-card';
 import { ProductDiscountMetadata } from '../product-discount-metadata/product-discount-metadata';
+import { RemoveDiscountButton } from '../remove-discount-button/remove-discount-button';
+import { DiscountDetailsFormSubmitButton } from './discount-details-form-submit-button';
 
 export const DiscountDetails = () => {
-  const { type } = useDiscountContext();
+  const { type, discount } = useDiscountContext();
 
   return (
     <div className="flex flex-col lg:grid grid-cols-6 gap-6">
@@ -20,6 +22,12 @@ export const DiscountDetails = () => {
         {type === DiscountType.Product && <ProductDiscountMetadata />}
 
         <DiscountRequirementsCard />
+        {discount && (
+          <div className="flex w-full gap-3 justify-end">
+            <RemoveDiscountButton discount={discount} />
+            <DiscountDetailsFormSubmitButton discount={discount} size="sm" />
+          </div>
+        )}
       </div>
       <div className="col-span-2 flex flex-col gap-6">
         <DiscountStatusCard />

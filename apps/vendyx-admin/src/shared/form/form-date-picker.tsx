@@ -1,4 +1,5 @@
 import { type ComponentProps } from 'react';
+import { type Matcher } from 'react-day-picker';
 import { type FieldPath, type FieldValues } from 'react-hook-form';
 
 import { formatDate } from 'date-fns';
@@ -19,6 +20,7 @@ export const FormDatePicker = <
   description,
   placeholder,
   className,
+  disabledDates,
   ...rest
 }: Props<TFieldValues, TName>) => {
   return (
@@ -52,7 +54,7 @@ export const FormDatePicker = <
                 mode="single"
                 selected={field.value}
                 onSelect={field.onChange}
-                disabled={date => date > new Date() || date < new Date('1900-01-01')}
+                disabled={disabledDates ?? (date => date < new Date())}
                 initialFocus
               />
             </PopoverContent>
@@ -76,4 +78,5 @@ type Props<
   description?: string;
   placeholder?: string;
   className?: string;
+  disabledDates?: Matcher | undefined;
 };

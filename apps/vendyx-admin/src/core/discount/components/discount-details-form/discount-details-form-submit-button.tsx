@@ -5,12 +5,12 @@ import { type DeepPartial, useFormContext, useWatch } from 'react-hook-form';
 
 import { type CommonDiscountFragment, DiscountValueType, OrderRequirementType } from '@/api/types';
 import BlockerWhenDirty from '@/shared/components/blocker-when-dirty/blocker-when-dirty';
-import { Button } from '@/shared/components/ui/button';
+import { Button, type ButtonProps } from '@/shared/components/ui/button';
 import { formatPrice, parsePrice } from '@/shared/utils/formatters';
 
 import { type DiscountDetailsFormInput } from './use-discount-details-form';
 
-export const DiscountDetailsFormSubmitButton: FC<Props> = ({ discount }) => {
+export const DiscountDetailsFormSubmitButton: FC<Props> = ({ discount, ...buttonProps }) => {
   const form = useFormContext<DiscountDetailsFormInput>();
   const values = useWatch({ defaultValue: form.getValues() });
 
@@ -24,11 +24,12 @@ export const DiscountDetailsFormSubmitButton: FC<Props> = ({ discount }) => {
     <>
       <BlockerWhenDirty isDirty={isDirty} />
       <Button
+        {...buttonProps}
         type="submit"
         disabled={!hasChanged || !withRequiredValues || isLoading}
         isLoading={isLoading}
       >
-        Save discount
+        Save
       </Button>
     </>
   );
@@ -65,6 +66,6 @@ const valuesHasChanged = (
   return baseValuesHasChanged || discountValueHasChanged || orderRequirementValueHasChanged;
 };
 
-type Props = {
+type Props = ButtonProps & {
   discount: CommonDiscountFragment | undefined;
 };

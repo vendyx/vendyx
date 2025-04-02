@@ -6,7 +6,9 @@ import { FormDatePicker } from '@/shared/form/form-date-picker';
 import { useDiscountDetailsFormContext } from '../discount-details-form/use-discount-details-form';
 
 export const DiscountDurationCard = () => {
-  const { control } = useDiscountDetailsFormContext();
+  const { control, watch } = useDiscountDetailsFormContext();
+
+  const startsAt = watch('startsAt');
 
   return (
     <Card>
@@ -26,6 +28,7 @@ export const DiscountDurationCard = () => {
           name="endsAt"
           label="Ends at"
           placeholder={formatDate(addMonths(new Date(), 1), 'PPP')}
+          disabledDates={date => date < startsAt}
         />
       </CardContent>
     </Card>

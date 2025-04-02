@@ -94,6 +94,11 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
 
   async function onSubmit(input: DiscountDetailsFormInput) {
     startTransition(async () => {
+      if (input.endsAt && input.endsAt < input.startsAt) {
+        notification.error('End date must be after start date');
+        return;
+      }
+
       const discountValue =
         input.discountValueType === DiscountValueType.Percentage
           ? input.discountValuePercentage
