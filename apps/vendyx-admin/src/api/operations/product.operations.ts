@@ -65,6 +65,7 @@ export const COMMON_ENHANCED_PRODUCT_FOR_SELECTOR = graphql(`
     variants {
       items {
         id
+        salePrice
         optionValues {
           id
           name
@@ -94,6 +95,7 @@ export const COMMON_DISCOUNT_APPLICABLE_PRODUCT_FRAGMENT = graphql(`
     variants {
       items {
         id
+        salePrice
         optionValues {
           id
           name

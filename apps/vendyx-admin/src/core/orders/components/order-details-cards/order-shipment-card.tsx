@@ -21,7 +21,7 @@ export const OrderShipmentCard: FC<Props> = ({ order }) => {
             Method: <span className="font-medium text-distinct">{shipment.method}</span>
           </p>
           <p>
-            Amount: <span>{formatPrice(shipment.amount)}</span>
+            Amount: <span>{formatPrice(shipment.total)}</span>
           </p>
           {shipment.trackingCode && (
             <p>

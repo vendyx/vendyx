@@ -26,6 +26,7 @@ export type Scalars = {
 export type ActiveDiscount = {
   __typename?: 'ActiveDiscount';
   applicationMode: DiscountApplicationMode;
+  discountType: DiscountType;
   discountedAmount: Scalars['Int']['output'];
   handle: Scalars['String']['output'];
   id: Scalars['ID']['output'];
@@ -735,9 +736,15 @@ export type Order = Node & {
   createdAt: Scalars['Date']['output'];
   customer?: Maybe<Customer>;
   /**
-   * Array of all order-level discount handles applied to the order
+   * Array of all order-level discounts applied to the order
    * Populated every time order is modified.
    * Use this field to show data of current discounts applied to the order
+   *
+   * Note1: Vendyx allows to add shipping discounts before a shipping method is selected for the order (`order.shipment` is null)
+   * so for that cases this field will contain that shipping discounts.
+   *
+   * Note2: When the order already has a shipping method selected (`order.shipment` is not null), this filed will now contain only order-level discounts
+   * and the shipping discounts will be placed in `order.shipment`.
    */
   discounts: Array<ActiveDiscount>;
   id: Scalars['ID']['output'];
@@ -782,7 +789,7 @@ export type OrderLine = Node & {
   __typename?: 'OrderLine';
   createdAt: Scalars['Date']['output'];
   /**
-   * Array of all order-line-level discount handles applied to the line
+   * Array of all order-line-level discounts applied to the line
    * Populated every time order line is modified.
    * Use this field to show data of current discounts applied to the order line
    */
@@ -1095,7 +1102,7 @@ export type Shipment = Node & {
   carrier?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['Date']['output'];
   /**
-   * Array of all shipment-level discount handles applied to the shipment
+   * Array of all shipment-level discounts applied to the shipment
    * Populated every time order shipment is modified.
    * Use this field to show data of current discounts applied to the shipment
    */
@@ -2249,6 +2256,7 @@ export type CommonEnhancedProductForSelectorFragment = {
     items: Array<{
       __typename?: 'Variant';
       id: string;
+      salePrice: number;
       optionValues: Array<{ __typename?: 'OptionValue'; id: string; name: string }>;
     }>;
   };
@@ -2272,6 +2280,7 @@ export type CommonDiscountApplicableProductFragment = {
     items: Array<{
       __typename?: 'Variant';
       id: string;
+      salePrice: number;
       optionValues: Array<{ __typename?: 'OptionValue'; id: string; name: string }>;
     }>;
   };
@@ -3026,6 +3035,7 @@ export const CommonEnhancedProductForSelectorFragmentDoc = new TypedDocumentStri
   variants {
     items {
       id
+      salePrice
       optionValues {
         id
         name
@@ -3057,6 +3067,7 @@ export const CommonDiscountApplicableProductFragmentDoc = new TypedDocumentStrin
   variants {
     items {
       id
+      salePrice
       optionValues {
         id
         name
@@ -3833,6 +3844,7 @@ export const GetAllEnhancedProductsForSelectorDocument = new TypedDocumentString
   variants {
     items {
       id
+      salePrice
       optionValues {
         id
         name
@@ -3874,6 +3886,7 @@ export const GetDiscountApplicableProductsQueryDocument = new TypedDocumentStrin
   variants {
     items {
       id
+      salePrice
       optionValues {
         id
         name

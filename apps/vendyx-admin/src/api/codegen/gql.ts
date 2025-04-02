@@ -63,8 +63,8 @@ type Documents = {
   '\n  mutation RemovePaymentMethod($id: ID!) {\n    removePaymentMethod(id: $id)\n  }\n': typeof types.RemovePaymentMethodDocument;
   '\n  fragment CommonProduct on Product {\n    id\n    createdAt\n    name\n    description\n    enabled\n    variants {\n      items {\n        id\n        salePrice\n        sku\n        stock\n        comparisonPrice\n        costPerUnit\n        requiresShipping\n        optionValues {\n          id\n          name\n        }\n        asset {\n          id\n          source\n        }\n      }\n    }\n    options {\n      id\n      name\n      values {\n        id\n        name\n      }\n    }\n    assets {\n      items {\n        id\n        name\n        source\n        order\n      }\n    }\n  }\n': typeof types.CommonProductFragmentDoc;
   '\n  fragment CommonProductForSelector on Product {\n    id\n    name\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n': typeof types.CommonProductForSelectorFragmentDoc;
-  '\n  fragment CommonEnhancedProductForSelector on Product {\n    id\n    name\n    variants {\n      items {\n        id\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n': typeof types.CommonEnhancedProductForSelectorFragmentDoc;
-  '\n  fragment CommonDiscountApplicableProduct on Product {\n    id\n    name\n    slug\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n    variants {\n      items {\n        id\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n  }\n': typeof types.CommonDiscountApplicableProductFragmentDoc;
+  '\n  fragment CommonEnhancedProductForSelector on Product {\n    id\n    name\n    variants {\n      items {\n        id\n        salePrice\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n': typeof types.CommonEnhancedProductForSelectorFragmentDoc;
+  '\n  fragment CommonDiscountApplicableProduct on Product {\n    id\n    name\n    slug\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n    variants {\n      items {\n        id\n        salePrice\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n  }\n': typeof types.CommonDiscountApplicableProductFragmentDoc;
   '\n  query GetProducts($input: ProductListInput) {\n    products(input: $input) {\n      count\n      pageInfo {\n        total\n      }\n      items {\n        id\n        createdAt\n        name\n        slug\n        enabled\n        variants {\n          items {\n            id\n            sku\n            stock\n            salePrice\n          }\n        }\n        assets(input: { take: 1 }) {\n          items {\n            id\n            source\n          }\n        }\n      }\n    }\n  }\n': typeof types.GetProductsDocument;
   '\n  query GetProductsForSelector($input: ProductListInput) {\n    products(input: $input) {\n      items {\n        ...CommonProductForSelector\n      }\n    }\n  }\n': typeof types.GetProductsForSelectorDocument;
   '\n  query GetAllEnhancedProductsForSelector($input: ProductListInput) {\n    products(input: $input) {\n      items {\n        ...CommonEnhancedProductForSelector\n      }\n    }\n  }\n': typeof types.GetAllEnhancedProductsForSelectorDocument;
@@ -200,9 +200,9 @@ const documents: Documents = {
     types.CommonProductFragmentDoc,
   '\n  fragment CommonProductForSelector on Product {\n    id\n    name\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n':
     types.CommonProductForSelectorFragmentDoc,
-  '\n  fragment CommonEnhancedProductForSelector on Product {\n    id\n    name\n    variants {\n      items {\n        id\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n':
+  '\n  fragment CommonEnhancedProductForSelector on Product {\n    id\n    name\n    variants {\n      items {\n        id\n        salePrice\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n':
     types.CommonEnhancedProductForSelectorFragmentDoc,
-  '\n  fragment CommonDiscountApplicableProduct on Product {\n    id\n    name\n    slug\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n    variants {\n      items {\n        id\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n  }\n':
+  '\n  fragment CommonDiscountApplicableProduct on Product {\n    id\n    name\n    slug\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n    variants {\n      items {\n        id\n        salePrice\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n  }\n':
     types.CommonDiscountApplicableProductFragmentDoc,
   '\n  query GetProducts($input: ProductListInput) {\n    products(input: $input) {\n      count\n      pageInfo {\n        total\n      }\n      items {\n        id\n        createdAt\n        name\n        slug\n        enabled\n        variants {\n          items {\n            id\n            sku\n            stock\n            salePrice\n          }\n        }\n        assets(input: { take: 1 }) {\n          items {\n            id\n            source\n          }\n        }\n      }\n    }\n  }\n':
     types.GetProductsDocument,
@@ -574,13 +574,13 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment CommonEnhancedProductForSelector on Product {\n    id\n    name\n    variants {\n      items {\n        id\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n'
+  source: '\n  fragment CommonEnhancedProductForSelector on Product {\n    id\n    name\n    variants {\n      items {\n        id\n        salePrice\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n'
 ): typeof import('./graphql').CommonEnhancedProductForSelectorFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment CommonDiscountApplicableProduct on Product {\n    id\n    name\n    slug\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n    variants {\n      items {\n        id\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n  }\n'
+  source: '\n  fragment CommonDiscountApplicableProduct on Product {\n    id\n    name\n    slug\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n    variants {\n      items {\n        id\n        salePrice\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n  }\n'
 ): typeof import('./graphql').CommonDiscountApplicableProductFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

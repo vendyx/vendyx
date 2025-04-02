@@ -3,11 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { FormInput } from '@/shared/form/form-input';
 import { FormRadioGroup } from '@/shared/form/form-radio-group';
 
+import { useDiscountContext } from '../../contexts/discount-context';
 import { useDiscountDetailsFormContext } from '../discount-details-form/use-discount-details-form';
 import { DiscountHandle } from './discount-handle/discount-handle';
 import { DiscountValue } from './discount-value/discount-value';
 
 export const DiscountGeneralCard = () => {
+  const { isCreating } = useDiscountContext();
   const { control } = useDiscountDetailsFormContext();
 
   return (
@@ -17,21 +19,23 @@ export const DiscountGeneralCard = () => {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        <FormRadioGroup
-          className="flex-row"
-          control={control}
-          name="applicationMode"
-          items={[
-            {
-              label: 'Discount code',
-              value: DiscountApplicationMode.Code
-            },
-            {
-              label: 'Automatic discount',
-              value: DiscountApplicationMode.Automatic
-            }
-          ]}
-        />
+        {isCreating && (
+          <FormRadioGroup
+            className="flex-row"
+            control={control}
+            name="applicationMode"
+            items={[
+              {
+                label: 'Discount code',
+                value: DiscountApplicationMode.Code
+              },
+              {
+                label: 'Automatic discount',
+                value: DiscountApplicationMode.Automatic
+              }
+            ]}
+          />
+        )}
         <div className="flex gap-4">
           <DiscountHandle />
           <FormInput

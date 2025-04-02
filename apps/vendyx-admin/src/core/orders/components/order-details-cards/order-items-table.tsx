@@ -139,7 +139,20 @@ export const OrderItemsTable: FC<Props> = ({ order }) => {
               <TableCell>Shipment</TableCell>
               <TableCell>{shipment?.method ?? ''}</TableCell>
               <TableCell></TableCell>
-              <TableCell>{formatPrice(shipment?.total ?? 0, { withCurrencyIcon: true })}</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-1">
+                  <span>{formatPrice(shipment?.total ?? 0, { withCurrencyIcon: true })}</span>
+                  {!!shipment?.discounts.length && (
+                    <InfoTooltip
+                      message={shipment.discounts
+                        .map(d => `${d.handle} (-$${formatPrice(d.discountedAmount)})`)
+                        .join(', ')}
+                    >
+                      <TagIcon size={16} className="text-muted-foreground" />
+                    </InfoTooltip>
+                  )}
+                </div>
+              </TableCell>
             </TableRow>
 
             <TableRow className="border-transparent">

@@ -70,18 +70,20 @@ export const DiscountProductSelector: FC<Props> = ({ defaultVariants }) => {
           }}
           label={product.name}
           image={product.assets.items?.[0]?.source}
-          content={product.variants.items.map(variant => ({
-            id: variant.id,
-            label: variant.optionValues.map(v => v.name).join(' / '),
-            checked: selectedVariants.includes(variant.id),
-            onCheckedChange: checked => {
-              if (checked) {
-                setSelectedVariants([...selectedVariants, variant.id]);
-              } else {
-                setSelectedVariants(selectedVariants.filter(v => v !== variant.id));
+          content={product.variants.items
+            .filter(v => v.optionValues.length) // remove variants without options
+            .map(variant => ({
+              id: variant.id,
+              label: variant.optionValues.map(v => v.name).join(' / '),
+              checked: selectedVariants.includes(variant.id),
+              onCheckedChange: checked => {
+                if (checked) {
+                  setSelectedVariants([...selectedVariants, variant.id]);
+                } else {
+                  setSelectedVariants(selectedVariants.filter(v => v !== variant.id));
+                }
               }
-            }
-          }))}
+            }))}
         />
       )}
     />

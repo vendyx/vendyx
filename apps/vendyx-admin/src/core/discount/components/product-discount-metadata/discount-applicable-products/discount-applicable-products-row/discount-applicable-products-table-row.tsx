@@ -9,6 +9,7 @@ import {
 } from '@/api/types';
 import { Button } from '@/shared/components/ui/button';
 import { TableCell, TableRow } from '@/shared/components/ui/table';
+import { formatPrice } from '@/shared/utils/formatters';
 import { cn } from '@/shared/utils/theme';
 
 import { useDiscountContext } from '../../../../contexts/discount-context';
@@ -25,6 +26,9 @@ export const DiscountApplicableProductsTableRow: FC<Props> = ({ base, product })
   const variantsInDiscount = getVariantsInMetadata(getValues('metadata'), isCreating);
   const variantsInProduct = variants.filter(v => variantsInDiscount.includes(v.id));
 
+  const isDefaultVariant =
+    variantsInProduct.length === 1 && variantsInProduct[0].optionValues.length === 0;
+
   return (
     <TableRow key={product.id} className={cn(isLoading && 'opacity-50')}>
       <TableCell className="flex items-center gap-2">
@@ -40,7 +44,9 @@ export const DiscountApplicableProductsTableRow: FC<Props> = ({ base, product })
           <span className="text-muted-foreground">
             {isCreating
               ? `${variants.length} ${variants.length > 1 ? 'variants' : 'variant'} selected`
-              : `${variantsInProduct.length} of ${variants.length} ${variants.length > 1 ? 'variants' : 'variant'}`}
+              : isDefaultVariant
+                ? formatPrice(variantsInProduct[0].salePrice, { withCurrencyIcon: true })
+                : `${variantsInProduct.length} of ${variants.length} ${variants.length > 1 ? 'variants' : 'variant'}`}
           </span>
         </div>
       </TableCell>
