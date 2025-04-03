@@ -29,7 +29,8 @@ We know there are so many other options for e-commerce platform, so why choose u
 - [x] Payments
 - [x] Collections
 - [x] Multi-tenant
-- [ ] Coupons 🚧
+- [x] Coupons
+- [ ] Built-in payment methods 🚧
 - [ ] Roles
 - [ ] Internationalization
 
