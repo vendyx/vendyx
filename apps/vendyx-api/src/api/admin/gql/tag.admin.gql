@@ -1,7 +1,7 @@
 type Query {
   tags(input: TagListInput): TagList!
-  createTag(input: CreateTagInput!): Tag!
-  updateTag(id: ID!, input: UpdateTagInput!): Tag!
+  createTag(input: CreateTagInput!): TagResult!
+  updateTag(id: ID!, input: UpdateTagInput!): TagResult!
   removeTag(id: ID!): Boolean!
 }
 
@@ -38,4 +38,18 @@ input TagListInput {
 
 input TagFilters {
   name: StringFilter
+}
+
+type TagResult {
+  apiErrors: [TagErrorResult!]!
+  tag: Tag
+}
+
+type TagErrorResult {
+  code: TagErrorCode!
+  message: String!
+}
+
+enum TagErrorCode {
+  NAME_ALREADY_EXISTS
 }

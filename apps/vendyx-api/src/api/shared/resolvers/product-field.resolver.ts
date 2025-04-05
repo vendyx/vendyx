@@ -58,4 +58,14 @@ export class ProductFieldResolver {
     const assetsList = result.map(r => ({ ...r.asset, order: r.order }));
     return new ListResponse(assetsList, assetsList.length, { total: count });
   }
+
+  @ResolveField('tags')
+  async tags(@Parent() product: Product) {
+    const result = await this.prisma.productTag.findMany({
+      where: { productId: product.id },
+      select: { tag: true }
+    });
+
+    return result.map(({ tag }) => tag);
+  }
 }
