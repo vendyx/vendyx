@@ -1,0 +1,14 @@
+"""
+A tag is an arbitrary label which can be applied to certain entities.
+It is used to help organize and filter those entities.
+"""
+type Tag implements Node {
+  id: ID!
+  createdAt: Date!
+  updatedAt: Date!
+
+  """
+  The tag's name
+  """
+  name: String!
+}

@@ -30,6 +30,7 @@ type Product implements Node {
   variants(input: ListInput): VariantList!
   assets(input: ListInput): AssetList!
   options: [Option!]!
+  tags: [Tag!]!
 }
 
 type ProductList implements List {

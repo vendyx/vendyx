@@ -17,21 +17,9 @@ export enum CustomerErrorCode {
     DISABLED_CUSTOMER = "DISABLED_CUSTOMER"
 }
 
-export enum DiscountApplicationMode {
-    CODE = "CODE",
-    AUTOMATIC = "AUTOMATIC"
-}
-
 export enum DiscountValueType {
     PERCENTAGE = "PERCENTAGE",
     FIXED_AMOUNT = "FIXED_AMOUNT"
-}
-
-export enum DiscountType {
-    ORDER = "ORDER",
-    PRODUCT = "PRODUCT",
-    SHIPPING = "SHIPPING",
-    BUY_X_GET_Y = "BUY_X_GET_Y"
 }
 
 export enum OrderRequirementType {
@@ -89,6 +77,18 @@ export enum AssetType {
 export enum CollectionContentType {
     PRODUCTS = "PRODUCTS",
     COLLECTIONS = "COLLECTIONS"
+}
+
+export enum DiscountApplicationMode {
+    CODE = "CODE",
+    AUTOMATIC = "AUTOMATIC"
+}
+
+export enum DiscountType {
+    ORDER = "ORDER",
+    PRODUCT = "PRODUCT",
+    SHIPPING = "SHIPPING",
+    BUY_X_GET_Y = "BUY_X_GET_Y"
 }
 
 export enum OrderState {
@@ -329,6 +329,24 @@ export class UpdateShopInput {
     logo?: Nullable<string>;
     socials?: Nullable<ShopSocialsInput>;
     storefrontUrl?: Nullable<string>;
+}
+
+export class CreateTagInput {
+    name: string;
+}
+
+export class UpdateTagInput {
+    name?: Nullable<string>;
+}
+
+export class TagListInput {
+    skip?: Nullable<number>;
+    take?: Nullable<number>;
+    filter?: Nullable<TagFilters>;
+}
+
+export class TagFilters {
+    name?: Nullable<StringFilter>;
 }
 
 export class CreateUserInput {
@@ -591,11 +609,13 @@ export abstract class IMutation {
 
     abstract addShipmentToOrder(orderId: string, input: AddShipmentToOrderInput): OrderResult | Promise<OrderResult>;
 
-    abstract addPaymentToOrder(orderId: string, input: AddPaymentToOrderInput): OrderResult | Promise<OrderResult>;
-
     abstract addDiscountCodeToOrder(orderId: string, code: string): OrderResult | Promise<OrderResult>;
 
     abstract removeDiscountCodeFromOrder(orderId: string, code: string): OrderResult | Promise<OrderResult>;
+
+    abstract recalculateDiscounts(orderId: string): OrderResult | Promise<OrderResult>;
+
+    abstract addPaymentToOrder(orderId: string, input: AddPaymentToOrderInput): OrderResult | Promise<OrderResult>;
 
     abstract createPaypalOrder(orderId: string): PaypalResult | Promise<PaypalResult>;
 }
@@ -634,6 +654,14 @@ export abstract class IQuery {
     abstract shop(slug: string): Nullable<Shop> | Promise<Nullable<Shop>>;
 
     abstract shops(input?: Nullable<ListInput>): ShopList | Promise<ShopList>;
+
+    abstract tags(input?: Nullable<TagListInput>): TagList | Promise<TagList>;
+
+    abstract createTag(input: CreateTagInput): Tag | Promise<Tag>;
+
+    abstract updateTag(id: string, input: UpdateTagInput): Tag | Promise<Tag>;
+
+    abstract removeTag(id: string): boolean | Promise<boolean>;
 
     abstract whoami(): Nullable<User> | Promise<Nullable<User>>;
 
@@ -851,6 +879,12 @@ export class ShopErrorResult {
     message: string;
 }
 
+export class TagList implements List {
+    items: Tag[];
+    count: number;
+    pageInfo: PageInfo;
+}
+
 export class User implements Node {
     id: string;
     createdAt: Date;
@@ -990,6 +1024,14 @@ export class CustomerList implements List {
     pageInfo: PageInfo;
 }
 
+export class ActiveDiscount {
+    id: string;
+    handle: string;
+    applicationMode: DiscountApplicationMode;
+    discountType: DiscountType;
+    discountedAmount: number;
+}
+
 export class OptionList implements List {
     items: Option[];
     count: number;
@@ -1046,13 +1088,6 @@ export class AddressJson {
     isDefault: boolean;
 }
 
-export class ActiveDiscount {
-    id: string;
-    handle: string;
-    applicationMode: DiscountApplicationMode;
-    discountedAmount: number;
-}
-
 export class OrderList implements List {
     items: Order[];
     count: number;
@@ -1080,6 +1115,7 @@ export class Product implements Node {
     variants?: VariantList;
     assets?: AssetList;
     options: Option[];
+    tags: Tag[];
 }
 
 export class ProductList implements List {
@@ -1099,6 +1135,13 @@ export class Shipment implements Node {
     method: string;
     discounts: ActiveDiscount[];
     order: Order;
+}
+
+export class Tag implements Node {
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    name: string;
 }
 
 export class VariantList implements List {

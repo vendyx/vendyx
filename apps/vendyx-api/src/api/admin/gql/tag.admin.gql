@@ -1,0 +1,41 @@
+type Query {
+  tags(input: TagListInput): TagList!
+  createTag(input: CreateTagInput!): Tag!
+  updateTag(id: ID!, input: UpdateTagInput!): Tag!
+  removeTag(id: ID!): Boolean!
+}
+
+input CreateTagInput {
+  name: String!
+}
+
+input UpdateTagInput {
+  name: String
+}
+
+type TagList implements List {
+  items: [Tag!]!
+  count: Int!
+  pageInfo: PageInfo!
+}
+
+input TagListInput {
+  """
+  Skip the first n results
+  """
+  skip: Int
+
+  """
+  takes n result from where the skip position is
+  """
+  take: Int
+
+  """
+  Filters to apply
+  """
+  filter: TagFilters
+}
+
+input TagFilters {
+  name: StringFilter
+}
