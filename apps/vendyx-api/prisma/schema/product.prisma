@@ -6,29 +6,31 @@ model Product {
   deletedAt DateTime? @map("deleted_at")
 
   /// The product's name
-  name        String          @db.VarChar(255)
+  name              String              @db.VarChar(255)
   /// A human-friendly unique string for the Product automatically generated from its name
-  slug        String          @unique @db.VarChar(255)
+  slug              String              @unique @db.VarChar(255)
   /// The product's description
-  description String?
+  description       String?
   /// Whether the products is enabled or not.
   /// Not enabled products are not exposed to the storefront API but are visible in the admin ui.
   /// Useful for products that are not published by now but they planned to be published in the future.
-  enabled     Boolean         @default(true)
+  enabled           Boolean             @default(true)
   /// Whether the product is archived or not.
   /// Archived products are not exposed to the storefront API and are not visible in the admin ui by default.
   /// Useful for products that are not available anymore but you don't want to lose their data.
-  archived    Boolean         @default(false)
+  archived          Boolean             @default(false)
   /// The product's variants
-  variants    Variant[]
+  variants          Variant[]
   /// The product's options
-  options     ProductOption[]
+  options           ProductOption[]
   /// The product's assets
-  assets      ProductAsset[]
-
-  shop              Shop                @relation(fields: [shopId], references: [id])
-  shopId            String              @default(dbgenerated("(current_setting('app.current_shop_id'::text))::uuid")) @map("shop_id") @db.Uuid
+  assets            ProductAsset[]
+  /// The product's tags
+  tags              ProductTag[]
   ProductCollection ProductCollection[] // TODO: refactor this to collections
+
+  shop   Shop   @relation(fields: [shopId], references: [id])
+  shopId String @default(dbgenerated("(current_setting('app.current_shop_id'::text))::uuid")) @map("shop_id") @db.Uuid
 
   @@map("product")
 }
@@ -161,4 +163,15 @@ model ProductCollection {
 
   @@id([productId, collectionId])
   @@map("product_collection")
+}
+
+model ProductTag {
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @map("product_id") @db.Uuid
+
+  tag   Tag    @relation(fields: [tagId], references: [id])
+  tagId String @map("tag_id") @db.Uuid
+
+  @@id([productId, tagId])
+  @@map("product_tag")
 }

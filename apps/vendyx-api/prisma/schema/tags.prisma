@@ -1,0 +1,17 @@
+/// A tag is an arbitrary label which can be applied to certain entities.
+/// It is used to help organize and filter those entities.
+model Tag {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  /// The tag's name
+  name     String       @unique
+  /// Products that this tag belongs to
+  products ProductTag[]
+
+  shop   Shop   @relation(fields: [shopId], references: [id])
+  shopId String @default(dbgenerated("(current_setting('app.current_shop_id'::text))::uuid")) @map("shop_id") @db.Uuid
+
+  @@map("tag")
+}
