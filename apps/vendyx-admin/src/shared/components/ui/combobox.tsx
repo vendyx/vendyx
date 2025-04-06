@@ -18,7 +18,7 @@ import { cn } from '@/shared/utils/theme';
 import { LoaderSpiner } from '../loaders/loader-spiner';
 import { Badge } from './badge';
 import { Button } from './button';
-import { Command, CommandGroup, CommandItem, CommandList } from './command';
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from './command';
 import { Label } from './label';
 
 export const Combobox: FC<Props> = ({
@@ -26,6 +26,7 @@ export const Combobox: FC<Props> = ({
   isLoading,
   label,
   onSelectedChange,
+  emptyText,
   defaultSelected
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -158,6 +159,9 @@ export const Combobox: FC<Props> = ({
                       <LoaderSpiner />
                     </div>
                   )}
+                  {itemsToDisplay.length === 0 && !isLoading && !shouldRenderAddTagButton && (
+                    <CommandEmpty>{emptyText}</CommandEmpty>
+                  )}
                 </div>
               </CommandGroup>
             </div>
@@ -206,6 +210,10 @@ type Props = {
    * Label for the combobox
    */
   label: string;
+  /**
+   * Text to be displayed when there are no items to display
+   */
+  emptyText: string;
   /**
    * Default selected items
    */

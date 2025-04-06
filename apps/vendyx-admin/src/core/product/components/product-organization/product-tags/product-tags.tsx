@@ -15,6 +15,7 @@ export const ProductTags: FC<Props> = ({ product }) => {
   return (
     <Combobox
       label="Tags"
+      emptyText="No existing tags"
       isLoading={isLoading}
       items={allTags.map(tag => ({ value: tag.id, label: tag.name }))}
       defaultSelected={product?.tags.map(t => ({ value: t.id, label: t.name }))}
