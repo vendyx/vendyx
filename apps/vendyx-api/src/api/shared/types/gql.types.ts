@@ -267,6 +267,7 @@ export class CreateProductInput {
     enabled?: Nullable<boolean>;
     archived?: Nullable<boolean>;
     assets?: Nullable<AssetInProductInput[]>;
+    tags?: Nullable<string[]>;
 }
 
 export class UpdateProductInput {
@@ -275,6 +276,7 @@ export class UpdateProductInput {
     enabled?: Nullable<boolean>;
     archived?: Nullable<boolean>;
     assets?: Nullable<AssetInProductInput[]>;
+    tags?: Nullable<string[]>;
 }
 
 export class AssetInProductInput {

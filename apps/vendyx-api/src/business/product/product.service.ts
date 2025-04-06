@@ -62,7 +62,8 @@ export class ProductService {
       slug,
       assets: input.assets
         ? { create: input.assets.map(asset => ({ assetId: asset.id, order: asset.order })) }
-        : undefined
+        : undefined,
+      tags: input.tags ? { create: input.tags.map(tag => ({ tagId: tag })) } : undefined
     });
 
     return product;
@@ -70,11 +71,18 @@ export class ProductService {
 
   async update(id: string, input: UpdateProductInput) {
     const productAssets = await this.productRepository.findAssets(id);
+    const productTags = await this.productRepository.findTags(id);
 
     const assetsToRemove = productAssets
       .map(a => a.assetId)
       .filter(assetId => {
         return !input?.assets?.some(asset => asset.id === assetId);
+      });
+
+    const tagsToRemove = productTags
+      .map(t => t.tagId)
+      .filter(tagId => {
+        return !input?.tags?.some(tag => tag === tagId);
       });
 
     return this.productRepository.update(id, {
@@ -87,6 +95,17 @@ export class ProductService {
             })),
             delete: assetsToRemove.map(asset => ({
               productId_assetId: { productId: id, assetId: asset }
+            }))
+          }
+        : undefined,
+      tags: input.tags
+        ? {
+            connectOrCreate: input.tags.map(tag => ({
+              where: { productId_tagId: { productId: id, tagId: tag } },
+              create: { tagId: tag }
+            })),
+            delete: tagsToRemove.map(tag => ({
+              productId_tagId: { productId: id, tagId: tag }
             }))
           }
         : undefined

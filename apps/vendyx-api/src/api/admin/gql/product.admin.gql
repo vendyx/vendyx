@@ -21,6 +21,7 @@ input CreateProductInput {
   archived: Boolean
 
   assets: [AssetInProductInput!]
+  tags: [ID!]
 }
 
 input UpdateProductInput {
@@ -30,6 +31,7 @@ input UpdateProductInput {
   archived: Boolean
 
   assets: [AssetInProductInput!]
+  tags: [ID!]
 }
 
 input AssetInProductInput {
