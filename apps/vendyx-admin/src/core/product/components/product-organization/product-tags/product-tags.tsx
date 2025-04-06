@@ -1,30 +1,28 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { Command as CommandPrimitive } from 'cmdk';
-import { useDebouncedCallback } from 'use-debounce';
-
-import { Checkbox } from '@/shared/components/ui/checkbox';
-import { Combobox } from '@/shared/components/ui/combobox';
-import { Command, CommandGroup, CommandItem, CommandList } from '@/shared/components/ui/command';
-import { Input } from '@/shared/components/ui/input';
-import { Label } from '@/shared/components/ui/label';
-import useClickOutside from '@/shared/hooks/use-click-outside';
-
-import { useProductTags } from './use-product-tags';
-import { ID } from '@/api/scalars/scalars.type';
-import { cn } from '@/shared/utils/theme';
 import { CheckIcon, PlusCircleIcon, XIcon } from 'lucide-react';
-import { LoaderSpiner } from '@/shared/components/loaders/loader-spiner';
-import { Button } from '@/shared/components/ui/button';
-import { CommonTagFragment } from '@/api/types';
-import { Badge } from '@/shared/components/ui/badge';
 
-export const ProductTags = () => {
+import { type CommonProductFragment, type CommonTagFragment } from '@/api/types';
+import { LoaderSpiner } from '@/shared/components/loaders/loader-spiner';
+import { Badge } from '@/shared/components/ui/badge';
+import { Button } from '@/shared/components/ui/button';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/shared/components/ui/command';
+import { Label } from '@/shared/components/ui/label';
+import { cn } from '@/shared/utils/theme';
+import { isUUID } from '@/shared/utils/validators';
+
+import { type ProductDetailsFormInput } from '../../product-details/use-product-details-form';
+import { useProductTags } from './use-product-tags';
+
+export const ProductTags: FC<Props> = ({ product }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<CommonTagFragment[]>([]);
+  const [selected, setSelected] = useState<CommonTagFragment[]>(product?.tags ?? []);
   const [inMemoryQuery, setInMemoryQuery] = useState('');
 
+  const { setValue } = useFormContext<ProductDetailsFormInput>();
   const { isLoading, allTags } = useProductTags();
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -36,6 +34,13 @@ export const ProductTags = () => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    setValue(
+      'tags',
+      selected.map(tag => (isUUID(tag.id) ? tag.id : tag.name))
+    );
+  }, [selected]);
 
   const tagsToDisplay = useMemo(() => {
     return (
@@ -106,7 +111,7 @@ export const ProductTags = () => {
                       className={cn('cursor-pointer flex items-center gap-2 p-2')}
                     >
                       <PlusCircleIcon size={16} />
-                      Add "{inMemoryQuery}"
+                      Add &quot;{inMemoryQuery}&quot;
                     </CommandItem>
                   )}
                   {tagsToDisplay.map(tag => {
@@ -173,4 +178,8 @@ export const ProductTags = () => {
       )}
     </Command>
   );
+};
+
+type Props = {
+  product: CommonProductFragment | undefined;
 };

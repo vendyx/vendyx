@@ -31,6 +31,7 @@ export const useProductDetailsForm = (product?: CommonProductFragment) => {
       sku: defaultVariant?.sku ?? '',
       requiresShipping: defaultVariant?.requiresShipping ?? false,
       enabled: product?.enabled ?? true,
+      tags: product?.tags.map(tag => tag.id) ?? [],
       variants:
         product?.variants.items
           .map(variant => ({
@@ -108,6 +109,7 @@ export const useProductDetailsForm = (product?: CommonProductFragment) => {
           name: values.name,
           description: values.description,
           enabled: values.enabled,
+          tags: values.tags,
           options,
           defaultVariant: productHasDefaultVariant ? product.variants.items[0].id : null,
           variants: variants.length
@@ -142,6 +144,7 @@ export const useProductDetailsForm = (product?: CommonProductFragment) => {
           name: values.name,
           description: values.description,
           enabled: values.enabled,
+          tags: values.tags,
           images,
           options,
           variants: variants.length
@@ -177,6 +180,7 @@ const schema = z.object({
   requiresShipping: z.boolean(),
   enabled: z.boolean().default(true),
   images: z.array(z.instanceof(File)).optional(),
+  tags: z.array(z.string()).optional(),
   options: z.array(
     z.object({
       id: z.string(),

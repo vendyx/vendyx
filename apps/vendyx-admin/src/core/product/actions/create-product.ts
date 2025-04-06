@@ -2,11 +2,14 @@
 
 import { redirect } from 'next/navigation';
 
+import { type ID } from '@/api/scalars/scalars.type';
 import { AssetService, type VendyxAsset } from '@/api/services/asset.service';
 import { OptionService } from '@/api/services/option.services';
 import { ProductService } from '@/api/services/product.service';
+import { TagService } from '@/api/services/tag.service';
 import { VariantService } from '@/api/services/variant.service';
 import { ParamNotifications } from '@/shared/notifications/notification-constants';
+import { isUUID } from '@/shared/utils/validators';
 
 export const createProduct = async (input: CreateProductInput) => {
   if (!input.variants.length) {
@@ -19,10 +22,33 @@ export const createProduct = async (input: CreateProductInput) => {
     images = await AssetService.upload(input.images);
   }
 
+  const tags: ID[] = [];
+
+  if (input.tags?.length) {
+    const tagsToCreate = input.tags.filter(tag => !isUUID(tag));
+    const tagsToAdd = input.tags.filter(tag => isUUID(tag));
+
+    console.log({
+      tagsToCreate,
+      tagsToAdd
+    });
+
+    if (tagsToCreate.length) {
+      const result = await TagService.create(tagsToCreate.map(tag => ({ name: tag })));
+
+      if (result.success) {
+        tags.push(...result.tags);
+      }
+    }
+
+    tags.push(...tagsToAdd);
+  }
+
   const product = await ProductService.create({
     name: input.name,
     description: input.description,
     enabled: input.enabled,
+    tags,
     assets: images.map((image, i) => ({ id: image.id, order: i }))
   });
 
@@ -101,6 +127,7 @@ type CreateProductInput = {
   description?: string;
   enabled?: boolean;
   images: FormData;
+  tags: string[] | undefined;
   options: {
     id: string;
     name: string;

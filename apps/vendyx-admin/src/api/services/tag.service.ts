@@ -30,9 +30,9 @@ export class TagService {
     return tags;
   }
 
-  static async create(input: CreateTagInput): Promise<Result> {
+  static async create(input: CreateTagInput[]): Promise<Result> {
     const {
-      createTag: { apiErrors, tag }
+      createTags: { apiErrors, tags }
     } = await serviceGqlFetcher(CREATE_TAG_MUTATION, { input });
 
     const error = getTagError(apiErrors[0]);
@@ -41,14 +41,14 @@ export class TagService {
       return { success: false, errorCode: apiErrors[0].code, error };
     }
 
-    return { success: true, tagId: tag?.id ?? '' };
+    return { success: true, tags: tags.map(t => t.id) };
   }
 }
 
 type Result =
   | {
       success: true;
-      tagId: ID;
+      tags: ID[];
     }
   | {
       success: false;

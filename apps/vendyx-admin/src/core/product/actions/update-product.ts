@@ -5,6 +5,7 @@ import { revalidateTag } from 'next/cache';
 import { type ID } from '@/api/scalars/scalars.type';
 import { OptionService } from '@/api/services/option.services';
 import { ProductService } from '@/api/services/product.service';
+import { TagService } from '@/api/services/tag.service';
 import { VariantService } from '@/api/services/variant.service';
 import { isUUID } from '@/shared/utils/validators';
 
@@ -32,10 +33,23 @@ export const updateProduct = async (productId: string, input: UpdateProductInput
   const variantsToUpdate = newVariants.filter(variant => isUUID(variant.id ?? ''));
   const variantsToCreate = newVariants.filter(variant => !isUUID(variant.id ?? ''));
 
+  const tagsToCreate = input.tags?.filter(tag => !isUUID(tag));
+  const tagsToAdd = input.tags?.filter(tag => isUUID(tag)) ?? [];
+
+  const createdTags: ID[] = [];
+  if (tagsToCreate?.length) {
+    const result = await TagService.create(tagsToCreate.map(tag => ({ name: tag })));
+
+    if (result.success) {
+      createdTags.push(...result.tags);
+    }
+  }
+
   await ProductService.update(productId, {
     name: input.name,
     description: input.description,
-    enabled: input.enabled
+    enabled: input.enabled,
+    tags: [...tagsToAdd, ...createdTags]
   });
 
   await updateVariants(variantsToUpdate);
@@ -143,6 +157,7 @@ type UpdateProductInput = {
   name: string;
   description?: string;
   enabled?: boolean;
+  tags: string[] | undefined;
   options: {
     id: string;
     name: string;

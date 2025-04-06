@@ -7,6 +7,10 @@ export const COMMON_PRODUCT_FRAGMENT = graphql(`
     name
     description
     enabled
+    tags {
+      id
+      name
+    }
     variants {
       items {
         id

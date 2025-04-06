@@ -18,13 +18,13 @@ export const GET_ALL_TAGS_QUERY = graphql(`
 `);
 
 export const CREATE_TAG_MUTATION = graphql(`
-  mutation CreateTag($input: CreateTagInput!) {
-    createTag(input: $input) {
+  mutation CreateTags($input: [CreateTagInput!]!) {
+    createTags(input: $input) {
       apiErrors {
         code
         message
       }
-      tag {
+      tags {
         id
       }
     }

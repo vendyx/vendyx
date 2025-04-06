@@ -61,7 +61,7 @@ type Documents = {
   '\n  mutation CreatePaymentMethod($input: CreatePaymentMethodInput!) {\n    createPaymentMethod(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      paymentMethod {\n        id\n      }\n    }\n  }\n': typeof types.CreatePaymentMethodDocument;
   '\n  mutation UpdatePaymentMethod($id: ID!, $input: UpdatePaymentMethodInput!) {\n    updatePaymentMethod(id: $id, input: $input) {\n      id\n    }\n  }\n': typeof types.UpdatePaymentMethodDocument;
   '\n  mutation RemovePaymentMethod($id: ID!) {\n    removePaymentMethod(id: $id)\n  }\n': typeof types.RemovePaymentMethodDocument;
-  '\n  fragment CommonProduct on Product {\n    id\n    createdAt\n    name\n    description\n    enabled\n    variants {\n      items {\n        id\n        salePrice\n        sku\n        stock\n        comparisonPrice\n        costPerUnit\n        requiresShipping\n        optionValues {\n          id\n          name\n        }\n        asset {\n          id\n          source\n        }\n      }\n    }\n    options {\n      id\n      name\n      values {\n        id\n        name\n      }\n    }\n    assets {\n      items {\n        id\n        name\n        source\n        order\n      }\n    }\n  }\n': typeof types.CommonProductFragmentDoc;
+  '\n  fragment CommonProduct on Product {\n    id\n    createdAt\n    name\n    description\n    enabled\n    tags {\n      id\n      name\n    }\n    variants {\n      items {\n        id\n        salePrice\n        sku\n        stock\n        comparisonPrice\n        costPerUnit\n        requiresShipping\n        optionValues {\n          id\n          name\n        }\n        asset {\n          id\n          source\n        }\n      }\n    }\n    options {\n      id\n      name\n      values {\n        id\n        name\n      }\n    }\n    assets {\n      items {\n        id\n        name\n        source\n        order\n      }\n    }\n  }\n': typeof types.CommonProductFragmentDoc;
   '\n  fragment CommonProductForSelector on Product {\n    id\n    name\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n': typeof types.CommonProductForSelectorFragmentDoc;
   '\n  fragment CommonEnhancedProductForSelector on Product {\n    id\n    name\n    variants {\n      items {\n        id\n        salePrice\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n': typeof types.CommonEnhancedProductForSelectorFragmentDoc;
   '\n  fragment CommonDiscountApplicableProduct on Product {\n    id\n    name\n    slug\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n    variants {\n      items {\n        id\n        salePrice\n        optionValues {\n          id\n          name\n        }\n      }\n    }\n  }\n': typeof types.CommonDiscountApplicableProductFragmentDoc;
@@ -87,7 +87,7 @@ type Documents = {
   '\n  mutation GenerateShopApiKey {\n    generateShopApiKey {\n      shop {\n        id\n        slug\n      }\n    }\n  }\n': typeof types.GenerateShopApiKeyDocument;
   '\n  fragment CommonTag on Tag {\n    id\n    name\n  }\n': typeof types.CommonTagFragmentDoc;
   '\n  query GetAllTags($input: TagListInput) {\n    tags(input: $input) {\n      items {\n        ...CommonTag\n      }\n    }\n  }\n': typeof types.GetAllTagsDocument;
-  '\n  mutation CreateTag($input: CreateTagInput!) {\n    createTag(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      tag {\n        id\n      }\n    }\n  }\n': typeof types.CreateTagDocument;
+  '\n  mutation CreateTags($input: [CreateTagInput!]!) {\n    createTags(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      tags {\n        id\n      }\n    }\n  }\n': typeof types.CreateTagsDocument;
   '\n  fragment CommonUser on User {\n    id\n    email\n    emailVerified\n  }\n': typeof types.CommonUserFragmentDoc;
   '\n  query Whoami {\n    whoami {\n      ...CommonUser\n    }\n  }\n': typeof types.WhoamiDocument;
   '\n  mutation GenerateAccessToken($input: GenerateUserAccessTokenInput!) {\n    generateUserAccessToken(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      accessToken\n    }\n  }\n': typeof types.GenerateAccessTokenDocument;
@@ -199,7 +199,7 @@ const documents: Documents = {
     types.UpdatePaymentMethodDocument,
   '\n  mutation RemovePaymentMethod($id: ID!) {\n    removePaymentMethod(id: $id)\n  }\n':
     types.RemovePaymentMethodDocument,
-  '\n  fragment CommonProduct on Product {\n    id\n    createdAt\n    name\n    description\n    enabled\n    variants {\n      items {\n        id\n        salePrice\n        sku\n        stock\n        comparisonPrice\n        costPerUnit\n        requiresShipping\n        optionValues {\n          id\n          name\n        }\n        asset {\n          id\n          source\n        }\n      }\n    }\n    options {\n      id\n      name\n      values {\n        id\n        name\n      }\n    }\n    assets {\n      items {\n        id\n        name\n        source\n        order\n      }\n    }\n  }\n':
+  '\n  fragment CommonProduct on Product {\n    id\n    createdAt\n    name\n    description\n    enabled\n    tags {\n      id\n      name\n    }\n    variants {\n      items {\n        id\n        salePrice\n        sku\n        stock\n        comparisonPrice\n        costPerUnit\n        requiresShipping\n        optionValues {\n          id\n          name\n        }\n        asset {\n          id\n          source\n        }\n      }\n    }\n    options {\n      id\n      name\n      values {\n        id\n        name\n      }\n    }\n    assets {\n      items {\n        id\n        name\n        source\n        order\n      }\n    }\n  }\n':
     types.CommonProductFragmentDoc,
   '\n  fragment CommonProductForSelector on Product {\n    id\n    name\n    assets(input: { take: 1 }) {\n      items {\n        id\n        source\n      }\n    }\n  }\n':
     types.CommonProductForSelectorFragmentDoc,
@@ -250,8 +250,8 @@ const documents: Documents = {
   '\n  fragment CommonTag on Tag {\n    id\n    name\n  }\n': types.CommonTagFragmentDoc,
   '\n  query GetAllTags($input: TagListInput) {\n    tags(input: $input) {\n      items {\n        ...CommonTag\n      }\n    }\n  }\n':
     types.GetAllTagsDocument,
-  '\n  mutation CreateTag($input: CreateTagInput!) {\n    createTag(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      tag {\n        id\n      }\n    }\n  }\n':
-    types.CreateTagDocument,
+  '\n  mutation CreateTags($input: [CreateTagInput!]!) {\n    createTags(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      tags {\n        id\n      }\n    }\n  }\n':
+    types.CreateTagsDocument,
   '\n  fragment CommonUser on User {\n    id\n    email\n    emailVerified\n  }\n':
     types.CommonUserFragmentDoc,
   '\n  query Whoami {\n    whoami {\n      ...CommonUser\n    }\n  }\n': types.WhoamiDocument,
@@ -570,7 +570,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment CommonProduct on Product {\n    id\n    createdAt\n    name\n    description\n    enabled\n    variants {\n      items {\n        id\n        salePrice\n        sku\n        stock\n        comparisonPrice\n        costPerUnit\n        requiresShipping\n        optionValues {\n          id\n          name\n        }\n        asset {\n          id\n          source\n        }\n      }\n    }\n    options {\n      id\n      name\n      values {\n        id\n        name\n      }\n    }\n    assets {\n      items {\n        id\n        name\n        source\n        order\n      }\n    }\n  }\n'
+  source: '\n  fragment CommonProduct on Product {\n    id\n    createdAt\n    name\n    description\n    enabled\n    tags {\n      id\n      name\n    }\n    variants {\n      items {\n        id\n        salePrice\n        sku\n        stock\n        comparisonPrice\n        costPerUnit\n        requiresShipping\n        optionValues {\n          id\n          name\n        }\n        asset {\n          id\n          source\n        }\n      }\n    }\n    options {\n      id\n      name\n      values {\n        id\n        name\n      }\n    }\n    assets {\n      items {\n        id\n        name\n        source\n        order\n      }\n    }\n  }\n'
 ): typeof import('./graphql').CommonProductFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -726,8 +726,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation CreateTag($input: CreateTagInput!) {\n    createTag(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      tag {\n        id\n      }\n    }\n  }\n'
-): typeof import('./graphql').CreateTagDocument;
+  source: '\n  mutation CreateTags($input: [CreateTagInput!]!) {\n    createTags(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      tags {\n        id\n      }\n    }\n  }\n'
+): typeof import('./graphql').CreateTagsDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

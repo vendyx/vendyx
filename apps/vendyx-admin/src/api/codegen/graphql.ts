@@ -275,6 +275,12 @@ export type CreateTagInput = {
   name: Scalars['String']['input'];
 };
 
+export type CreateTagsResult = {
+  __typename?: 'CreateTagsResult';
+  apiErrors: Array<TagErrorResult>;
+  tags: Array<Tag>;
+};
+
 export type CreateUserInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -507,7 +513,7 @@ export type Mutation = {
   createProduct: Product;
   createShippingMethod: ShippingMethodResult;
   createShop: ShopResult;
-  createTag: TagResult;
+  createTags: CreateTagsResult;
   createUser: UserResult;
   createVariant: Variant;
   createZone: Zone;
@@ -578,8 +584,8 @@ export type MutationCreateShopArgs = {
   input: CreateShopInput;
 };
 
-export type MutationCreateTagArgs = {
-  input: CreateTagInput;
+export type MutationCreateTagsArgs = {
+  input: Array<CreateTagInput>;
 };
 
 export type MutationCreateUserArgs = {
@@ -2291,6 +2297,7 @@ export type CommonProductFragment = {
   name: string;
   description?: string | null;
   enabled: boolean;
+  tags: Array<{ __typename?: 'Tag'; id: string; name: string }>;
   variants: {
     __typename?: 'VariantList';
     items: Array<{
@@ -2653,16 +2660,16 @@ export type GetAllTagsQuery = {
   };
 };
 
-export type CreateTagMutationVariables = Exact<{
-  input: CreateTagInput;
+export type CreateTagsMutationVariables = Exact<{
+  input: Array<CreateTagInput> | CreateTagInput;
 }>;
 
-export type CreateTagMutation = {
+export type CreateTagsMutation = {
   __typename?: 'Mutation';
-  createTag: {
-    __typename?: 'TagResult';
+  createTags: {
+    __typename?: 'CreateTagsResult';
     apiErrors: Array<{ __typename?: 'TagErrorResult'; code: TagErrorCode; message: string }>;
-    tag?: { __typename?: 'Tag'; id: string } | null;
+    tags: Array<{ __typename?: 'Tag'; id: string }>;
   };
 };
 
@@ -3085,6 +3092,10 @@ export const CommonProductFragmentDoc = new TypedDocumentString(
   name
   description
   enabled
+  tags {
+    id
+    name
+  }
   variants {
     items {
       id
@@ -4030,6 +4041,10 @@ export const GetProductDocument = new TypedDocumentString(`
   name
   description
   enabled
+  tags {
+    id
+    name
+  }
   variants {
     items {
       id
@@ -4216,19 +4231,19 @@ export const GetAllTagsDocument = new TypedDocumentString(`
   id
   name
 }`) as unknown as TypedDocumentString<GetAllTagsQuery, GetAllTagsQueryVariables>;
-export const CreateTagDocument = new TypedDocumentString(`
-    mutation CreateTag($input: CreateTagInput!) {
-  createTag(input: $input) {
+export const CreateTagsDocument = new TypedDocumentString(`
+    mutation CreateTags($input: [CreateTagInput!]!) {
+  createTags(input: $input) {
     apiErrors {
       code
       message
     }
-    tag {
+    tags {
       id
     }
   }
 }
-    `) as unknown as TypedDocumentString<CreateTagMutation, CreateTagMutationVariables>;
+    `) as unknown as TypedDocumentString<CreateTagsMutation, CreateTagsMutationVariables>;
 export const WhoamiDocument = new TypedDocumentString(`
     query Whoami {
   whoami {

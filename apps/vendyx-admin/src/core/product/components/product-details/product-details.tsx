@@ -107,7 +107,7 @@ export const ProductDetails: FC<Props> = ({ product }) => {
 
           <ProductAssetUploader product={product} />
 
-          <ProductOrganization />
+          <ProductOrganization product={product} />
         </div>
       </div>
       {product && (
