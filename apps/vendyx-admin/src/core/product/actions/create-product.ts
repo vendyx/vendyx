@@ -28,11 +28,6 @@ export const createProduct = async (input: CreateProductInput) => {
     const tagsToCreate = input.tags.filter(tag => !isUUID(tag));
     const tagsToAdd = input.tags.filter(tag => isUUID(tag));
 
-    console.log({
-      tagsToCreate,
-      tagsToAdd
-    });
-
     if (tagsToCreate.length) {
       const result = await TagService.create(tagsToCreate.map(tag => ({ name: tag })));
 

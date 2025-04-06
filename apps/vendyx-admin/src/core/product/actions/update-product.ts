@@ -10,10 +10,6 @@ import { VariantService } from '@/api/services/variant.service';
 import { isUUID } from '@/shared/utils/validators';
 
 export const updateProduct = async (productId: string, input: UpdateProductInput) => {
-  console.log({
-    variants: input.variants,
-    input: input.variantsToRemove
-  });
   if (!input.variants.length) {
     throw new Error('createProduct: At least one variant is required');
   }

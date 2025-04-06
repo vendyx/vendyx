@@ -101,13 +101,6 @@ export const useProductDetailsForm = (product?: CommonProductFragment) => {
 
   async function onSubmit(values: ProductDetailsFormInput) {
     const { variants, options } = values;
-    const variantsToRemove = product?.variants.items.filter(
-      variant => !variants.some(v => v.id === variant.id)
-    );
-
-    console.log({
-      variantsToRemove
-    });
 
     startTransition(async () => {
       if (product?.id) {
