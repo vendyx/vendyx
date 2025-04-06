@@ -43,7 +43,7 @@ model Order {
 
   /// Any-level Discounts applied to the order, only populated when the order is paid
   /// Use this field for querying the order discounts, not the `activeDiscounts` field
-  discounts DiscountOrder[]
+  discounts OrderDiscount[]
 
   lines OrderLine[]
 
