@@ -8,7 +8,9 @@ export const GET = async (request: NextRequest) => {
 
   const search = searchParams.get('search') ?? '';
 
-  const result = await TagService.getAll({ filters: { name: { contains: search } } });
+  const result = await TagService.getAll({
+    filters: { name: { contains: search } }
+  });
 
   return Response.json(new InternalApiResponse(result));
 };
