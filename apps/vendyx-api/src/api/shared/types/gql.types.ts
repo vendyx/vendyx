@@ -63,6 +63,10 @@ export enum ShopErrorCode {
     EMAIL_ALREADY_EXISTS = "EMAIL_ALREADY_EXISTS"
 }
 
+export enum TagErrorCode {
+    NAME_ALREADY_EXISTS = "NAME_ALREADY_EXISTS"
+}
+
 export enum UserErrorCode {
     INVALID_CREDENTIALS = "INVALID_CREDENTIALS",
     EMAIL_ALREADY_EXISTS = "EMAIL_ALREADY_EXISTS",
@@ -342,7 +346,7 @@ export class UpdateTagInput {
 export class TagListInput {
     skip?: Nullable<number>;
     take?: Nullable<number>;
-    filter?: Nullable<TagFilters>;
+    filters?: Nullable<TagFilters>;
 }
 
 export class TagFilters {
@@ -559,6 +563,12 @@ export abstract class IMutation {
 
     abstract generateShopApiKey(): ShopResult | Promise<ShopResult>;
 
+    abstract createTag(input: CreateTagInput): TagResult | Promise<TagResult>;
+
+    abstract updateTag(id: string, input: UpdateTagInput): TagResult | Promise<TagResult>;
+
+    abstract removeTags(ids: string[]): boolean | Promise<boolean>;
+
     abstract createUser(input: CreateUserInput): UserResult | Promise<UserResult>;
 
     abstract updateUser(id: string, input: UpdateUserInput): UserResult | Promise<UserResult>;
@@ -656,12 +666,6 @@ export abstract class IQuery {
     abstract shops(input?: Nullable<ListInput>): ShopList | Promise<ShopList>;
 
     abstract tags(input?: Nullable<TagListInput>): TagList | Promise<TagList>;
-
-    abstract createTag(input: CreateTagInput): Tag | Promise<Tag>;
-
-    abstract updateTag(id: string, input: UpdateTagInput): Tag | Promise<Tag>;
-
-    abstract removeTag(id: string): boolean | Promise<boolean>;
 
     abstract whoami(): Nullable<User> | Promise<Nullable<User>>;
 
@@ -883,6 +887,16 @@ export class TagList implements List {
     items: Tag[];
     count: number;
     pageInfo: PageInfo;
+}
+
+export class TagResult {
+    apiErrors: TagErrorResult[];
+    tag?: Nullable<Tag>;
+}
+
+export class TagErrorResult {
+    code: TagErrorCode;
+    message: string;
 }
 
 export class User implements Node {

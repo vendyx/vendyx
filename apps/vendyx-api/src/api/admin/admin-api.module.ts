@@ -23,6 +23,7 @@ import { ZoneResolver } from './resolvers/zone.resolver';
 import { COMMON_RESOLVERS } from '../shared/common-resolvers';
 import { GraphqlApiModule, SHARED_SCHEMA_PATH } from '../shared/graphql-api.module';
 import { DiscountResolver } from './resolvers/discount.resolver';
+import { TagResolver } from './resolvers/tag.resolver';
 
 const ADMIN_API_SCHEMA_PATH = './src/api/admin/gql/**/*.gql';
 
@@ -59,7 +60,8 @@ export class AdminApiModule {
     CustomerResolver,
     MetricsResolver,
     CollectionResolver,
-    DiscountResolver
+    DiscountResolver,
+    TagResolver
   ]
 })
 class AdminModule {}

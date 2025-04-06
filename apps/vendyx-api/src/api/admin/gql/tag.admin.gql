@@ -1,8 +1,11 @@
 type Query {
   tags(input: TagListInput): TagList!
+}
+
+type Mutation {
   createTag(input: CreateTagInput!): TagResult!
   updateTag(id: ID!, input: UpdateTagInput!): TagResult!
-  removeTag(id: ID!): Boolean!
+  removeTags(ids: [ID!]!): Boolean!
 }
 
 input CreateTagInput {
@@ -33,7 +36,7 @@ input TagListInput {
   """
   Filters to apply
   """
-  filter: TagFilters
+  filters: TagFilters
 }
 
 input TagFilters {

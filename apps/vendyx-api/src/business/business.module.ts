@@ -19,6 +19,7 @@ import { PaymentMethodService } from './payment-method/payment-method.service';
 import { ProductService } from './product/product.service';
 import { ShippingMethodService } from './shipping-method/shipping-method.service';
 import { ShopService } from './shop/shop.service';
+import { TagService } from './tag/tag.service';
 import { UserService } from './user/user.service';
 import { VariantService } from './variant/variant.service';
 import { ZoneService } from './zone/zone.service';
@@ -39,7 +40,8 @@ const SERVICES = [
   MetricsService,
   CollectionService,
   AddressService,
-  DiscountService
+  DiscountService,
+  TagService
 ];
 
 @Module({
