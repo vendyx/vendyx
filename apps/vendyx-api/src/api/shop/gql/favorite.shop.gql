@@ -1,0 +1,26 @@
+type Query {
+  favorites(input: ProductListInput): ProductList!
+}
+
+type Mutation {
+  addToFavorites(input: AddToFavoritesInput!): FavoriteResult!
+  removeFromFavorites(ids: [ID!]!): Boolean!
+}
+
+input AddToFavoritesInput {
+  productId: ID!
+}
+
+type FavoriteResult {
+  product: Product
+  apiErrors: [FavoriteErrorResult!]!
+}
+
+type FavoriteErrorResult {
+  code: FavoriteErrorCode!
+  message: String!
+}
+
+enum FavoriteErrorCode {
+  ALREADY_IN_FAVORITES
+}

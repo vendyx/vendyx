@@ -7,8 +7,8 @@ model Favorite {
 
   customer   Customer? @relation(fields: [customerId], references: [id])
   customerId String?   @map("customer_id") @db.Uuid
-  product    Product?  @relation(fields: [productId], references: [id])
-  productId  String?   @map("product_id") @db.Uuid
+  variant    Variant?  @relation(fields: [variantId], references: [id])
+  variantId  String?   @map("variant_id") @db.Uuid
 
   @@map("favorite")
 }
