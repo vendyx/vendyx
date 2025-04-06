@@ -1,0 +1,14 @@
+/// A favorite is a product that a customer has marked as a favorite.
+/// Useful to implement wishlists or save for later functionality.
+model Favorite {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  customerId String?   @map("customer_id") @db.Uuid
+  product    Product?  @relation(fields: [productId], references: [id])
+  productId  String?   @map("product_id") @db.Uuid
+
+  @@map("favorite")
+}

@@ -27,6 +27,7 @@ model Product {
   assets            ProductAsset[]
   /// The product's tags
   tags              ProductTag[]
+  favorites         Favorite[]
   ProductCollection ProductCollection[] // TODO: refactor this to collections
 
   shop   Shop   @relation(fields: [shopId], references: [id])

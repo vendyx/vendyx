@@ -19,6 +19,7 @@ model Customer {
 
   orders    Order[]
   addresses Address[]
+  favorites Favorite[]
 
   shop   Shop   @relation(fields: [shopId], references: [id])
   shopId String @default(dbgenerated("(current_setting('app.current_shop_id'::text))::uuid")) @map("shop_id") @db.Uuid
