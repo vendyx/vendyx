@@ -13,6 +13,7 @@ import {
   DiscountValueType,
   OrderRequirementType
 } from '@/api/types';
+import { FormMessages } from '@/shared/form/form-messages';
 import { notification } from '@/shared/notifications/notifications';
 import { formatPrice, parsePrice } from '@/shared/utils/formatters';
 
@@ -166,7 +167,7 @@ export enum DiscountAppliesTo {
 }
 
 const schema = z.object({
-  handle: z.string().min(1),
+  handle: z.string().min(1, FormMessages.required),
   enabled: z.boolean(),
   applicationMode: z.enum([DiscountApplicationMode.Automatic, DiscountApplicationMode.Code]),
   discountValueType: z.enum([DiscountValueType.FixedAmount, DiscountValueType.Percentage]),

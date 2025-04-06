@@ -55,7 +55,7 @@ export const useCustomerDetailsForm = (customer: CommonCustomerFragment) => {
 };
 
 const schema = z.object({
-  firstName: z.string().min(1, FormMessages.required),
+  firstName: z.string().optional(),
   lastName: z.string().min(1, FormMessages.required),
   email: z.string().email({ message: FormMessages.invalidEmail }),
   phoneNumber: z.string().min(10, FormMessages.invalidPhoneNumber).optional().or(z.literal('')),
