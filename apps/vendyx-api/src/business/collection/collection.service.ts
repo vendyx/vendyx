@@ -33,7 +33,6 @@ export class CollectionService {
 
   async count(input?: CollectionListInput) {
     return this.prisma.collection.count({
-      ...clean({ skip: input?.skip, take: input?.take }),
       where: {
         ...clean(input?.filters ?? {}),
         name: input?.filters?.name ? { ...clean(input.filters.name), mode: 'insensitive' } : {}

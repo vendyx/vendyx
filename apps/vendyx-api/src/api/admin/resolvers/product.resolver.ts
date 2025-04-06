@@ -23,7 +23,7 @@ export class ProductResolver {
   async products(@Args('input') input?: ListInput) {
     const [result, total] = await Promise.all([
       this.productService.find(input),
-      this.productService.count()
+      this.productService.count(input)
     ]);
 
     return new ListResponse(result, result.length, { total });

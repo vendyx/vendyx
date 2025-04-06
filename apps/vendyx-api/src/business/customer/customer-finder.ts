@@ -39,7 +39,6 @@ export class CustomerFinder {
 
   async count(input?: CustomerListInput) {
     return this._prisma.customer.count({
-      ...clean({ skip: input?.skip, take: input?.take }),
       where: {
         enabled: input?.filters?.enabled ? clean(input?.filters?.enabled) : { equals: true },
         OR: [

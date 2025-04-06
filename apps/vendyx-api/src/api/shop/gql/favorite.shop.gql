@@ -1,5 +1,5 @@
 type Query {
-  favorites(input: ProductListInput): ProductList!
+  favorites(input: ProductListInput): VariantList!
 }
 
 type Mutation {
@@ -8,11 +8,11 @@ type Mutation {
 }
 
 input AddToFavoritesInput {
-  productId: ID!
+  variantId: ID!
 }
 
 type FavoriteResult {
-  product: Product
+  variant: Variant
   apiErrors: [FavoriteErrorResult!]!
 }
 

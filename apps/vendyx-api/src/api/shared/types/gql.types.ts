@@ -104,6 +104,10 @@ export enum OrderState {
     CANCELED = "CANCELED"
 }
 
+export enum FavoriteErrorCode {
+    ALREADY_IN_FAVORITES = "ALREADY_IN_FAVORITES"
+}
+
 export enum PaypalErrorCode {
     PAYPAL_ERROR = "PAYPAL_ERROR",
     UNKNOWN_ERROR = "UNKNOWN_ERROR"
@@ -460,6 +464,10 @@ export class UpdateCustomerPasswordInput {
     confirmPassword: string;
 }
 
+export class AddToFavoritesInput {
+    variantId: string;
+}
+
 export class CreateOrderInput {
     line?: Nullable<CreateOrderLineInput>;
 }
@@ -607,6 +615,10 @@ export abstract class IMutation {
 
     abstract disableCustomer(): CustomerResult | Promise<CustomerResult>;
 
+    abstract addToFavorites(input: AddToFavoritesInput): FavoriteResult | Promise<FavoriteResult>;
+
+    abstract removeFromFavorites(ids: string[]): boolean | Promise<boolean>;
+
     abstract createOrder(input: CreateOrderInput): OrderResult | Promise<OrderResult>;
 
     abstract addLineToOrder(orderId: string, input: CreateOrderLineInput): OrderResult | Promise<OrderResult>;
@@ -688,6 +700,8 @@ export abstract class IQuery {
     abstract product(id?: Nullable<string>, slug?: Nullable<string>): Nullable<Product> | Promise<Nullable<Product>>;
 
     abstract me(): Nullable<Customer> | Promise<Nullable<Customer>>;
+
+    abstract favorites(input?: Nullable<ProductListInput>): VariantList | Promise<VariantList>;
 
     abstract availableShippingMethods(orderId: string): ShippingMethod[] | Promise<ShippingMethod[]>;
 
@@ -1174,6 +1188,16 @@ export class VariantList implements List {
 export class GenerateCustomerAccessTokenResult {
     accessToken?: Nullable<string>;
     apiErrors: CustomerErrorResult[];
+}
+
+export class FavoriteResult {
+    product?: Nullable<Product>;
+    apiErrors: FavoriteErrorResult[];
+}
+
+export class FavoriteErrorResult {
+    code: FavoriteErrorCode;
+    message: string;
 }
 
 export class PaypalResult {

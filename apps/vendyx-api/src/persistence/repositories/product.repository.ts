@@ -53,7 +53,6 @@ export class ProductRepository {
 
   count(input?: ProductListInput & { collectionId?: ID; variantsIds?: ID[] }) {
     return this.prisma.product.count({
-      ...clean({ skip: input?.skip, take: input?.take }),
       where: {
         name: input?.filters?.name ? { ...clean(input.filters.name), mode: 'insensitive' } : {},
         archived: clean(input?.filters?.archived ?? {}),

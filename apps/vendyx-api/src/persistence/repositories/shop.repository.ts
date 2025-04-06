@@ -23,7 +23,7 @@ export class ShopRepository {
   }
 
   async count(input?: ListInput) {
-    return this.prisma.shop.count({ ...clean(input ?? {}) });
+    return this.prisma.shop.count();
   }
 
   async findBySlug(slug: string) {

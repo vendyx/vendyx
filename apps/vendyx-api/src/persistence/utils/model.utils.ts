@@ -13,6 +13,7 @@ export const modelHasDeletedAtProperty = (model: string) => {
     model !== 'StateZone' &&
     model !== 'DiscountOrder' &&
     model !== 'ProductTag' &&
-    model !== 'Tag'
+    model !== 'Tag' &&
+    model !== 'Favorite'
   );
 };

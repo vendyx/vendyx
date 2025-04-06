@@ -21,7 +21,7 @@ export class DiscountResolver {
   async discounts(@Args('input') input?: DiscountListInput) {
     const [discounts, total] = await Promise.all([
       this.discountService.find(input),
-      this.discountService.count()
+      this.discountService.count(input)
     ]);
 
     return new ListResponse(discounts, discounts.length, { total });

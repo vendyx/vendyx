@@ -1,14 +1,16 @@
 /// A favorite is a product that a customer has marked as a favorite.
 /// Useful to implement wishlists or save for later functionality.
 model Favorite {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  customer   Customer? @relation(fields: [customerId], references: [id])
-  customerId String?   @map("customer_id") @db.Uuid
-  variant    Variant?  @relation(fields: [variantId], references: [id])
-  variantId  String?   @map("variant_id") @db.Uuid
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String   @map("customer_id") @db.Uuid
+  variant    Variant  @relation(fields: [variantId], references: [id])
+  variantId  String   @map("variant_id") @db.Uuid
 
+  shop   Shop   @relation(fields: [shopId], references: [id])
+  shopId String @default(dbgenerated("(current_setting('app.current_shop_id'::text))::uuid")) @map("shop_id") @db.Uuid
+
+  @@id([customerId, variantId])
   @@map("favorite")
 }

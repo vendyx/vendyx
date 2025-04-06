@@ -38,7 +38,6 @@ export class DiscountService {
 
   count(input?: DiscountListInput) {
     return this.prisma.discount.count({
-      ...clean({ skip: input?.skip, take: input?.take }),
       where: {
         handle: input?.filters?.handle
           ? { ...clean(input.filters.handle), mode: 'insensitive' }

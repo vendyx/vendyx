@@ -28,7 +28,6 @@ export class TagService {
 
   async count(input?: TagListInput) {
     return this.prisma.tag.count({
-      ...clean({ skip: input?.skip, take: input?.take }),
       where: {
         name: input?.filters?.name ? { ...clean(input.filters.name), mode: 'insensitive' } : {}
       }

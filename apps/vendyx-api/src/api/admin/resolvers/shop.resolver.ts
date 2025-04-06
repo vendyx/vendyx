@@ -30,7 +30,7 @@ export class ShopResolver {
   async shops(@Args('input') input?: ListInput) {
     const [result, total] = await Promise.all([
       this.shopService.find(input),
-      this.shopService.count()
+      this.shopService.count(input)
     ]);
 
     return new ListResponse(result, result.length, { total });

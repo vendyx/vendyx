@@ -51,7 +51,6 @@ export class OrderFinders {
 
   async count(input?: OrderListInput, customerId?: ID) {
     return this._prisma.order.count({
-      ...clean({ skip: input?.skip, take: input?.take }),
       where: {
         customerId: customerId,
         state: input?.filters?.state

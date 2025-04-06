@@ -12,6 +12,7 @@ import { CollectionService } from './collection/collection.service';
 import { CountryService } from './country/country.service';
 import { CustomerService } from './customer/customer.service';
 import { DiscountService } from './discount/discount.service';
+import { FavoriteService } from './favorite/favorite.service';
 import { MetricsService } from './metrics/metrics.service';
 import { OptionService } from './option/option.service';
 import { OrderService } from './order/order.service';
@@ -41,7 +42,8 @@ const SERVICES = [
   CollectionService,
   AddressService,
   DiscountService,
-  TagService
+  TagService,
+  FavoriteService
 ];
 
 @Module({
