@@ -55,6 +55,7 @@ CREATE POLICY shop_isolation_policy ON "customer" USING (shop_id = current_setti
 CREATE POLICY shop_isolation_policy ON "collection" USING (shop_id = current_setting('app.current_shop_id', TRUE)::uuid);
 CREATE POLICY shop_isolation_policy ON "address" USING (shop_id = current_setting('app.current_shop_id', TRUE)::uuid);
 CREATE POLICY shop_isolation_policy ON "discount" USING (shop_id = current_setting('app.current_shop_id', TRUE)::uuid);
+CREATE POLICY shop_isolation_policy ON "tag" USING (shop_id = current_setting('app.current_shop_id', TRUE)::uuid);
 
 -- Bypass RLS policy
 CREATE POLICY bypass_rls_policy ON "shop" USING (current_setting('app.bypass_rls', TRUE)::text = 'on');
@@ -74,3 +75,4 @@ CREATE POLICY bypass_rls_policy ON "customer" USING (current_setting('app.bypass
 CREATE POLICY bypass_rls_policy ON "collection" USING (current_setting('app.bypass_rls', TRUE)::text = 'on');
 CREATE POLICY bypass_rls_policy ON "address" USING (current_setting('app.bypass_rls', TRUE)::text = 'on');
 CREATE POLICY bypass_rls_policy ON "discount" USING (current_setting('app.bypass_rls', TRUE)::text = 'on');
+CREATE POLICY bypass_rls_policy ON "tag" USING (current_setting('app.bypass_rls', TRUE)::text = 'on');
