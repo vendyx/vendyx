@@ -250,6 +250,7 @@ export type CreateProductInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   enabled?: InputMaybe<Scalars['Boolean']['input']>;
   name: Scalars['String']['input'];
+  tags?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type CreateShippingMethodInput = {
@@ -268,6 +269,10 @@ export type CreateShopInput = {
   phoneNumber: Scalars['String']['input'];
   socials?: InputMaybe<ShopSocialsInput>;
   storefrontUrl?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateTagInput = {
+  name: Scalars['String']['input'];
 };
 
 export type CreateUserInput = {
@@ -502,6 +507,7 @@ export type Mutation = {
   createProduct: Product;
   createShippingMethod: ShippingMethodResult;
   createShop: ShopResult;
+  createTag: TagResult;
   createUser: UserResult;
   createVariant: Variant;
   createZone: Zone;
@@ -514,6 +520,7 @@ export type Mutation = {
   removeDiscounts?: Maybe<Scalars['Boolean']['output']>;
   removePaymentMethod: Scalars['Boolean']['output'];
   removeShippingMethod: Scalars['Boolean']['output'];
+  removeTags: Scalars['Boolean']['output'];
   removeZone: Scalars['Boolean']['output'];
   softRemoveOption: Option;
   softRemoveOptionValues: Scalars['Boolean']['output'];
@@ -528,6 +535,7 @@ export type Mutation = {
   updateProduct: Product;
   updateShippingMethod: ShippingMethod;
   updateShop: ShopResult;
+  updateTag: TagResult;
   updateUser: UserResult;
   updateVariant: Variant;
   updateZone: Zone;
@@ -568,6 +576,10 @@ export type MutationCreateShippingMethodArgs = {
 
 export type MutationCreateShopArgs = {
   input: CreateShopInput;
+};
+
+export type MutationCreateTagArgs = {
+  input: CreateTagInput;
 };
 
 export type MutationCreateUserArgs = {
@@ -614,6 +626,10 @@ export type MutationRemovePaymentMethodArgs = {
 
 export type MutationRemoveShippingMethodArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type MutationRemoveTagsArgs = {
+  ids: Array<Scalars['ID']['input']>;
 };
 
 export type MutationRemoveZoneArgs = {
@@ -679,6 +695,11 @@ export type MutationUpdateShippingMethodArgs = {
 export type MutationUpdateShopArgs = {
   input: UpdateShopInput;
   shopSlug: Scalars['String']['input'];
+};
+
+export type MutationUpdateTagArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateTagInput;
 };
 
 export type MutationUpdateUserArgs = {
@@ -951,6 +972,7 @@ export type Product = Node & {
   options: Array<Option>;
   /** A human-friendly unique string for the Product automatically generated from its name */
   slug: Scalars['String']['output'];
+  tags: Array<Tag>;
   updatedAt: Scalars['Date']['output'];
   variants: VariantList;
 };
@@ -1011,6 +1033,7 @@ export type Query = {
   shippingMethods: Array<ShippingMethod>;
   shop?: Maybe<Shop>;
   shops: ShopList;
+  tags: TagList;
   totalOrders: MetricsResult;
   totalSales: MetricsResult;
   validateAccessToken?: Maybe<Scalars['Boolean']['output']>;
@@ -1078,6 +1101,10 @@ export type QueryShopArgs = {
 
 export type QueryShopsArgs = {
   input?: InputMaybe<ListInput>;
+};
+
+export type QueryTagsArgs = {
+  input?: InputMaybe<TagListInput>;
 };
 
 export type QueryTotalOrdersArgs = {
@@ -1253,6 +1280,55 @@ export type StringFilter = {
   equals?: InputMaybe<Scalars['String']['input']>;
 };
 
+/**
+ * A tag is an arbitrary label which can be applied to certain entities.
+ * It is used to help organize and filter those entities.
+ */
+export type Tag = Node & {
+  __typename?: 'Tag';
+  createdAt: Scalars['Date']['output'];
+  id: Scalars['ID']['output'];
+  /** The tag's name */
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['Date']['output'];
+};
+
+export enum TagErrorCode {
+  NameAlreadyExists = 'NAME_ALREADY_EXISTS'
+}
+
+export type TagErrorResult = {
+  __typename?: 'TagErrorResult';
+  code: TagErrorCode;
+  message: Scalars['String']['output'];
+};
+
+export type TagFilters = {
+  name?: InputMaybe<StringFilter>;
+};
+
+export type TagList = List & {
+  __typename?: 'TagList';
+  count: Scalars['Int']['output'];
+  items: Array<Tag>;
+  pageInfo: PageInfo;
+};
+
+export type TagListInput = {
+  /** Filters to apply */
+  filters?: InputMaybe<TagFilters>;
+  /** Skip the first n results */
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  /** takes n result from where the skip position is */
+  take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type TagResult = {
+  __typename?: 'TagResult';
+  apiErrors: Array<TagErrorResult>;
+  tag?: Maybe<Tag>;
+};
+
 export type UpdateAddressInput = {
   city?: InputMaybe<Scalars['String']['input']>;
   country?: InputMaybe<Scalars['String']['input']>;
@@ -1329,6 +1405,7 @@ export type UpdateProductInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   enabled?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type UpdateShippingMethodInput = {
@@ -1350,6 +1427,10 @@ export type UpdateShopInput = {
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
   socials?: InputMaybe<ShopSocialsInput>;
   storefrontUrl?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateTagInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateUserInput = {

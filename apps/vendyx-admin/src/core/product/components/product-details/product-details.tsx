@@ -13,6 +13,7 @@ import { FormTextarea } from '@/shared/form/form-textarea';
 
 import { VariantContextProvider } from '../../contexts/variant.context';
 import { ProductAssetUploader } from '../product-asset-uploader/product-asset-uploader';
+import { ProductOrganization } from '../product-organization/product-organization';
 import { ProductSubmitButton } from '../product-submit-button/product-submit-button';
 import { RemoveProductButton } from '../remove-product/remove-product-button';
 import { VariantDetails } from '../variant-details/variant-details';
@@ -105,6 +106,8 @@ export const ProductDetails: FC<Props> = ({ product }) => {
           </Card>
 
           <ProductAssetUploader product={product} />
+
+          <ProductOrganization />
         </div>
       </div>
       {product && (
