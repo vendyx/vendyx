@@ -116,6 +116,10 @@ export class ProductRepository {
     return this.prisma.productTag.findMany({ where: { productId } });
   }
 
+  async hardDeleteTags(productId: string) {
+    await this.prisma.productTag.deleteMany({ where: { productId } });
+  }
+
   async hardDeleteAssets(productId: string) {
     const assetsToDelete = await this.prisma.productAsset.findMany({ where: { productId } });
     const assetsIds = assetsToDelete.map(a => a.assetId);

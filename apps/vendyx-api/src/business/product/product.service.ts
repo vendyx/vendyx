@@ -117,6 +117,7 @@ export class ProductService {
       ids.map(async id => {
         await this.productRepository.hardDeleteOptions(id);
         await this.productRepository.hardDeleteAssets(id);
+        await this.productRepository.hardDeleteTags(id);
         await this.productRepository.softDelete(id);
       })
     );
