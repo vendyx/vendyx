@@ -85,6 +85,8 @@ type Documents = {
   '\n  mutation CreateShop($input: CreateShopInput!) {\n    createShop(input: $input) {\n      apiErrors {\n        message\n        code\n      }\n      shop {\n        id\n        slug\n      }\n    }\n  }\n': typeof types.CreateShopDocument;
   '\n  mutation UpdateShop($shopSlug: String!, $input: UpdateShopInput!) {\n    updateShop(shopSlug: $shopSlug, input: $input) {\n      apiErrors {\n        message\n        code\n      }\n      shop {\n        id\n        slug\n      }\n    }\n  }\n': typeof types.UpdateShopDocument;
   '\n  mutation GenerateShopApiKey {\n    generateShopApiKey {\n      shop {\n        id\n        slug\n      }\n    }\n  }\n': typeof types.GenerateShopApiKeyDocument;
+  '\n  query GetAllTags($input: TagListInput) {\n    tags(input: $input) {\n      items {\n        id\n        name\n      }\n    }\n  }\n': typeof types.GetAllTagsDocument;
+  '\n  mutation CreateTag($input: CreateTagInput!) {\n    createTag(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      tag {\n        id\n      }\n    }\n  }\n': typeof types.CreateTagDocument;
   '\n  fragment CommonUser on User {\n    id\n    email\n    emailVerified\n  }\n': typeof types.CommonUserFragmentDoc;
   '\n  query Whoami {\n    whoami {\n      ...CommonUser\n    }\n  }\n': typeof types.WhoamiDocument;
   '\n  mutation GenerateAccessToken($input: GenerateUserAccessTokenInput!) {\n    generateUserAccessToken(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      accessToken\n    }\n  }\n': typeof types.GenerateAccessTokenDocument;
@@ -244,6 +246,10 @@ const documents: Documents = {
     types.UpdateShopDocument,
   '\n  mutation GenerateShopApiKey {\n    generateShopApiKey {\n      shop {\n        id\n        slug\n      }\n    }\n  }\n':
     types.GenerateShopApiKeyDocument,
+  '\n  query GetAllTags($input: TagListInput) {\n    tags(input: $input) {\n      items {\n        id\n        name\n      }\n    }\n  }\n':
+    types.GetAllTagsDocument,
+  '\n  mutation CreateTag($input: CreateTagInput!) {\n    createTag(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      tag {\n        id\n      }\n    }\n  }\n':
+    types.CreateTagDocument,
   '\n  fragment CommonUser on User {\n    id\n    email\n    emailVerified\n  }\n':
     types.CommonUserFragmentDoc,
   '\n  query Whoami {\n    whoami {\n      ...CommonUser\n    }\n  }\n': types.WhoamiDocument,
@@ -702,6 +708,18 @@ export function graphql(
 export function graphql(
   source: '\n  mutation GenerateShopApiKey {\n    generateShopApiKey {\n      shop {\n        id\n        slug\n      }\n    }\n  }\n'
 ): typeof import('./graphql').GenerateShopApiKeyDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetAllTags($input: TagListInput) {\n    tags(input: $input) {\n      items {\n        id\n        name\n      }\n    }\n  }\n'
+): typeof import('./graphql').GetAllTagsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation CreateTag($input: CreateTagInput!) {\n    createTag(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      tag {\n        id\n      }\n    }\n  }\n'
+): typeof import('./graphql').CreateTagDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

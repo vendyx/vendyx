@@ -2635,6 +2635,28 @@ export type GenerateShopApiKeyMutation = {
   };
 };
 
+export type GetAllTagsQueryVariables = Exact<{
+  input?: InputMaybe<TagListInput>;
+}>;
+
+export type GetAllTagsQuery = {
+  __typename?: 'Query';
+  tags: { __typename?: 'TagList'; items: Array<{ __typename?: 'Tag'; id: string; name: string }> };
+};
+
+export type CreateTagMutationVariables = Exact<{
+  input: CreateTagInput;
+}>;
+
+export type CreateTagMutation = {
+  __typename?: 'Mutation';
+  createTag: {
+    __typename?: 'TagResult';
+    apiErrors: Array<{ __typename?: 'TagErrorResult'; code: TagErrorCode; message: string }>;
+    tag?: { __typename?: 'Tag'; id: string } | null;
+  };
+};
+
 export type CommonUserFragment = {
   __typename?: 'User';
   id: string;
@@ -4164,6 +4186,29 @@ export const GenerateShopApiKeyDocument = new TypedDocumentString(`
   GenerateShopApiKeyMutation,
   GenerateShopApiKeyMutationVariables
 >;
+export const GetAllTagsDocument = new TypedDocumentString(`
+    query GetAllTags($input: TagListInput) {
+  tags(input: $input) {
+    items {
+      id
+      name
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<GetAllTagsQuery, GetAllTagsQueryVariables>;
+export const CreateTagDocument = new TypedDocumentString(`
+    mutation CreateTag($input: CreateTagInput!) {
+  createTag(input: $input) {
+    apiErrors {
+      code
+      message
+    }
+    tag {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CreateTagMutation, CreateTagMutationVariables>;
 export const WhoamiDocument = new TypedDocumentString(`
     query Whoami {
   whoami {
