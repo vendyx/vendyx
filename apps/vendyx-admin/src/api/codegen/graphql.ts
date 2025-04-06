@@ -2635,13 +2635,24 @@ export type GenerateShopApiKeyMutation = {
   };
 };
 
+export type CommonTagFragmentFragment = { __typename?: 'Tag'; id: string; name: string } & {
+  ' $fragmentName'?: 'CommonTagFragmentFragment';
+};
+
 export type GetAllTagsQueryVariables = Exact<{
   input?: InputMaybe<TagListInput>;
 }>;
 
 export type GetAllTagsQuery = {
   __typename?: 'Query';
-  tags: { __typename?: 'TagList'; items: Array<{ __typename?: 'Tag'; id: string; name: string }> };
+  tags: {
+    __typename?: 'TagList';
+    items: Array<
+      { __typename?: 'Tag' } & {
+        ' $fragmentRefs'?: { CommonTagFragmentFragment: CommonTagFragmentFragment };
+      }
+    >;
+  };
 };
 
 export type CreateTagMutationVariables = Exact<{
@@ -3220,6 +3231,15 @@ export const CommonListShopFragmentDoc = new TypedDocumentString(
     `,
   { fragmentName: 'CommonListShop' }
 ) as unknown as TypedDocumentString<CommonListShopFragment, unknown>;
+export const CommonTagFragmentFragmentDoc = new TypedDocumentString(
+  `
+    fragment CommonTagFragment on Tag {
+  id
+  name
+}
+    `,
+  { fragmentName: 'CommonTagFragment' }
+) as unknown as TypedDocumentString<CommonTagFragmentFragment, unknown>;
 export const CommonUserFragmentDoc = new TypedDocumentString(
   `
     fragment CommonUser on User {
@@ -4190,12 +4210,14 @@ export const GetAllTagsDocument = new TypedDocumentString(`
     query GetAllTags($input: TagListInput) {
   tags(input: $input) {
     items {
-      id
-      name
+      ...CommonTagFragment
     }
   }
 }
-    `) as unknown as TypedDocumentString<GetAllTagsQuery, GetAllTagsQueryVariables>;
+    fragment CommonTagFragment on Tag {
+  id
+  name
+}`) as unknown as TypedDocumentString<GetAllTagsQuery, GetAllTagsQueryVariables>;
 export const CreateTagDocument = new TypedDocumentString(`
     mutation CreateTag($input: CreateTagInput!) {
   createTag(input: $input) {

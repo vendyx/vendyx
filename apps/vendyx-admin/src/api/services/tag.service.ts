@@ -1,7 +1,16 @@
 import { getTagError } from '../errors/tag.errors';
-import { CREATE_TAG_MUTATION, GET_ALL_TAGS_QUERY } from '../operations/tag.operations';
+import {
+  COMMON_TAG_FRAGMENT,
+  CREATE_TAG_MUTATION,
+  GET_ALL_TAGS_QUERY
+} from '../operations/tag.operations';
 import { type ID } from '../scalars/scalars.type';
-import { type CreateTagInput, type TagErrorCode, type TagListInput } from '../types';
+import {
+  type CreateTagInput,
+  getFragmentData,
+  type TagErrorCode,
+  type TagListInput
+} from '../types';
 import { serviceGqlFetcher } from './service-fetchers/service-gql-fetchers';
 
 export class TagService {
@@ -10,11 +19,13 @@ export class TagService {
   };
 
   static async getAll(input?: TagListInput) {
-    const { tags } = await serviceGqlFetcher(
+    const result = await serviceGqlFetcher(
       GET_ALL_TAGS_QUERY,
       { input },
       { tags: [TagService.Tags.tags] }
     );
+
+    const tags = result.tags.items.map(t => getFragmentData(COMMON_TAG_FRAGMENT, t));
 
     return tags;
   }
