@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { TagNameAlreadyExists } from './tag.errors';
-import { clean } from '../shared/utils/clean.utils';
-
 import { CreateTagInput, TagListInput, UpdateTagInput } from '@/api/shared/types/gql.types';
 import {
   PRISMA_FOR_SHOP,
   PrismaForShop
 } from '@/persistence/prisma-clients/prisma-for-shop.provider';
 import { ID } from '@/persistence/types/scalars.type';
+
+import { TagNameAlreadyExists } from './tag.errors';
+import { clean } from '../shared/utils/clean.utils';
 
 @Injectable()
 export class TagService {
@@ -35,18 +35,23 @@ export class TagService {
     });
   }
 
-  async create(input: CreateTagInput) {
-    const withTheSameName = await this.prisma.tag.findUnique({ where: { name: input.name } });
+  async create(input: CreateTagInput[]) {
+    const uniqueTags = new Set(input.map(tag => tag.name));
+    const tagsToCreate = Array.from(uniqueTags).map(name => ({ name }));
 
-    if (withTheSameName) {
-      return new TagNameAlreadyExists(input.name);
-    }
-
-    return await this.prisma.tag.create({
-      data: {
-        name: input.name
+    const tagsAlreadyExists = await this.prisma.tag.findMany({
+      where: {
+        name: { in: tagsToCreate.map(tag => tag.name) }
       }
     });
+
+    if (tagsAlreadyExists.length) {
+      return new TagNameAlreadyExists(tagsAlreadyExists.map(tag => tag.name));
+    }
+
+    return await this.prisma.$transaction(
+      tagsToCreate.map(tag => this.prisma.tag.create({ data: tag }))
+    );
   }
 
   async update(id: ID, input: UpdateTagInput) {
@@ -54,7 +59,7 @@ export class TagService {
       const withTheSameName = await this.prisma.tag.findUnique({ where: { name: input.name } });
 
       if (withTheSameName && withTheSameName.id !== id) {
-        return new TagNameAlreadyExists(input.name);
+        return new TagNameAlreadyExists([input.name]);
       }
     }
 

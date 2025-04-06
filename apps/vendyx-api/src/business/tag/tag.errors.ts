@@ -1,9 +1,12 @@
-import { ErrorResult } from '../shared/utils/error-result.utils';
-
 import { TagErrorCode } from '@/api/shared/types/gql.types';
 
+import { ErrorResult } from '../shared/utils/error-result.utils';
+
 export class TagNameAlreadyExists extends ErrorResult<TagErrorCode> {
-  constructor(name: string) {
-    super(TagErrorCode.NAME_ALREADY_EXISTS, `Tag with name "${name}" already exists`);
+  constructor(names: string[]) {
+    super(
+      TagErrorCode.NAME_ALREADY_EXISTS,
+      `Tags with names ${names.map(n => `"${n}"`).join(',')} already exists`
+    );
   }
 }

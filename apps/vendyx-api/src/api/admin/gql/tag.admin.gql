@@ -3,7 +3,7 @@ type Query {
 }
 
 type Mutation {
-  createTag(input: CreateTagInput!): TagResult!
+  createTags(input: [CreateTagInput!]!): CreateTagsResult!
   updateTag(id: ID!, input: UpdateTagInput!): TagResult!
   removeTags(ids: [ID!]!): Boolean!
 }
@@ -41,6 +41,11 @@ input TagListInput {
 
 input TagFilters {
   name: StringFilter
+}
+
+type CreateTagsResult {
+  apiErrors: [TagErrorResult!]!
+  tags: [Tag!]!
 }
 
 type TagResult {

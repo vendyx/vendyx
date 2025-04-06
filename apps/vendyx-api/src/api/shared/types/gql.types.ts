@@ -565,7 +565,7 @@ export abstract class IMutation {
 
     abstract generateShopApiKey(): ShopResult | Promise<ShopResult>;
 
-    abstract createTag(input: CreateTagInput): TagResult | Promise<TagResult>;
+    abstract createTags(input: CreateTagInput[]): CreateTagsResult | Promise<CreateTagsResult>;
 
     abstract updateTag(id: string, input: UpdateTagInput): TagResult | Promise<TagResult>;
 
@@ -889,6 +889,11 @@ export class TagList implements List {
     items: Tag[];
     count: number;
     pageInfo: PageInfo;
+}
+
+export class CreateTagsResult {
+    apiErrors: TagErrorResult[];
+    tags: Tag[];
 }
 
 export class TagResult {

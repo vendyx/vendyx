@@ -20,11 +20,13 @@ export class TagResolver {
     return new ListResponse(tags, tags.length, { total });
   }
 
-  @Mutation('createTag')
-  async createTag(@Args('input') input: CreateTagInput) {
+  @Mutation('createTags')
+  async createTag(@Args('input') input: CreateTagInput[]) {
     const result = await this.tagService.create(input);
 
-    return isErrorResult(result) ? { apiErrors: [result] } : { apiErrors: [], tag: result };
+    return isErrorResult(result)
+      ? { apiErrors: [result], tags: [] }
+      : { apiErrors: [], tags: result };
   }
 
   @Mutation('updateTag')
