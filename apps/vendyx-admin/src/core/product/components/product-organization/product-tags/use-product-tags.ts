@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { restFetcher } from '@/api/fetchers/rest-fetcher';
 import { type CommonTagFragment } from '@/api/types';
