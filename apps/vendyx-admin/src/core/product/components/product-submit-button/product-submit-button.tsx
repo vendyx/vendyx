@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 'use client';
 
 import { type FC } from 'react';
@@ -59,7 +60,7 @@ export const valuesHasChanged = (
     options: _product.options,
     variants: _product.variants.items
   };
-  const { variants, options, ..._values } = values;
+  const { variants, options, tags, ..._values } = values;
   const { variants: defaultVariants, options: defaultOptions, ..._defaultValues } = defaultForm;
 
   const formValuesHasChanged = Object.keys(_values).some(
@@ -69,7 +70,13 @@ export const valuesHasChanged = (
   const optionsHasChanged = getOptionsHasChanged(options, defaultOptions);
   const variantsHasChanged = getVariantsHasChanged(variants, defaultVariants);
 
-  return formValuesHasChanged || optionsHasChanged || variantsHasChanged;
+  const tagsHasChanged =
+    tags?.some(tag => {
+      const persistedTag = _product.tags.find(t => t.id === tag);
+      return persistedTag?.id !== tag;
+    }) || tags?.length !== _product.tags.length;
+
+  return formValuesHasChanged || optionsHasChanged || variantsHasChanged || tagsHasChanged;
 };
 
 const getVariantsHasChanged = (
@@ -81,6 +88,9 @@ const getVariantsHasChanged = (
     comparisonPrice: v.comparisonPrice ? v.comparisonPrice / 100 : null,
     salePrice: v.salePrice / 100
   }));
+
+  // variant length is different and default variant is not the only one
+  if (variants?.length !== defaultVariants.length && defaultVariants?.length !== 1) return true;
 
   return variants?.some(v => {
     if (!v) return false;

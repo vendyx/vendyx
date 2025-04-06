@@ -70,6 +70,7 @@ export const useProductDetailsForm = (product?: CommonProductFragment) => {
         sku: defaultVariant?.sku ?? '',
         requiresShipping: defaultVariant?.requiresShipping ?? false,
         enabled: product?.enabled ?? true,
+        tags: product?.tags.map(tag => tag.id) ?? [],
         variants:
           product?.variants.items
             .map(variant => ({
@@ -100,6 +101,13 @@ export const useProductDetailsForm = (product?: CommonProductFragment) => {
 
   async function onSubmit(values: ProductDetailsFormInput) {
     const { variants, options } = values;
+    const variantsToRemove = product?.variants.items.filter(
+      variant => !variants.some(v => v.id === variant.id)
+    );
+
+    console.log({
+      variantsToRemove
+    });
 
     startTransition(async () => {
       if (product?.id) {
@@ -127,7 +135,7 @@ export const useProductDetailsForm = (product?: CommonProductFragment) => {
           variantsToRemove:
             product?.variants.items
               .filter(variant => !variants.some(v => v.id === variant.id))
-              .filter(variant => variant.id !== defaultVariant?.id) // Don't remove the default variant
+              .filter(variant => (!variants.length ? variant.id !== defaultVariant?.id : true)) // Don't remove the default variant
               .map(variant => variant.id) ?? [],
           optionsToRemove:
             product?.options
