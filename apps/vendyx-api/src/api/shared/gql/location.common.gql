@@ -1,0 +1,53 @@
+"""
+A location is a physical place where the shop operates.
+A location can be a store, warehouse, or any other place where the shop has a presence.
+A location is used to for shipping and pickup.
+"""
+type Location implements Node {
+  id: ID!
+  createdAt: Date!
+  updatedAt: Date!
+
+  """
+  Identifiable name of the location
+  """
+  name: String!
+
+  country: String!
+  streetLine1: String!
+  streetLine2: String
+  city: String!
+  """
+  State or region
+  """
+  province: String!
+  postalCode: String!
+  phoneNumber: String!
+}
+
+type LocationList implements List {
+  items: [Location!]!
+  count: Int!
+  pageInfo: PageInfo!
+}
+
+input LocationListInput {
+  """
+  Skip the first n results
+  """
+  skip: Int
+
+  """
+  takes n result from where the skip position is
+  """
+  take: Int
+
+  """
+  Filters to apply
+  """
+  filters: LocationFilters
+}
+
+input LocationFilters {
+  name: StringFilter
+}

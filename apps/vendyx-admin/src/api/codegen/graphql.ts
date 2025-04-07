@@ -228,6 +228,21 @@ export type CreateDiscountInput = {
   type: DiscountType;
 };
 
+export type CreateLocationInput = {
+  city: Scalars['String']['input'];
+  country: Scalars['String']['input'];
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isDefault?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Identifiable name of the location */
+  name: Scalars['String']['input'];
+  phoneNumber: Scalars['String']['input'];
+  postalCode: Scalars['String']['input'];
+  /** State or region */
+  province: Scalars['String']['input'];
+  streetLine1: Scalars['String']['input'];
+  streetLine2?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type CreateOptionInput = {
   name: Scalars['String']['input'];
   order: Scalars['Int']['input'];
@@ -466,6 +481,15 @@ export type GenerateUserAccessTokenInput = {
   password: Scalars['String']['input'];
 };
 
+/** In store pickup preference */
+export type InStorePickup = {
+  __typename?: 'InStorePickup';
+  /** Instructions for the customer to pickup the order */
+  instructions: Scalars['String']['output'];
+  /** The location is available for in store pickup */
+  isAvailable: Scalars['Boolean']['output'];
+};
+
 /** A list of items with count, each result that expose a array of items should implement this interface */
 export type List = {
   count: Scalars['Int']['output'];
@@ -478,6 +502,72 @@ export type ListInput = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   /** takes n result from where the skip position is */
   take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/**
+ * A location is a physical place where the shop operates.
+ * A location can be a store, warehouse, or any other place where the shop has a presence.
+ * A location is used to for shipping and pickup.
+ */
+export type Location = Node & {
+  __typename?: 'Location';
+  city: Scalars['String']['output'];
+  country: Scalars['String']['output'];
+  createdAt: Scalars['Date']['output'];
+  id: Scalars['ID']['output'];
+  inStorePickup: InStorePickup;
+  /**
+   * Whether the location is active or not
+   * This is used to show/hide location in the storefront
+   */
+  isActive: Scalars['Boolean']['output'];
+  /** Weather The location is the default location for the shop */
+  isDefault: Scalars['Boolean']['output'];
+  /** Identifiable name of the location */
+  name: Scalars['String']['output'];
+  phoneNumber: Scalars['String']['output'];
+  postalCode: Scalars['String']['output'];
+  /** State or region */
+  province: Scalars['String']['output'];
+  streetLine1: Scalars['String']['output'];
+  streetLine2?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['Date']['output'];
+};
+
+export enum LocationErrorCode {
+  LocationNameAlreadyExists = 'LOCATION_NAME_ALREADY_EXISTS'
+}
+
+export type LocationErrorResult = {
+  __typename?: 'LocationErrorResult';
+  code: LocationErrorCode;
+  message: Scalars['String']['output'];
+};
+
+export type LocationFilters = {
+  name?: InputMaybe<StringFilter>;
+};
+
+export type LocationList = List & {
+  __typename?: 'LocationList';
+  count: Scalars['Int']['output'];
+  items: Array<Location>;
+  pageInfo: PageInfo;
+};
+
+export type LocationListInput = {
+  /** Filters to apply */
+  filters?: InputMaybe<LocationFilters>;
+  /** Skip the first n results */
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  /** takes n result from where the skip position is */
+  take?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type LocationResult = {
+  __typename?: 'LocationResult';
+  apiErrors: Array<LocationErrorResult>;
+  location?: Maybe<Location>;
 };
 
 export type MarkOrderAsShippedInput = {
@@ -508,6 +598,7 @@ export type Mutation = {
   createCollection: Collection;
   createCustomerAddress: Address;
   createDiscount: DiscountResult;
+  createLocation: LocationResult;
   createOption: Option;
   createPaymentMethod: PaymentMethodResult;
   createProduct: Product;
@@ -524,6 +615,7 @@ export type Mutation = {
   removeCollection: Scalars['Boolean']['output'];
   removeCustomerAddress: Address;
   removeDiscounts?: Maybe<Scalars['Boolean']['output']>;
+  removeLocation: Scalars['Boolean']['output'];
   removePaymentMethod: Scalars['Boolean']['output'];
   removeShippingMethod: Scalars['Boolean']['output'];
   removeTags: Scalars['Boolean']['output'];
@@ -536,6 +628,7 @@ export type Mutation = {
   updateCustomer: CustomerResult;
   updateCustomerAddress: Address;
   updateDiscount: DiscountResult;
+  updateLocation: LocationResult;
   updateOption: Option;
   updatePaymentMethod: PaymentMethod;
   updateProduct: Product;
@@ -561,6 +654,10 @@ export type MutationCreateCustomerAddressArgs = {
 
 export type MutationCreateDiscountArgs = {
   input: CreateDiscountInput;
+};
+
+export type MutationCreateLocationArgs = {
+  input: CreateLocationInput;
 };
 
 export type MutationCreateOptionArgs = {
@@ -626,6 +723,10 @@ export type MutationRemoveDiscountsArgs = {
   ids: Array<Scalars['ID']['input']>;
 };
 
+export type MutationRemoveLocationArgs = {
+  id: Scalars['ID']['input'];
+};
+
 export type MutationRemovePaymentMethodArgs = {
   id: Scalars['ID']['input'];
 };
@@ -676,6 +777,11 @@ export type MutationUpdateCustomerAddressArgs = {
 export type MutationUpdateDiscountArgs = {
   id: Scalars['ID']['input'];
   input: UpdateDiscountInput;
+};
+
+export type MutationUpdateLocationArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateLocationInput;
 };
 
 export type MutationUpdateOptionArgs = {
@@ -1036,6 +1142,8 @@ export type Query = {
   customers: CustomerList;
   discount?: Maybe<Discount>;
   discounts: DiscountList;
+  location: Location;
+  locations: LocationList;
   order?: Maybe<Order>;
   orders: OrderList;
   paymentHandlers: Array<PaymentHandler>;
@@ -1086,6 +1194,14 @@ export type QueryDiscountArgs = {
 
 export type QueryDiscountsArgs = {
   input?: InputMaybe<DiscountListInput>;
+};
+
+export type QueryLocationArgs = {
+  id: Scalars['ID']['input'];
+};
+
+export type QueryLocationsArgs = {
+  input?: InputMaybe<LocationListInput>;
 };
 
 export type QueryOrderArgs = {
@@ -1420,6 +1536,21 @@ export type UpdateDiscountInput = {
   perCustomerLimit?: InputMaybe<Scalars['Int']['input']>;
   startsAt?: InputMaybe<Scalars['Date']['input']>;
   type?: InputMaybe<DiscountType>;
+};
+
+export type UpdateLocationInput = {
+  city?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isDefault?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Identifiable name of the location */
+  name?: InputMaybe<Scalars['String']['input']>;
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  postalCode?: InputMaybe<Scalars['String']['input']>;
+  /** State or region */
+  province?: InputMaybe<Scalars['String']['input']>;
+  streetLine1?: InputMaybe<Scalars['String']['input']>;
+  streetLine2?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateOptionInput = {

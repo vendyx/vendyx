@@ -24,6 +24,7 @@ type Mutation {
 }
 
 type Query {
+  availablePickupLocations(orderId: ID!, input: LocationListInput): LocationList!
   availableShippingMethods(orderId: ID!): [ShippingMethod!]!
   availablePaymentMethods: [PaymentMethod!]!
 }
@@ -65,7 +66,11 @@ input AddPaymentToOrderInput {
 }
 
 input AddShipmentToOrderInput {
-  methodId: ID!
+  type: ShipmentType!
+  """
+  Refers to the shipping method ID when type is SHIPPING, and to the pickup location ID when type is PICKUP
+  """
+  providerId: ID!
 }
 
 " Results "

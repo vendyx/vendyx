@@ -1,0 +1,95 @@
+extend type Location {
+  """
+  Weather The location is the default location for the shop
+  """
+  isDefault: Boolean!
+
+  """
+  Whether the location is active or not
+  This is used to show/hide location in the storefront
+  """
+  isActive: Boolean!
+
+  inStorePickup: InStorePickup!
+}
+
+"""
+In store pickup preference
+"""
+type InStorePickup {
+  """
+  The location is available for in store pickup
+  """
+  isAvailable: Boolean!
+  """
+  Instructions for the customer to pickup the order
+  """
+  instructions: String!
+}
+
+type Query {
+  locations(input: LocationListInput): LocationList!
+  location(id: ID!): Location!
+}
+
+type Mutation {
+  createLocation(input: CreateLocationInput!): LocationResult!
+  updateLocation(id: ID!, input: UpdateLocationInput!): LocationResult!
+  removeLocation(id: ID!): Boolean!
+}
+
+input CreateLocationInput {
+  """
+  Identifiable name of the location
+  """
+  name: String!
+
+  country: String!
+  streetLine1: String!
+  streetLine2: String
+  city: String!
+  """
+  State or region
+  """
+  province: String!
+  postalCode: String!
+  phoneNumber: String!
+
+  isDefault: Boolean
+  isActive: Boolean
+}
+
+input UpdateLocationInput {
+  """
+  Identifiable name of the location
+  """
+  name: String
+
+  country: String
+  streetLine1: String
+  streetLine2: String
+  city: String
+  """
+  State or region
+  """
+  province: String
+  postalCode: String
+  phoneNumber: String
+
+  isDefault: Boolean
+  isActive: Boolean
+}
+
+type LocationResult {
+  location: Location
+  apiErrors: [LocationErrorResult!]!
+}
+
+type LocationErrorResult {
+  code: LocationErrorCode!
+  message: String!
+}
+
+enum LocationErrorCode {
+  LOCATION_NAME_ALREADY_EXISTS
+}

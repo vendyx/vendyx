@@ -42,6 +42,7 @@ model Shop {
   discounts      Discount[]
   tags           Tag[]
   favorites      Favorite[]
+  location       Location[]
 
   /// The shop's owner
   owner   User   @relation(fields: [ownerId], references: [id])

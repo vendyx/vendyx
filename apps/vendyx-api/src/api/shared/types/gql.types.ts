@@ -511,7 +511,8 @@ export class AddPaymentToOrderInput {
 }
 
 export class AddShipmentToOrderInput {
-    methodId: string;
+    type: ShipmentType;
+    providerId: string;
 }
 
 export interface Node {

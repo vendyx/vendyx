@@ -392,19 +392,27 @@ export class OrderService extends OrderFinders {
       include: { shipment: true }
     });
 
-    if (!order.shippingAddress) {
+    if (!order.shippingAddress && input.type === ShipmentType.SHIPPING) {
       return new MissingShippingAddress();
     }
 
-    if (!this.canPerformAction(order, 'add_shipment')) {
+    if (!this.canPerformAction(order, 'add_shipment', input)) {
       return new ForbiddenOrderAction(order.state);
+    }
+
+    if (input.type === ShipmentType.PICKUP) {
+      // const location = getLocation(input.providerId)
+      // if (!location) {
+      //   return new LocationNotFound();
+      // }
+      // saveShipmentToOrder(location)
     }
 
     const state = (order?.shippingAddress as unknown as Address).province;
 
     const method = await this.prisma.shippingMethod.findUnique({
       where: {
-        id: input.methodId,
+        id: input.providerId,
         enabled: true,
         zone: { states: { some: { state: { name: state } } } }
       }
@@ -1271,7 +1279,8 @@ export class OrderService extends OrderFinders {
    */
   private canPerformAction(
     order: Order & { customer?: Customer | null; shipment?: Shipment | null },
-    action: OrderAction
+    action: OrderAction,
+    input?: unknown
   ) {
     if (action === 'modify') return order.state === OrderState.MODIFYING;
 
@@ -1281,6 +1290,10 @@ export class OrderService extends OrderFinders {
 
     if (action === 'add_shipment') {
       const hasShippingAddress = Boolean(order.shippingAddress);
+      const _input = input as AddShipmentToOrderInput;
+
+      // If shipment is pickup, we don't need a shipping address
+      if (_input.type === ShipmentType.PICKUP && !hasShippingAddress) return true;
 
       return hasShippingAddress && order.state === OrderState.MODIFYING;
     }

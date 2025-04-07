@@ -1,0 +1,46 @@
+/// A location is a physical place where the shop operates.
+/// A location can be a store, warehouse, or any other place where the shop has a presence.
+/// A location is used to for shipping and pickup.
+model Location {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  /// Identifiable name of the location
+  name String
+
+  country     String
+  streetLine1 String  @map("street_line1")
+  streetLine2 String? @map("street_line2")
+  city        String
+  /// State
+  province    String
+  postalCode  String  @map("postal_code")
+  phoneNumber String  @map("phone_number") @db.VarChar(15) // Max length of phone number is 15
+
+  /// Weather The location is the default location for the shop
+  isDefault Boolean @default(false) @map("is_default")
+  /// Weather the location is active or not
+  /// This is used to show/hide location in the storefront
+  isActive  Boolean @default(true) @map("is_active")
+
+  inStorePickup InStorePickup?
+
+  shop   Shop   @relation(fields: [shopId], references: [id])
+  shopId String @default(dbgenerated("(current_setting('app.current_shop_id'::text))::uuid")) @map("shop_id") @db.Uuid
+}
+
+/// In store pickup preference
+model InStorePickup {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  /// The location is available for in store pickup
+  isAvailable  Boolean @default(false) @map("is_available")
+  /// Instructions for the customer to pickup the order
+  instructions String  @db.Text
+
+  location   Location @relation(fields: [locationId], references: [id])
+  locationId String   @unique @map("location_id") @db.Uuid
+}
