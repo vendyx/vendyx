@@ -71,9 +71,8 @@ export const COMMON_ORDER_FRAGMENT = graphql(`
       id
       amount
       total
-      carrier
       method
-      trackingCode
+      metadata
       discounts {
         handle
         applicationMode
@@ -111,8 +110,8 @@ export const GET_ALL_ORDERS_QUERY = graphql(`
         shipment {
           id
           amount
-          trackingCode
           method
+          metadata
         }
       }
     }

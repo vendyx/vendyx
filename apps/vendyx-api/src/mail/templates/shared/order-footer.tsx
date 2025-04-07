@@ -5,7 +5,7 @@ import * as React from 'react';
 import { ShopSocials } from '@/api/shared/types/gql.types';
 
 export const OrderFooter: React.FC<Props> = ({ shop }) => {
-  const socials = shop.socials as ShopSocials;
+  const socials = shop.socials as ShopSocials | null;
 
   return (
     <Section className="mt-[80px] bg-[#F7F7F7] p-4">
@@ -16,7 +16,7 @@ export const OrderFooter: React.FC<Props> = ({ shop }) => {
         </Column>
         <Column className="w-1/2">
           <Row className="table-cell h-[44px] w-[56px] align-bottom">
-            {socials.facebook && (
+            {socials?.facebook && (
               <Column className="pr-[8px]">
                 <Link href={socials.facebook}>
                   <Img
@@ -28,14 +28,14 @@ export const OrderFooter: React.FC<Props> = ({ shop }) => {
                 </Link>
               </Column>
             )}
-            {socials.twitter && (
+            {socials?.twitter && (
               <Column className="pr-[8px]">
                 <Link href={socials.twitter}>
                   <Img alt="X" height="36" src="https://react.email/static/x-logo.png" width="36" />
                 </Link>
               </Column>
             )}
-            {socials.instagram && (
+            {socials?.instagram && (
               <Column>
                 <Link href={socials.instagram}>
                   <Img

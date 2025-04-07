@@ -99,9 +99,15 @@ export enum OrderState {
     MODIFYING = "MODIFYING",
     PAYMENT_ADDED = "PAYMENT_ADDED",
     PAYMENT_AUTHORIZED = "PAYMENT_AUTHORIZED",
+    READY_FOR_PICKUP = "READY_FOR_PICKUP",
     SHIPPED = "SHIPPED",
     DELIVERED = "DELIVERED",
     CANCELED = "CANCELED"
+}
+
+export enum ShipmentType {
+    SHIPPING = "SHIPPING",
+    PICKUP = "PICKUP"
 }
 
 export enum FavoriteErrorCode {
@@ -1163,13 +1169,22 @@ export class Shipment implements Node {
     id: string;
     createdAt: Date;
     updatedAt: Date;
-    trackingCode?: Nullable<string>;
-    carrier?: Nullable<string>;
+    type: ShipmentType;
     amount: number;
     total: number;
     method: string;
+    metadata?: Nullable<JSON>;
     discounts: ActiveDiscount[];
     order: Order;
+}
+
+export class ShippingMetadata {
+    carrier: string;
+    trackingCode: string;
+}
+
+export class PickupMetadata {
+    location: string;
 }
 
 export class Tag implements Node {
@@ -1191,7 +1206,7 @@ export class GenerateCustomerAccessTokenResult {
 }
 
 export class FavoriteResult {
-    product?: Nullable<Product>;
+    variant?: Nullable<Variant>;
     apiErrors: FavoriteErrorResult[];
 }
 

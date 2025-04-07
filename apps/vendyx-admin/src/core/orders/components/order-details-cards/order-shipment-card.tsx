@@ -1,11 +1,12 @@
 import { type FC } from 'react';
 
-import { type CommonOrderFragment } from '@/api/types';
+import { type CommonOrderFragment, type ShippingMetadata } from '@/api/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { formatPrice } from '@/shared/utils/formatters';
 
 export const OrderShipmentCard: FC<Props> = ({ order }) => {
   const { shipment } = order;
+  const shipmentMetadata = shipment?.metadata as ShippingMetadata;
 
   if (!shipment) return null;
 
@@ -23,14 +24,14 @@ export const OrderShipmentCard: FC<Props> = ({ order }) => {
           <p>
             Amount: <span>{formatPrice(shipment.total)}</span>
           </p>
-          {shipment.trackingCode && (
+          {shipmentMetadata?.trackingCode && (
             <p>
-              Tracking number: <span>{shipment.trackingCode}</span>
+              Tracking number: <span>{shipmentMetadata?.trackingCode}</span>
             </p>
           )}
-          {shipment.carrier && (
+          {shipmentMetadata?.carrier && (
             <p>
-              Carrier: <span>{shipment.carrier}</span>
+              Carrier: <span>{shipmentMetadata?.carrier}</span>
             </p>
           )}
         </div>

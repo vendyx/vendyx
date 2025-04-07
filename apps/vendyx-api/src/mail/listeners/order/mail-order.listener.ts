@@ -13,20 +13,26 @@ export class MailOrderListener {
   async handleOrderPaidEvent(payload: OrderPaidEvent) {
     try {
       await this.mailOrderService.sendOrderConfirmationEmail(payload.orderId);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @OnEvent(OrderEvent.SHIPPED)
   async handleOrderShippedEvent(payload: OrderPaidEvent) {
     try {
       await this.mailOrderService.sendOrderSentEmail(payload.orderId);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @OnEvent(OrderEvent.DELIVERED)
   async handleOrderDeliveredEvent(payload: OrderPaidEvent) {
     try {
       await this.mailOrderService.sendOrderDeliverEmail(payload.orderId);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

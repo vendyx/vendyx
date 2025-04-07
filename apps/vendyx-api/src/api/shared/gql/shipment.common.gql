@@ -1,12 +1,35 @@
+"""
+A shipment is the total price of the shipping method rate
+"""
 type Shipment implements Node {
   id: ID!
   createdAt: Date!
   updatedAt: Date!
-  trackingCode: String
-  carrier: String
+
+  """
+  The shipment's type
+  """
+  type: ShipmentType!
+  """
+  Amount of the shipment collected from the customer
+  """
   amount: Int!
+  """
+  The price of the shipment after discounts
+  """
   total: Int!
+  """
+  Method name that was used to create the shipment
+  If type is `SHIPPING`, this is the name of the shipping method (We do not reference the ShippingMethod here because the method can be deleted)
+  If type is `PICKUP`, it will be 'pickup
+  """
   method: String!
+  """
+  Metadata for the shipment depending on the shipment type
+  If type is `SHIPPING`, type will be `ShippingMetadata`
+  If type is `PICKUP`, type will be `PickupMetadata`
+  """
+  metadata: JSON
 
   """
   Array of all shipment-level discounts applied to the shipment
@@ -16,4 +39,30 @@ type Shipment implements Node {
   discounts: [ActiveDiscount!]!
 
   order: Order!
+}
+
+enum ShipmentType {
+  """
+  The shipment is a delivery to the customer
+  """
+  SHIPPING
+  """
+  The shipment is a pickup at a store
+  """
+  PICKUP
+}
+
+"""
+Metadata for shipment type `SHIPPING`
+"""
+type ShippingMetadata {
+  carrier: String!
+  trackingCode: String!
+}
+
+"""
+Metadata for shipment type `PICKUP`
+"""
+type PickupMetadata {
+  location: String!
 }

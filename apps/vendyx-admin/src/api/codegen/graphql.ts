@@ -876,7 +876,15 @@ export enum OrderState {
   PaymentAdded = 'PAYMENT_ADDED',
   /** The payment has been authorized by the payment provider */
   PaymentAuthorized = 'PAYMENT_AUTHORIZED',
-  /** The order has been shipped (carrier and tracking code added) */
+  /**
+   * The order is ready for pickup at the location chosen by the customer
+   * This state is only possible if the order has a shipment with type `PICKUP`
+   */
+  ReadyForPickup = 'READY_FOR_PICKUP',
+  /**
+   * The order has been shipped (carrier and tracking code added)
+   * This state is only possible if the order has a shipment with type `SHIPPING`
+   */
   Shipped = 'SHIPPED'
 }
 
@@ -952,6 +960,12 @@ export type PaymentMethodResult = {
   __typename?: 'PaymentMethodResult';
   apiErrors: Array<PaymentMethodErrorResult>;
   paymentMethod?: Maybe<PaymentMethod>;
+};
+
+/** Metadata for shipment type `PICKUP` */
+export type PickupMetadata = {
+  __typename?: 'PickupMetadata';
+  location: Scalars['String']['output'];
 };
 
 export type Product = Node & {
@@ -1129,10 +1143,11 @@ export type QueryZoneArgs = {
   id: Scalars['ID']['input'];
 };
 
+/** A shipment is the total price of the shipping method rate */
 export type Shipment = Node & {
   __typename?: 'Shipment';
+  /** Amount of the shipment collected from the customer */
   amount: Scalars['Int']['output'];
-  carrier?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['Date']['output'];
   /**
    * Array of all shipment-level discounts applied to the shipment
@@ -1141,12 +1156,32 @@ export type Shipment = Node & {
    */
   discounts: Array<ActiveDiscount>;
   id: Scalars['ID']['output'];
+  /**
+   * Metadata for the shipment depending on the shipment type
+   * If type is `SHIPPING`, type will be `ShippingMetadata`
+   * If type is `PICKUP`, type will be `PickupMetadata`
+   */
+  metadata?: Maybe<Scalars['JSON']['output']>;
+  /**
+   * Method name that was used to create the shipment
+   * If type is `SHIPPING`, this is the name of the shipping method (We do not reference the ShippingMethod here because the method can be deleted)
+   * If type is `PICKUP`, it will be 'pickup
+   */
   method: Scalars['String']['output'];
   order: Order;
+  /** The price of the shipment after discounts */
   total: Scalars['Int']['output'];
-  trackingCode?: Maybe<Scalars['String']['output']>;
+  /** The shipment's type */
+  type: ShipmentType;
   updatedAt: Scalars['Date']['output'];
 };
+
+export enum ShipmentType {
+  /** The shipment is a pickup at a store */
+  Pickup = 'PICKUP',
+  /** The shipment is a delivery to the customer */
+  Shipping = 'SHIPPING'
+}
 
 /** A shipping handler is a way to manage the shipping of an order in your shop, manage include the shipping cost, the shipping time, etc */
 export type ShippingHandler = {
@@ -1163,6 +1198,13 @@ export type ShippingHandler = {
   icon?: Maybe<Scalars['String']['output']>;
   /** The shipping handler's name (e.g. 'Fedex') */
   name: Scalars['String']['output'];
+};
+
+/** Metadata for shipment type `SHIPPING` */
+export type ShippingMetadata = {
+  __typename?: 'ShippingMetadata';
+  carrier: Scalars['String']['output'];
+  trackingCode: Scalars['String']['output'];
 };
 
 /** A shipping method is a method chosen by the customer to ship the order to the customer's address */
@@ -2098,9 +2140,8 @@ export type CommonOrderFragment = {
     id: string;
     amount: number;
     total: number;
-    carrier?: string | null;
     method: string;
-    trackingCode?: string | null;
+    metadata?: any | null;
     discounts: Array<{
       __typename?: 'ActiveDiscount';
       handle: string;
@@ -2145,8 +2186,8 @@ export type GetAllOrdersQueryQuery = {
         __typename?: 'Shipment';
         id: string;
         amount: number;
-        trackingCode?: string | null;
         method: string;
+        metadata?: any | null;
       } | null;
     }>;
   };
@@ -3042,9 +3083,8 @@ export const CommonOrderFragmentDoc = new TypedDocumentString(
     id
     amount
     total
-    carrier
     method
-    trackingCode
+    metadata
     discounts {
       handle
       applicationMode
@@ -3700,8 +3740,8 @@ export const GetAllOrdersQueryDocument = new TypedDocumentString(`
       shipment {
         id
         amount
-        trackingCode
         method
+        metadata
       }
     }
   }
@@ -3783,9 +3823,8 @@ export const GetOrderbyIdQueryDocument = new TypedDocumentString(`
     id
     amount
     total
-    carrier
     method
-    trackingCode
+    metadata
     discounts {
       handle
       applicationMode

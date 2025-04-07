@@ -12,7 +12,13 @@ enum OrderState {
   """
   PAYMENT_AUTHORIZED
   """
+  The order is ready for pickup at the location chosen by the customer
+  This state is only possible if the order has a shipment with type `PICKUP`
+  """
+  READY_FOR_PICKUP
+  """
   The order has been shipped (carrier and tracking code added)
+  This state is only possible if the order has a shipment with type `SHIPPING`
   """
   SHIPPED
   """

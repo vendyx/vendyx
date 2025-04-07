@@ -29,6 +29,7 @@ import {
 } from '@react-email/components';
 import * as React from 'react';
 
+import { ShippingMetadata } from '@/api/shared/types/gql.types';
 import { formatOrderCode } from '@/business/order/order.utils';
 import { getFormattedPrice } from '@/business/shared/utils/price.utils';
 
@@ -37,6 +38,7 @@ import { OrderFooter } from './shared/order-footer';
 const Component: React.FC<Props> = ({ order, shop }) => {
   const { customer, shipment } = order;
   const shippingAddress = order.shippingAddress as unknown as Address;
+  const shipmentMetadata = order.shipment?.metadata as unknown as ShippingMetadata;
 
   return (
     <Html>
@@ -55,7 +57,7 @@ const Component: React.FC<Props> = ({ order, shop }) => {
                   <Heading className="text-black text-[24px] font-normal mb-2">
                     Tracking number
                   </Heading>
-                  <Text className="text-[#666666] !my-0">{order.shipment?.trackingCode}</Text>
+                  <Text className="text-[#666666] !my-0">{shipmentMetadata?.trackingCode}</Text>
                 </Column>
               </Row>
               <Heading className="text-black text-[30px] font-normal">

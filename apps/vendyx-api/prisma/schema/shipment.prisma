@@ -1,3 +1,10 @@
+enum ShipmentType {
+  /// The shipment is a delivery to the customer
+  SHIPPING
+  /// The shipment is a pickup at a store
+  PICKUP
+}
+
 /// A shipment is the total price of the shipping method rate
 model Shipment {
   id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -5,23 +12,27 @@ model Shipment {
   updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
+  /// The shipment's type
+  type            ShipmentType
   /// Amount of the shipment collected from the customer
   amount          Int
   /// The price of the shipment after discounts
   total           Int
-  /// Method name that was used to create the shipment. We do not reference the ShippingMethod here because the method can be deleted.
+  /// Method name that was used to create the shipment
+  /// If type is `SHIPPING`, this is the name of the shipping method (We do not reference the ShippingMethod here because the method can be deleted)
+  /// If type is `PICKUP`, it will be 'pickup
   method          String
-  /// Tracking code of the shipment retrieved from the carrier
-  trackingCode    String? @map("tracking_code")
-  /// Carrier name that was used to create the shipment
-  carrier         String?
   /// Array of all shipment-level discount handles applied to the shipment
   /// Populated every time order shipment is modified.
   /// Use this field to show data of current discounts applied to the shipment
   /// Type: ActiveDiscount[]
   ///
   /// NOTE: this field is exposed in the api as `discounts`
-  activeDiscounts Json    @default("[]") @map("active_discounts") @db.Json
+  activeDiscounts Json         @default("[]") @map("active_discounts") @db.Json
+  /// Metadata for the shipment depending on the shipment type
+  /// If type is `SHIPPING`, type will be `ShippingMetadata`
+  /// If type is `PICKUP`, type will be `PickupMetadata`
+  metadata        Json?        @db.Json
 
   Order Order[]
 

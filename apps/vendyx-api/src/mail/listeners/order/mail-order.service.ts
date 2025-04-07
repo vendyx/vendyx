@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OrderState } from '@prisma/client';
 
+import { ShippingMetadata } from '@/api/shared/types/gql.types';
 import { MailClientSendInput } from '@/mail/clients/mail-client.interface';
 import { SendGridClient } from '@/mail/clients/sendgrid-client';
 import { MailError } from '@/mail/mail.error';
@@ -99,7 +100,8 @@ export class MailOrderService {
       throw new MailError(`Order or customer doesn't exist for order id: ${orderId}`);
     }
 
-    if (!order || !order.shipment?.carrier || !order.shipment.trackingCode) {
+    const metadata = order.shipment?.metadata as unknown as ShippingMetadata;
+    if (!order || !metadata?.carrier || !metadata.trackingCode) {
       throw new MailError(
         `Order or carrier or tracking code doesn't exist for order id: ${orderId}`
       );
@@ -161,7 +163,8 @@ export class MailOrderService {
       throw new MailError(`Order or customer doesn't exist for order id: ${orderId}`);
     }
 
-    if (!order || !order.shipment?.carrier || !order.shipment.trackingCode) {
+    const metadata = order.shipment?.metadata as unknown as ShippingMetadata;
+    if (!order || !metadata?.carrier || !metadata.trackingCode) {
       throw new MailError(
         `Order or carrier or tracking code doesn't exist for order id: ${orderId}`
       );

@@ -12,6 +12,7 @@ import {
   OrderState,
   Prisma,
   Shipment,
+  ShipmentType,
   Variant
 } from '@prisma/client';
 import { InputJsonArray, JsonValue } from '@prisma/client/runtime/library';
@@ -24,6 +25,7 @@ import {
   CreateOrderInput,
   CreateOrderLineInput,
   MarkOrderAsShippedInput,
+  ShippingMetadata,
   UpdateOrderLineInput
 } from '@/api/shared/types/gql.types';
 import { EventBusService } from '@/event-bus/event-bus.service';
@@ -446,7 +448,12 @@ export class OrderService extends OrderFinders {
       where: { id: orderId },
       data: {
         shipment: {
-          create: { amount: shippingPrice, total: shippingPrice, method: method.name }
+          create: {
+            amount: shippingPrice,
+            total: shippingPrice,
+            method: method.name,
+            type: ShipmentType.SHIPPING
+          }
         },
         total: order.total + shippingPrice
       },
@@ -651,7 +658,14 @@ export class OrderService extends OrderFinders {
     const result = await this.prisma.order.update({
       where: { id: orderId },
       data: {
-        shipment: { update: { carrier: input.carrier, trackingCode: input.trackingCode } },
+        shipment: {
+          update: {
+            metadata: {
+              carrier: input.carrier,
+              trackingCode: input.trackingCode
+            } satisfies ShippingMetadata
+          }
+        },
         state: OrderState.SHIPPED
       }
     });
