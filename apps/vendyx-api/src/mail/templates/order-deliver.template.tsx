@@ -7,6 +7,7 @@ import {
   OrderLine,
   Product,
   Shipment,
+  ShipmentType,
   Shop,
   Variant
 } from '@prisma/client';
@@ -29,7 +30,7 @@ import {
 } from '@react-email/components';
 import * as React from 'react';
 
-import { ShippingMetadata } from '@/api/shared/types/gql.types';
+import { PickupMetadata, ShippingMetadata } from '@/api/shared/types/gql.types';
 import { formatOrderCode } from '@/business/order/order.utils';
 import { getFormattedPrice } from '@/business/shared/utils/price.utils';
 
@@ -37,8 +38,13 @@ import { OrderFooter } from './shared/order-footer';
 
 const Component: React.FC<Props> = ({ order, shop }) => {
   const { customer, shipment } = order;
-  const shippingAddress = order.shippingAddress as unknown as Address;
-  const shipmentMetadata = order.shipment?.metadata as unknown as ShippingMetadata;
+  const shippingAddress = order.shippingAddress as unknown as Address | undefined;
+
+  const shipmentMetadata = order.shipment?.metadata;
+
+  const isPickup = shipment?.type === ShipmentType.PICKUP;
+  const shippingMetadata = shipmentMetadata as unknown as ShippingMetadata;
+  const pickupMetadata = shipmentMetadata as unknown as PickupMetadata;
 
   return (
     <Html>
@@ -53,23 +59,32 @@ const Component: React.FC<Props> = ({ order, shop }) => {
                   <Heading className="text-black text-[24px] font-normal mb-2">{shop.name}</Heading>
                   <Text className="text-[#666666] !my-0">ORDER {formatOrderCode(order.code)}</Text>
                 </Column>
-                <Column>
-                  <Heading className="text-black text-[24px] font-normal mb-2">
-                    Tracking number
-                  </Heading>
-                  <Text className="text-[#666666] !my-0">{shipmentMetadata?.trackingCode}</Text>
-                </Column>
+                {shippingMetadata.trackingCode && (
+                  <Column>
+                    <Heading className="text-black text-[24px] font-normal mb-2">
+                      Tracking number
+                    </Heading>
+                    <Text className="text-[#666666] !my-0">{shippingMetadata?.trackingCode}</Text>
+                  </Column>
+                )}
+                {pickupMetadata && (
+                  <Column>
+                    <Heading className="text-black text-[24px] font-normal mb-2">
+                      From store
+                    </Heading>
+                    <Text className="text-[#666666] !my-0">{pickupMetadata.location}</Text>
+                  </Column>
+                )}
               </Row>
               <Heading className="text-black text-[30px] font-normal">
                 Your order has been delivered
               </Heading>
-              <Text className="text-[#666666] text-[16px]">
+              {/* <Text className="text-[#666666] text-[16px]">
                 Your order has been delivered. Track your order with the link below.
               </Text>
-              {/* TODO: Add tracking url */}
               <Button className="bg-[#000000] rounded text-white text-[14px] font-semibold no-underline text-center px-5 py-3">
                 Track order
-              </Button>
+              </Button> */}
             </Section>
 
             {/* Order summary */}
@@ -156,18 +171,32 @@ const Component: React.FC<Props> = ({ order, shop }) => {
                   <Text className="text-[#666666] text-[16px] !my-1">{customer?.email}</Text>
                 </Column>
                 <Column className="w-1/2">
-                  <Heading className="text-black text-[20px] font-normal mt-[80px]">
-                    Shipping to
-                  </Heading>
-                  <Text className="text-[#666666] text-[16px] !my-1">
-                    {shippingAddress.streetLine1} {shippingAddress.streetLine2}
-                  </Text>
-                  <Text className="text-[#666666] text-[16px] !my-1">
-                    {shippingAddress.postalCode} {shippingAddress.city}, {shippingAddress.province}
-                  </Text>
-                  <Text className="text-[#666666] text-[16px] !my-1">
-                    {shippingAddress.country}
-                  </Text>
+                  {isPickup ? (
+                    <>
+                      <Heading className="text-black text-[20px] font-normal mt-[80px]">
+                        Collected from store
+                      </Heading>
+                      <Text className="text-[#666666] text-[16px] !my-1">
+                        {pickupMetadata.location}
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Heading className="text-black text-[20px] font-normal mt-[80px]">
+                        Shipping to
+                      </Heading>
+                      <Text className="text-[#666666] text-[16px] !my-1">
+                        {shippingAddress?.streetLine1} {shippingAddress?.streetLine2}
+                      </Text>
+                      <Text className="text-[#666666] text-[16px] !my-1">
+                        {shippingAddress?.postalCode} {shippingAddress?.city},{' '}
+                        {shippingAddress?.province}
+                      </Text>
+                      <Text className="text-[#666666] text-[16px] !my-1">
+                        {shippingAddress?.country}
+                      </Text>
+                    </>
+                  )}
                 </Column>
               </Row>
             </Section>

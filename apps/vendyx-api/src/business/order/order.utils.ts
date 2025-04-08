@@ -24,12 +24,11 @@ export const ValidOrderTransitions = [
   /**
    * The order has been picked up by the customer
    */
-  [OrderState.READY_FOR_PICKUP, OrderState.DELIVERED][
-    /**
-     * The order has been delivered
-     */
-    (OrderState.SHIPPED, OrderState.DELIVERED)
-  ]
+  [OrderState.READY_FOR_PICKUP, OrderState.DELIVERED],
+  /**
+   * The order has been delivered
+   */
+  [OrderState.SHIPPED, OrderState.DELIVERED]
 ];
 
 /**

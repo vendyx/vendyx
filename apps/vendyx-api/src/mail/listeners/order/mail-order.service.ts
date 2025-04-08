@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { OrderState } from '@prisma/client';
+import { OrderState, ShipmentType } from '@prisma/client';
 
 import { ShippingMetadata } from '@/api/shared/types/gql.types';
 import { MailClientSendInput } from '@/mail/clients/mail-client.interface';
@@ -164,7 +164,9 @@ export class MailOrderService {
     }
 
     const metadata = order.shipment?.metadata as unknown as ShippingMetadata;
-    if (!order || !metadata?.carrier || !metadata.trackingCode) {
+    const isPickup = order.shipment?.type === ShipmentType.PICKUP;
+
+    if (!isPickup && (!order || !metadata?.carrier || !metadata.trackingCode)) {
       throw new MailError(
         `Order or carrier or tracking code doesn't exist for order id: ${orderId}`
       );

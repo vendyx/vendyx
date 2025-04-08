@@ -11,6 +11,7 @@ import {
   GET_ALL_ORDERS_QUERY,
   GET_ORDER_BY_ID_QUERY,
   MARK_ORDER_AS_DELIVERED_MUTATION,
+  MARK_ORDER_AS_READY_FOR_PICKUP_MUTATION,
   MARK_ORDER_AS_SHIPPED_MUTATION
 } from '../operations/order.operations';
 import { type ID } from '../scalars/scalars.type';
@@ -48,6 +49,20 @@ export const OrderService = {
     const {
       markOrderAsShipped: { apiErrors, order }
     } = await serviceGqlFetcher(MARK_ORDER_AS_SHIPPED_MUTATION, { orderId, input });
+
+    const error = getOrderError(apiErrors[0]);
+
+    if (error) {
+      return { success: false, error, errorCode: apiErrors[0].code };
+    }
+
+    return { success: true, orderId: order?.id ?? '' };
+  },
+
+  async markAsReadyForPickup(orderId: ID): Promise<OrderResult> {
+    const {
+      markAsReadyForPickup: { apiErrors, order }
+    } = await serviceGqlFetcher(MARK_ORDER_AS_READY_FOR_PICKUP_MUTATION, { orderId });
 
     const error = getOrderError(apiErrors[0]);
 

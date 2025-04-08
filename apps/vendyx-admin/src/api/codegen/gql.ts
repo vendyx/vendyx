@@ -51,6 +51,7 @@ type Documents = {
   '\n  query GetAllOrdersQuery($input: OrderListInput) {\n    orders(input: $input) {\n      count\n      pageInfo {\n        total\n      }\n      items {\n        id\n        code\n        state\n        total\n        totalQuantity\n        placedAt\n        customer {\n          id\n          firstName\n          lastName\n        }\n        shipment {\n          id\n          amount\n          method\n          metadata\n        }\n      }\n    }\n  }\n': typeof types.GetAllOrdersQueryDocument;
   '\n  query GetOrderbyIdQuery($orderId: ID) {\n    order(id: $orderId) {\n      ...CommonOrder\n    }\n  }\n': typeof types.GetOrderbyIdQueryDocument;
   '\n  mutation MarkAsShipped($orderId: ID!, $input: MarkOrderAsShippedInput!) {\n    markOrderAsShipped(id: $orderId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      order {\n        id\n      }\n    }\n  }\n': typeof types.MarkAsShippedDocument;
+  '\n  mutation MarkAsReadyForPickup($orderId: ID!) {\n    markAsReadyForPickup(id: $orderId) {\n      apiErrors {\n        code\n        message\n      }\n      order {\n        id\n      }\n    }\n  }\n': typeof types.MarkAsReadyForPickupDocument;
   '\n  mutation MarkAsDelivered($orderId: ID!) {\n    markOrderAsDelivered(id: $orderId) {\n      apiErrors {\n        code\n        message\n      }\n      order {\n        id\n      }\n    }\n  }\n': typeof types.MarkAsDeliveredDocument;
   '\n  mutation CancelOrder($orderId: ID!) {\n    cancelOrder(id: $orderId) {\n      apiErrors {\n        code\n        message\n      }\n      order {\n        id\n      }\n    }\n  }\n': typeof types.CancelOrderDocument;
   '\n  fragment CommonPaymentHandler on PaymentHandler {\n    icon\n    name\n    code\n    args\n  }\n': typeof types.CommonPaymentHandlerFragmentDoc;
@@ -179,6 +180,8 @@ const documents: Documents = {
     types.GetOrderbyIdQueryDocument,
   '\n  mutation MarkAsShipped($orderId: ID!, $input: MarkOrderAsShippedInput!) {\n    markOrderAsShipped(id: $orderId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      order {\n        id\n      }\n    }\n  }\n':
     types.MarkAsShippedDocument,
+  '\n  mutation MarkAsReadyForPickup($orderId: ID!) {\n    markAsReadyForPickup(id: $orderId) {\n      apiErrors {\n        code\n        message\n      }\n      order {\n        id\n      }\n    }\n  }\n':
+    types.MarkAsReadyForPickupDocument,
   '\n  mutation MarkAsDelivered($orderId: ID!) {\n    markOrderAsDelivered(id: $orderId) {\n      apiErrors {\n        code\n        message\n      }\n      order {\n        id\n      }\n    }\n  }\n':
     types.MarkAsDeliveredDocument,
   '\n  mutation CancelOrder($orderId: ID!) {\n    cancelOrder(id: $orderId) {\n      apiErrors {\n        code\n        message\n      }\n      order {\n        id\n      }\n    }\n  }\n':
@@ -506,6 +509,12 @@ export function graphql(
 export function graphql(
   source: '\n  mutation MarkAsShipped($orderId: ID!, $input: MarkOrderAsShippedInput!) {\n    markOrderAsShipped(id: $orderId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      order {\n        id\n      }\n    }\n  }\n'
 ): typeof import('./graphql').MarkAsShippedDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  mutation MarkAsReadyForPickup($orderId: ID!) {\n    markAsReadyForPickup(id: $orderId) {\n      apiErrors {\n        code\n        message\n      }\n      order {\n        id\n      }\n    }\n  }\n'
+): typeof import('./graphql').MarkAsReadyForPickupDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

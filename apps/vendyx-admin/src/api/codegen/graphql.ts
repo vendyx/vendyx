@@ -611,6 +611,7 @@ export type Mutation = {
   createZone: Zone;
   generateShopApiKey: ShopResult;
   generateUserAccessToken: UserAccessTokenResult;
+  markAsReadyForPickup: OrderResult;
   markOrderAsDelivered: OrderResult;
   markOrderAsShipped: OrderResult;
   removeCollection: Scalars['Boolean']['output'];
@@ -701,6 +702,10 @@ export type MutationCreateZoneArgs = {
 
 export type MutationGenerateUserAccessTokenArgs = {
   input: GenerateUserAccessTokenInput;
+};
+
+export type MutationMarkAsReadyForPickupArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type MutationMarkOrderAsDeliveredArgs = {
@@ -2359,6 +2364,19 @@ export type MarkAsShippedMutation = {
   };
 };
 
+export type MarkAsReadyForPickupMutationVariables = Exact<{
+  orderId: Scalars['ID']['input'];
+}>;
+
+export type MarkAsReadyForPickupMutation = {
+  __typename?: 'Mutation';
+  markAsReadyForPickup: {
+    __typename?: 'OrderResult';
+    apiErrors: Array<{ __typename?: 'OrderErrorResult'; code: OrderErrorCode; message: string }>;
+    order?: { __typename?: 'Order'; id: string } | null;
+  };
+};
+
 export type MarkAsDeliveredMutationVariables = Exact<{
   orderId: Scalars['ID']['input'];
 }>;
@@ -3992,6 +4010,22 @@ export const MarkAsShippedDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<MarkAsShippedMutation, MarkAsShippedMutationVariables>;
+export const MarkAsReadyForPickupDocument = new TypedDocumentString(`
+    mutation MarkAsReadyForPickup($orderId: ID!) {
+  markAsReadyForPickup(id: $orderId) {
+    apiErrors {
+      code
+      message
+    }
+    order {
+      id
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  MarkAsReadyForPickupMutation,
+  MarkAsReadyForPickupMutationVariables
+>;
 export const MarkAsDeliveredDocument = new TypedDocumentString(`
     mutation MarkAsDelivered($orderId: ID!) {
   markOrderAsDelivered(id: $orderId) {
