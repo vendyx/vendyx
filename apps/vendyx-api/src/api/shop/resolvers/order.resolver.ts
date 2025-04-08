@@ -6,7 +6,7 @@ import {
   AddCustomerToOrderInput,
   AddPaymentToOrderInput,
   AddShipmentToOrderInput,
-  CreateAddressInput,
+  AvailablePickupLocationsInput,
   CreateOrderAddressInput,
   CreateOrderInput,
   CreateOrderLineInput,
@@ -87,6 +87,11 @@ export class OrderResolver {
     }
 
     return shippingMethods;
+  }
+
+  @Query('availablePickupLocations')
+  async availablePickupLocations(@Args('input') input: AvailablePickupLocationsInput) {
+    return await this.orderService.findAvailablePickupLocations(input);
   }
 
   @Mutation('addDiscountCodeToOrder')

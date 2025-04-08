@@ -548,6 +548,11 @@ export class CreateOrderAddressInput {
     references?: Nullable<string>;
 }
 
+export class AvailablePickupLocationsInput {
+    country: string;
+    province: string;
+}
+
 export class AddPaymentToOrderInput {
     methodId: string;
 }
@@ -588,7 +593,7 @@ export abstract class IMutation {
 
     abstract updateLocation(id: string, input: UpdateLocationInput): LocationResult | Promise<LocationResult>;
 
-    abstract removeLocation(id: string): boolean | Promise<boolean>;
+    abstract removeLocation(id: string): RemoveLocationResult | Promise<RemoveLocationResult>;
 
     abstract createOption(productId: string, input: CreateOptionInput): Option | Promise<Option>;
 
@@ -762,7 +767,7 @@ export abstract class IQuery {
 
     abstract favorites(input?: Nullable<ProductListInput>): VariantList | Promise<VariantList>;
 
-    abstract availablePickupLocations(orderId: string, input?: Nullable<LocationListInput>): LocationList | Promise<LocationList>;
+    abstract availablePickupLocations(orderId: string, input?: Nullable<AvailablePickupLocationsInput>): Location[] | Promise<Location[]>;
 
     abstract availableShippingMethods(orderId: string): ShippingMethod[] | Promise<ShippingMethod[]>;
 
@@ -852,6 +857,11 @@ export class InStorePickup {
 
 export class LocationResult {
     location?: Nullable<Location>;
+    apiErrors: LocationErrorResult[];
+}
+
+export class RemoveLocationResult {
+    success: boolean;
     apiErrors: LocationErrorResult[];
 }
 

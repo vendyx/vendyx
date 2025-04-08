@@ -24,7 +24,12 @@ type Mutation {
 }
 
 type Query {
-  availablePickupLocations(orderId: ID!, input: LocationListInput): LocationList!
+  """
+  Get all available locations for pickup (for shipment type PICKUP)
+  If input is not provided, it will return all available locations
+  If input is provided, it will return the locations in the given country and province
+  """
+  availablePickupLocations(input: AvailablePickupLocationsInput): [Location!]!
   availableShippingMethods(orderId: ID!): [ShippingMethod!]!
   availablePaymentMethods: [PaymentMethod!]!
 }
@@ -59,6 +64,11 @@ input CreateOrderAddressInput {
   province: String!
   postalCode: String!
   references: String
+}
+
+input AvailablePickupLocationsInput {
+  country: String!
+  province: String!
 }
 
 input AddPaymentToOrderInput {

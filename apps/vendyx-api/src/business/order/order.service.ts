@@ -22,9 +22,11 @@ import {
   AddCustomerToOrderInput,
   AddPaymentToOrderInput,
   AddShipmentToOrderInput,
+  AvailablePickupLocationsInput,
   CreateOrderAddressInput,
   CreateOrderInput,
   CreateOrderLineInput,
+  LocationListInput,
   MarkOrderAsShippedInput,
   ShippingMetadata,
   UpdateOrderLineInput
@@ -133,6 +135,29 @@ export class OrderService extends OrderFinders {
         };
       })
       .filter(Boolean);
+  }
+
+  /**
+   * @description
+   * Find available pickup locations for the order
+   * If no input is provided, return all active locations with inStorePickup enabled
+   * If input is provided, return locations that match the country and province
+   */
+  async findAvailablePickupLocations(input: AvailablePickupLocationsInput | undefined) {
+    if (!input) {
+      return await this.prisma.location.findMany({
+        where: { isActive: true, inStorePickup: { isAvailable: true } }
+      });
+    }
+
+    return await this.prisma.location.findMany({
+      where: {
+        isActive: true,
+        inStorePickup: { isAvailable: true },
+        country: input.country,
+        province: input.province
+      }
+    });
   }
 
   async findAvailablePaymentMethods() {
