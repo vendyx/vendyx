@@ -18,9 +18,18 @@ export const ValidOrderTransitions = [
    */
   [OrderState.PAYMENT_AUTHORIZED, OrderState.SHIPPED],
   /**
-   * The order has been delivered
+   * The order is ready for customer to pick up in store
    */
-  [OrderState.SHIPPED, OrderState.DELIVERED]
+  [OrderState.PAYMENT_AUTHORIZED, OrderState.READY_FOR_PICKUP],
+  /**
+   * The order has been picked up by the customer
+   */
+  [OrderState.READY_FOR_PICKUP, OrderState.DELIVERED][
+    /**
+     * The order has been delivered
+     */
+    (OrderState.SHIPPED, OrderState.DELIVERED)
+  ]
 ];
 
 /**

@@ -16,7 +16,7 @@ import {
   ShipmentType,
   Variant
 } from '@prisma/client';
-import { InputJsonArray, JsonValue } from '@prisma/client/runtime/library';
+import { InputJsonArray, JsonArray, JsonObject, JsonValue } from '@prisma/client/runtime/library';
 
 import {
   AddCustomerToOrderInput,
@@ -28,6 +28,7 @@ import {
   CreateOrderLineInput,
   LocationListInput,
   MarkOrderAsShippedInput,
+  PickupMetadata,
   ShippingMetadata,
   UpdateOrderLineInput
 } from '@/api/shared/types/gql.types';
@@ -35,6 +36,7 @@ import { EventBusService } from '@/event-bus/event-bus.service';
 import {
   OrderDeliveredEvent,
   OrderPaidEvent,
+  OrderReadyForPickupEvent,
   OrderShippedEvent
 } from '@/event-bus/events/order.event';
 import { PaymentService } from '@/payment/payment.service';
@@ -613,6 +615,33 @@ export class OrderService extends OrderFinders {
     return orderToReturn;
   }
 
+  /**
+   * @description
+   * Mark the order as ready for pickup
+   */
+  async markAsReadyForPickup(orderId: ID) {
+    const order = await this.findOrderOrThrow(orderId);
+
+    if (!this.canPerformAction(order, 'mark_as_ready_for_pickup')) {
+      return new ForbiddenOrderAction(order.state);
+    }
+
+    if (!(await this.validateOrderTransitionState(order, OrderState.READY_FOR_PICKUP))) {
+      return new OrderTransitionError(
+        `Unable to transition to ${OrderState.READY_FOR_PICKUP} state in ${order.state} state.`
+      );
+    }
+
+    const result = await this.prisma.order.update({
+      where: { id: orderId },
+      data: { state: OrderState.READY_FOR_PICKUP }
+    });
+
+    this.eventBus.emit(new OrderReadyForPickupEvent(orderId));
+
+    return result;
+  }
+
   async markAsShipped(orderId: ID, input: MarkOrderAsShippedInput) {
     const order = await this.findOrderOrThrow(orderId);
 
@@ -945,7 +974,8 @@ export class OrderService extends OrderFinders {
               amount: shippingPrice,
               total: shippingPrice,
               method: method.name,
-              type: ShipmentType.SHIPPING
+              type: ShipmentType.SHIPPING,
+              metadata: null as unknown as JsonObject
             }
           },
           total: order.total - order.shipment.amount + shippingPrice
@@ -965,7 +995,8 @@ export class OrderService extends OrderFinders {
             amount: shippingPrice,
             total: shippingPrice,
             method: method.name,
-            type: ShipmentType.SHIPPING
+            type: ShipmentType.SHIPPING,
+            metadata: null as unknown as JsonObject
           }
         },
         total: order.total + shippingPrice
@@ -996,7 +1027,15 @@ export class OrderService extends OrderFinders {
         where: { id: order.id },
         data: {
           shipment: {
-            update: { amount: 0, total: 0, method: '', type: ShipmentType.PICKUP }
+            update: {
+              amount: 0,
+              total: 0,
+              method: '',
+              type: ShipmentType.PICKUP,
+              metadata: {
+                location: location.name
+              } satisfies PickupMetadata
+            }
           },
           total: order.total - order.shipment.amount
         },
@@ -1015,7 +1054,10 @@ export class OrderService extends OrderFinders {
             amount: 0,
             total: 0,
             method: '',
-            type: ShipmentType.PICKUP
+            type: ShipmentType.PICKUP,
+            metadata: {
+              location: location.name
+            } satisfies PickupMetadata
           }
         }
       },
@@ -1397,9 +1439,13 @@ export class OrderService extends OrderFinders {
       return order.state === OrderState.MODIFYING;
     }
 
+    if (action === 'mark_as_ready_for_pickup') return order.state === OrderState.PAYMENT_AUTHORIZED;
+
     if (action === 'mark_as_shipped') return order.state === OrderState.PAYMENT_AUTHORIZED;
 
-    if (action === 'mark_as_delivered') return order.state === OrderState.SHIPPED;
+    if (action === 'mark_as_delivered') {
+      return order.state === OrderState.SHIPPED || order.state === OrderState.READY_FOR_PICKUP;
+    }
 
     if (action === 'cancel')
       return order.state !== OrderState.CANCELED && order.state !== OrderState.DELIVERED;
@@ -1518,6 +1564,7 @@ type OrderAction =
   | 'add_shipment'
   | 'add_payment'
   | 'modify_discounts'
+  | 'mark_as_ready_for_pickup'
   | 'mark_as_shipped'
   | 'mark_as_delivered'
   | 'cancel';

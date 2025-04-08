@@ -35,6 +35,13 @@ export class OrderResolver {
     return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
   }
 
+  @Mutation('markAsReadyForPickup')
+  async markAsReadyForPickup(@Args('id') orderId: ID) {
+    const result = await this.orderService.markAsReadyForPickup(orderId);
+
+    return isErrorResult(result) ? { apiErrors: [result] } : { order: result, apiErrors: [] };
+  }
+
   @Mutation('markOrderAsDelivered')
   async markOrderAsDelivered(@Args('id') orderId: ID) {
     const result = await this.orderService.markAsDelivered(orderId);

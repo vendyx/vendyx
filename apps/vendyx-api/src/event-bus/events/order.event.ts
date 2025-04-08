@@ -4,6 +4,7 @@ import { VendyxEvent } from './vendyx.event';
 
 export enum OrderEvent {
   PAID = 'order.paid',
+  READY_FOR_PICKUP = 'order.ready_for_pickup',
   SHIPPED = 'order.shipped',
   DELIVERED = 'order.delivered',
   CANCELLED = 'order.cancelled'
@@ -16,6 +17,12 @@ export enum OrderEvent {
 export class OrderPaidEvent extends VendyxEvent {
   constructor(public readonly orderId: ID) {
     super(OrderEvent.PAID);
+  }
+}
+
+export class OrderReadyForPickupEvent extends VendyxEvent {
+  constructor(public readonly orderId: ID) {
+    super(OrderEvent.READY_FOR_PICKUP);
   }
 }
 

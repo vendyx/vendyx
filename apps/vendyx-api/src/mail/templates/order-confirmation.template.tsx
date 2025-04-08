@@ -7,6 +7,7 @@ import {
   OrderLine,
   Product,
   Shipment,
+  ShipmentType,
   Shop,
   Variant
 } from '@prisma/client';
@@ -29,6 +30,7 @@ import {
 } from '@react-email/components';
 import * as React from 'react';
 
+import { PickupMetadata } from '@/api/shared/types/gql.types';
 import { formatOrderCode } from '@/business/order/order.utils';
 import { getFormattedPrice } from '@/business/shared/utils/price.utils';
 
@@ -37,7 +39,10 @@ import { OrderFooter } from './shared/order-footer';
 const Component: React.FC<Props> = ({ order, shop }) => {
   const customerName = order.customer?.firstName ?? order.customer?.lastName;
   const { customer, shipment } = order;
-  const shippingAddress = order.shippingAddress as unknown as Address;
+
+  const isPickup = order.shipment?.type === ShipmentType.PICKUP;
+  const shippingAddress = order.shippingAddress as unknown as Address | undefined;
+  const shipmentMetadata = order.shipment?.metadata as unknown as PickupMetadata;
 
   return (
     <Html>
@@ -144,18 +149,28 @@ const Component: React.FC<Props> = ({ order, shop }) => {
                   <Text className="text-[#666666] text-[16px] !my-1">{customer?.email}</Text>
                 </Column>
                 <Column className="w-1/2">
-                  <Heading className="text-black text-[20px] font-normal mt-[80px]">
-                    Shipping to
-                  </Heading>
-                  <Text className="text-[#666666] text-[16px] !my-1">
-                    {shippingAddress.streetLine1} {shippingAddress.streetLine2}
-                  </Text>
-                  <Text className="text-[#666666] text-[16px] !my-1">
-                    {shippingAddress.postalCode} {shippingAddress.city}, {shippingAddress.province}
-                  </Text>
-                  <Text className="text-[#666666] text-[16px] !my-1">
-                    {shippingAddress.country}
-                  </Text>
+                  {isPickup ? (
+                    <Text className="text-[#666666] text-[16px] !my-1">
+                      Your order will be ready for pickup at{' '}
+                      <strong>{shipmentMetadata?.location}</strong>
+                    </Text>
+                  ) : (
+                    <>
+                      <Heading className="text-black text-[20px] font-normal mt-[80px]">
+                        Shipping to
+                      </Heading>
+                      <Text className="text-[#666666] text-[16px] !my-1">
+                        {shippingAddress?.streetLine1} {shippingAddress?.streetLine2}
+                      </Text>
+                      <Text className="text-[#666666] text-[16px] !my-1">
+                        {shippingAddress?.postalCode} {shippingAddress?.city},{' '}
+                        {shippingAddress?.province}
+                      </Text>
+                      <Text className="text-[#666666] text-[16px] !my-1">
+                        {shippingAddress?.country}
+                      </Text>
+                    </>
+                  )}
                 </Column>
               </Row>
             </Section>
