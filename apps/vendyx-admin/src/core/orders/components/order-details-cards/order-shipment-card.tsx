@@ -1,12 +1,21 @@
 import { type FC } from 'react';
 
-import { type CommonOrderFragment, type ShippingMetadata } from '@/api/types';
+import {
+  type CommonOrderFragment,
+  type PickupMetadata,
+  ShipmentType,
+  type ShippingMetadata
+} from '@/api/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { formatPrice } from '@/shared/utils/formatters';
 
 export const OrderShipmentCard: FC<Props> = ({ order }) => {
   const { shipment } = order;
-  const shipmentMetadata = shipment?.metadata as ShippingMetadata;
+  const shipmentMetadata = shipment?.metadata;
+  const isPickup = shipment?.type === ShipmentType.Pickup;
+
+  const shippingMetadata = shipmentMetadata as ShippingMetadata;
+  const pickupMetadata = shipmentMetadata as PickupMetadata;
 
   if (!shipment) return null;
 
@@ -19,19 +28,29 @@ export const OrderShipmentCard: FC<Props> = ({ order }) => {
       <CardContent className="flex flex-col gap-6 text-sm">
         <div className="flex flex-col gap-2">
           <p>
-            Method: <span className="font-medium text-distinct">{shipment.method}</span>
+            Method:{' '}
+            <span className="font-medium text-distinct">
+              {isPickup ? 'In store pickup' : shipment.method}
+            </span>
           </p>
-          <p>
-            Amount: <span>{formatPrice(shipment.total)}</span>
-          </p>
-          {shipmentMetadata?.trackingCode && (
+          {isPickup && (
             <p>
-              Tracking number: <span>{shipmentMetadata?.trackingCode}</span>
+              Location: <span>{pickupMetadata.location}</span>
             </p>
           )}
-          {shipmentMetadata?.carrier && (
+          {!isPickup && (
             <p>
-              Carrier: <span>{shipmentMetadata?.carrier}</span>
+              Amount: <span>{formatPrice(shipment.total)}</span>
+            </p>
+          )}
+          {shippingMetadata?.trackingCode && (
+            <p>
+              Tracking number: <span>{shippingMetadata?.trackingCode}</span>
+            </p>
+          )}
+          {shippingMetadata?.carrier && (
+            <p>
+              Carrier: <span>{shippingMetadata?.carrier}</span>
             </p>
           )}
         </div>

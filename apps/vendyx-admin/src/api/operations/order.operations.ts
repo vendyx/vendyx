@@ -72,6 +72,7 @@ export const COMMON_ORDER_FRAGMENT = graphql(`
       amount
       total
       method
+      type
       metadata
       discounts {
         handle

@@ -535,6 +535,7 @@ export type Location = Node & {
 };
 
 export enum LocationErrorCode {
+  LocationIsDefault = 'LOCATION_IS_DEFAULT',
   LocationNameAlreadyExists = 'LOCATION_NAME_ALREADY_EXISTS'
 }
 
@@ -615,7 +616,7 @@ export type Mutation = {
   removeCollection: Scalars['Boolean']['output'];
   removeCustomerAddress: Address;
   removeDiscounts?: Maybe<Scalars['Boolean']['output']>;
-  removeLocation: Scalars['Boolean']['output'];
+  removeLocation: RemoveLocationResult;
   removePaymentMethod: Scalars['Boolean']['output'];
   removeShippingMethod: Scalars['Boolean']['output'];
   removeTags: Scalars['Boolean']['output'];
@@ -1257,6 +1258,12 @@ export type QueryVariantArgs = {
 
 export type QueryZoneArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type RemoveLocationResult = {
+  __typename?: 'RemoveLocationResult';
+  apiErrors: Array<LocationErrorResult>;
+  success: Scalars['Boolean']['output'];
 };
 
 /** A shipment is the total price of the shipping method rate */
@@ -2272,6 +2279,7 @@ export type CommonOrderFragment = {
     amount: number;
     total: number;
     method: string;
+    type: ShipmentType;
     metadata?: any | null;
     discounts: Array<{
       __typename?: 'ActiveDiscount';
@@ -3215,6 +3223,7 @@ export const CommonOrderFragmentDoc = new TypedDocumentString(
     amount
     total
     method
+    type
     metadata
     discounts {
       handle
@@ -3955,6 +3964,7 @@ export const GetOrderbyIdQueryDocument = new TypedDocumentString(`
     amount
     total
     method
+    type
     metadata
     discounts {
       handle
