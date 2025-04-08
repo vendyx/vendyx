@@ -7,6 +7,7 @@ import {
   DiscountType,
   DiscountValueType,
   Order,
+  OrderDiscount,
   OrderLine,
   OrderRequirementType,
   OrderState,
@@ -63,6 +64,7 @@ import {
   FailedAddingShippingMethod,
   ForbiddenOrderAction,
   InvalidDiscountCode,
+  LocationNotFound,
   MissingShippingAddress,
   NotEnoughStock,
   OrderTransitionError,
@@ -401,74 +403,10 @@ export class OrderService extends OrderFinders {
     }
 
     if (input.type === ShipmentType.PICKUP) {
-      // const location = getLocation(input.providerId)
-      // if (!location) {
-      //   return new LocationNotFound();
-      // }
-      // saveShipmentToOrder(location)
+      return this.addPickupShipment(order, input);
     }
 
-    const state = (order?.shippingAddress as unknown as Address).province;
-
-    const method = await this.prisma.shippingMethod.findUnique({
-      where: {
-        id: input.providerId,
-        enabled: true,
-        zone: { states: { some: { state: { name: state } } } }
-      }
-    });
-
-    // or not available for provided state
-    if (!method) {
-      return new ShippingMethodNotFound();
-    }
-
-    const handler = method.handler as ConfigurableProperty;
-    const decryptedArgs = this.securityService.decrypt<ConfigurablePropertyArgs>(handler.args);
-
-    if (!decryptedArgs) {
-      return new FailedAddingShippingMethod("Couldn't decrypt shipping method arguments.");
-    }
-
-    const shippingPrice = await this.shipmentService.calculatePrice(order, {
-      ...handler,
-      args: decryptedArgs
-    });
-
-    // If the order already has a shipment, update the amount and method
-    if (order.shipment) {
-      const orderUpdated = await this.prisma.order.update({
-        where: { id: orderId },
-        data: {
-          shipment: {
-            update: { amount: shippingPrice, total: shippingPrice, method: method.name }
-          },
-          total: order.total - order.shipment.amount + shippingPrice
-        },
-        include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
-      });
-
-      return this.applyDiscounts(orderUpdated, []);
-    }
-
-    // If the order doesn't have a shipment, create a new one
-    const orderUpdated = await this.prisma.order.update({
-      where: { id: orderId },
-      data: {
-        shipment: {
-          create: {
-            amount: shippingPrice,
-            total: shippingPrice,
-            method: method.name,
-            type: ShipmentType.SHIPPING
-          }
-        },
-        total: order.total + shippingPrice
-      },
-      include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
-    });
-
-    return this.applyDiscounts(orderUpdated, []);
+    return this.addShippingShipment(order, input);
   }
 
   /**
@@ -935,6 +873,131 @@ export class OrderService extends OrderFinders {
     });
 
     return order;
+  }
+
+  /**
+   * @description
+   * Add a shipping shipment to the order
+   */
+  private async addShippingShipment(
+    order: Order & { shipment: Shipment | null },
+    input: AddShipmentToOrderInput
+  ) {
+    const state = (order?.shippingAddress as unknown as Address).province;
+
+    const method = await this.prisma.shippingMethod.findUnique({
+      where: {
+        id: input.providerId,
+        enabled: true,
+        zone: { states: { some: { state: { name: state } } } }
+      }
+    });
+
+    // or not available for provided state
+    if (!method) {
+      return new ShippingMethodNotFound();
+    }
+
+    const handler = method.handler as ConfigurableProperty;
+    const decryptedArgs = this.securityService.decrypt<ConfigurablePropertyArgs>(handler.args);
+
+    if (!decryptedArgs) {
+      return new FailedAddingShippingMethod("Couldn't decrypt shipping method arguments.");
+    }
+
+    const shippingPrice = await this.shipmentService.calculatePrice(order, {
+      ...handler,
+      args: decryptedArgs
+    });
+
+    // If the order already has a shipment, update the amount and method
+    if (order.shipment) {
+      const orderUpdated = await this.prisma.order.update({
+        where: { id: order.id },
+        data: {
+          shipment: {
+            update: {
+              amount: shippingPrice,
+              total: shippingPrice,
+              method: method.name,
+              type: ShipmentType.SHIPPING
+            }
+          },
+          total: order.total - order.shipment.amount + shippingPrice
+        },
+        include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
+      });
+
+      return this.applyDiscounts(orderUpdated, []);
+    }
+
+    // If the order doesn't have a shipment, create a new one
+    const orderUpdated = await this.prisma.order.update({
+      where: { id: order.id },
+      data: {
+        shipment: {
+          create: {
+            amount: shippingPrice,
+            total: shippingPrice,
+            method: method.name,
+            type: ShipmentType.SHIPPING
+          }
+        },
+        total: order.total + shippingPrice
+      },
+      include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
+    });
+
+    return this.applyDiscounts(orderUpdated, []);
+  }
+
+  /**
+   * @description
+   * Add a pickup shipment to the order
+   */
+  private async addPickupShipment(
+    order: Order & { shipment: Shipment | null },
+    input: AddShipmentToOrderInput
+  ) {
+    const location = await this.prisma.location.findUnique({ where: { id: input.providerId } });
+
+    if (!location) {
+      return new LocationNotFound();
+    }
+
+    // If the order already has a shipment, update the amount and method
+    if (order.shipment) {
+      const orderUpdated = await this.prisma.order.update({
+        where: { id: order.id },
+        data: {
+          shipment: {
+            update: { amount: 0, total: 0, method: '', type: ShipmentType.PICKUP }
+          },
+          total: order.total - order.shipment.amount
+        },
+        include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
+      });
+
+      return this.applyDiscounts(orderUpdated, []);
+    }
+
+    // If the order doesn't have a shipment, create a new one
+    const orderUpdated = await this.prisma.order.update({
+      where: { id: order.id },
+      data: {
+        shipment: {
+          create: {
+            amount: 0,
+            total: 0,
+            method: '',
+            type: ShipmentType.PICKUP
+          }
+        }
+      },
+      include: { shipment: true, customer: true, lines: { include: { productVariant: true } } }
+    });
+
+    return this.applyDiscounts(orderUpdated, []);
   }
 
   /**

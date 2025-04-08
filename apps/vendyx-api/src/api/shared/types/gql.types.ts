@@ -31,12 +31,17 @@ export enum DiscountErrorCode {
     HANDLE_ALREADY_EXISTS = "HANDLE_ALREADY_EXISTS"
 }
 
+export enum LocationErrorCode {
+    LOCATION_NAME_ALREADY_EXISTS = "LOCATION_NAME_ALREADY_EXISTS"
+}
+
 export enum OrderErrorCode {
     NOT_ENOUGH_STOCK = "NOT_ENOUGH_STOCK",
     CUSTOMER_INVALID_EMAIL = "CUSTOMER_INVALID_EMAIL",
     CUSTOMER_DISABLED = "CUSTOMER_DISABLED",
     MISSING_SHIPPING_ADDRESS = "MISSING_SHIPPING_ADDRESS",
     SHIPPING_METHOD_NOT_FOUND = "SHIPPING_METHOD_NOT_FOUND",
+    LOCATION_NOT_FOUND = "LOCATION_NOT_FOUND",
     FAILED_ADDING_SHIPPING_METHOD = "FAILED_ADDING_SHIPPING_METHOD",
     PAYMENT_METHOD_NOT_FOUND = "PAYMENT_METHOD_NOT_FOUND",
     PAYMENT_DECLINED = "PAYMENT_DECLINED",
@@ -214,6 +219,32 @@ export class DiscountListInput {
 export class DiscountFilters {
     enabled?: Nullable<BooleanFilter>;
     handle?: Nullable<StringFilter>;
+}
+
+export class CreateLocationInput {
+    name: string;
+    country: string;
+    streetLine1: string;
+    streetLine2?: Nullable<string>;
+    city: string;
+    province: string;
+    postalCode: string;
+    phoneNumber: string;
+    isDefault?: Nullable<boolean>;
+    isActive?: Nullable<boolean>;
+}
+
+export class UpdateLocationInput {
+    name?: Nullable<string>;
+    country?: Nullable<string>;
+    streetLine1?: Nullable<string>;
+    streetLine2?: Nullable<string>;
+    city?: Nullable<string>;
+    province?: Nullable<string>;
+    postalCode?: Nullable<string>;
+    phoneNumber?: Nullable<string>;
+    isDefault?: Nullable<boolean>;
+    isActive?: Nullable<boolean>;
 }
 
 export class MetricsInput {
@@ -457,6 +488,16 @@ export class BooleanFilter {
     equals?: Nullable<boolean>;
 }
 
+export class LocationListInput {
+    skip?: Nullable<number>;
+    take?: Nullable<number>;
+    filters?: Nullable<LocationFilters>;
+}
+
+export class LocationFilters {
+    name?: Nullable<StringFilter>;
+}
+
 export class CreateCustomerInput {
     firstName?: Nullable<string>;
     lastName: string;
@@ -541,6 +582,12 @@ export abstract class IMutation {
     abstract updateDiscount(id: string, input: UpdateDiscountInput): DiscountResult | Promise<DiscountResult>;
 
     abstract removeDiscounts(ids: string[]): Nullable<boolean> | Promise<Nullable<boolean>>;
+
+    abstract createLocation(input: CreateLocationInput): LocationResult | Promise<LocationResult>;
+
+    abstract updateLocation(id: string, input: UpdateLocationInput): LocationResult | Promise<LocationResult>;
+
+    abstract removeLocation(id: string): boolean | Promise<boolean>;
 
     abstract createOption(productId: string, input: CreateOptionInput): Option | Promise<Option>;
 
@@ -662,6 +709,10 @@ export abstract class IQuery {
 
     abstract discount(id: string): Nullable<Discount> | Promise<Nullable<Discount>>;
 
+    abstract locations(input?: Nullable<LocationListInput>): LocationList | Promise<LocationList>;
+
+    abstract location(id: string): Location | Promise<Location>;
+
     abstract totalSales(input: MetricsInput): MetricsResult | Promise<MetricsResult>;
 
     abstract totalOrders(input: MetricsInput): MetricsResult | Promise<MetricsResult>;
@@ -709,6 +760,8 @@ export abstract class IQuery {
     abstract me(): Nullable<Customer> | Promise<Nullable<Customer>>;
 
     abstract favorites(input?: Nullable<ProductListInput>): VariantList | Promise<VariantList>;
+
+    abstract availablePickupLocations(orderId: string, input?: Nullable<LocationListInput>): LocationList | Promise<LocationList>;
 
     abstract availableShippingMethods(orderId: string): ShippingMethod[] | Promise<ShippingMethod[]>;
 
@@ -771,6 +824,38 @@ export class DiscountResult {
 
 export class DiscountErrorResult {
     code: DiscountErrorCode;
+    message: string;
+}
+
+export class Location implements Node {
+    isDefault: boolean;
+    isActive: boolean;
+    inStorePickup: InStorePickup;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    name: string;
+    country: string;
+    streetLine1: string;
+    streetLine2?: Nullable<string>;
+    city: string;
+    province: string;
+    postalCode: string;
+    phoneNumber: string;
+}
+
+export class InStorePickup {
+    isAvailable: boolean;
+    instructions: string;
+}
+
+export class LocationResult {
+    location?: Nullable<Location>;
+    apiErrors: LocationErrorResult[];
+}
+
+export class LocationErrorResult {
+    code: LocationErrorCode;
     message: string;
 }
 
@@ -1072,6 +1157,12 @@ export class ActiveDiscount {
     applicationMode: DiscountApplicationMode;
     discountType: DiscountType;
     discountedAmount: number;
+}
+
+export class LocationList implements List {
+    items: Location[];
+    count: number;
+    pageInfo: PageInfo;
 }
 
 export class OptionList implements List {

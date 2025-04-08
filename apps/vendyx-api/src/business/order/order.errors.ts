@@ -67,6 +67,15 @@ export class ShippingMethodNotFound extends ErrorResult<OrderErrorCode> {
   }
 }
 
+/**
+ * Error thrown when trying to add a shipment to an order and the location id provided does not exist
+ */
+export class LocationNotFound extends ErrorResult<OrderErrorCode> {
+  constructor() {
+    super(OrderErrorCode.LOCATION_NOT_FOUND, 'Location not found');
+  }
+}
+
 export class PaymentMethodNotFound extends ErrorResult<OrderErrorCode> {
   constructor() {
     super(OrderErrorCode.PAYMENT_METHOD_NOT_FOUND, 'Payment method not found');
