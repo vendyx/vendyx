@@ -14,6 +14,8 @@ export const modelHasDeletedAtProperty = (model: string) => {
     model !== 'OrderDiscount' &&
     model !== 'ProductTag' &&
     model !== 'Tag' &&
-    model !== 'Favorite'
+    model !== 'Favorite' &&
+    model !== 'Location' &&
+    model !== 'InStorePickup'
   );
 };

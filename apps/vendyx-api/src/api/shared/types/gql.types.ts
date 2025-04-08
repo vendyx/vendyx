@@ -32,7 +32,8 @@ export enum DiscountErrorCode {
 }
 
 export enum LocationErrorCode {
-    LOCATION_NAME_ALREADY_EXISTS = "LOCATION_NAME_ALREADY_EXISTS"
+    LOCATION_NAME_ALREADY_EXISTS = "LOCATION_NAME_ALREADY_EXISTS",
+    LOCATION_IS_DEFAULT = "LOCATION_IS_DEFAULT"
 }
 
 export enum OrderErrorCode {

@@ -35,7 +35,7 @@ type Query {
 type Mutation {
   createLocation(input: CreateLocationInput!): LocationResult!
   updateLocation(id: ID!, input: UpdateLocationInput!): LocationResult!
-  removeLocation(id: ID!): Boolean!
+  removeLocation(id: ID!): RemoveLocationResult!
 }
 
 input CreateLocationInput {
@@ -85,6 +85,11 @@ type LocationResult {
   apiErrors: [LocationErrorResult!]!
 }
 
+type RemoveLocationResult {
+  success: Boolean!
+  apiErrors: [LocationErrorResult!]!
+}
+
 type LocationErrorResult {
   code: LocationErrorCode!
   message: String!
@@ -92,4 +97,5 @@ type LocationErrorResult {
 
 enum LocationErrorCode {
   LOCATION_NAME_ALREADY_EXISTS
+  LOCATION_IS_DEFAULT
 }

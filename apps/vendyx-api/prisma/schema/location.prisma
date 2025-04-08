@@ -7,11 +7,11 @@ model Location {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   /// Identifiable name of the location
-  name String
+  name String @unique
 
   country     String
-  streetLine1 String  @map("street_line1")
-  streetLine2 String? @map("street_line2")
+  streetLine1 String  @map("street_line_1")
+  streetLine2 String? @map("street_line_2")
   city        String
   /// State
   province    String
@@ -28,6 +28,8 @@ model Location {
 
   shop   Shop   @relation(fields: [shopId], references: [id])
   shopId String @default(dbgenerated("(current_setting('app.current_shop_id'::text))::uuid")) @map("shop_id") @db.Uuid
+
+  @@map("location")
 }
 
 /// In store pickup preference
@@ -43,4 +45,6 @@ model InStorePickup {
 
   location   Location @relation(fields: [locationId], references: [id])
   locationId String   @unique @map("location_id") @db.Uuid
+
+  @@map("in_store_pickup")
 }

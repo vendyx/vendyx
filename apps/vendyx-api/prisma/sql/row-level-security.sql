@@ -18,6 +18,7 @@ ALTER TABLE "address" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "discount" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "tag" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "favorite" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "location" ENABLE ROW LEVEL SECURITY;
 
 -- Force Row Level Security for table owners
 ALTER TABLE "shop" FORCE ROW LEVEL SECURITY;
@@ -39,6 +40,7 @@ ALTER TABLE "address" FORCE ROW LEVEL SECURITY;
 ALTER TABLE "discount" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "tag" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "favorite" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "location" ENABLE ROW LEVEL SECURITY;
 
 -- Create row security policies
 CREATE POLICY owner_isolation_policy ON "shop" USING (owner_id = current_setting('app.current_owner_id', TRUE)::uuid);
@@ -61,6 +63,7 @@ CREATE POLICY shop_isolation_policy ON "address" USING (shop_id = current_settin
 CREATE POLICY shop_isolation_policy ON "discount" USING (shop_id = current_setting('app.current_shop_id', TRUE)::uuid);
 CREATE POLICY shop_isolation_policy ON "tag" USING (shop_id = current_setting('app.current_shop_id', TRUE)::uuid);
 CREATE POLICY shop_isolation_policy ON "favorite" USING (shop_id = current_setting('app.current_shop_id', TRUE)::uuid);
+CREATE POLICY shop_isolation_policy ON "location" USING (shop_id = current_setting('app.current_shop_id', TRUE)::uuid);
 
 -- Bypass RLS policy
 CREATE POLICY bypass_rls_policy ON "shop" USING (current_setting('app.bypass_rls', TRUE)::text = 'on');
@@ -81,3 +84,4 @@ CREATE POLICY bypass_rls_policy ON "collection" USING (current_setting('app.bypa
 CREATE POLICY bypass_rls_policy ON "address" USING (current_setting('app.bypass_rls', TRUE)::text = 'on');
 CREATE POLICY bypass_rls_policy ON "discount" USING (current_setting('app.bypass_rls', TRUE)::text = 'on');
 CREATE POLICY bypass_rls_policy ON "favorite" USING (current_setting('app.bypass_rls', TRUE)::text = 'on');
+CREATE POLICY bypass_rls_policy ON "location" USING (current_setting('app.bypass_rls', TRUE)::text = 'on');

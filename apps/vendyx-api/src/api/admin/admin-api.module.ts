@@ -9,6 +9,7 @@ import { ShipmentModule } from '@/shipments/shipment.module';
 import { CollectionResolver } from './resolvers/collection.resolver';
 import { CountryResolver } from './resolvers/country.resolver';
 import { CustomerResolver } from './resolvers/customer.resolver';
+import { LocationResolver } from './resolvers/location.resolver';
 import { MetricsResolver } from './resolvers/metrics.resolver';
 import { OptionResolver } from './resolvers/option.resolver';
 import { OrderResolver } from './resolvers/order.resolver';
@@ -61,7 +62,8 @@ export class AdminApiModule {
     MetricsResolver,
     CollectionResolver,
     DiscountResolver,
-    TagResolver
+    TagResolver,
+    LocationResolver
   ]
 })
 class AdminModule {}

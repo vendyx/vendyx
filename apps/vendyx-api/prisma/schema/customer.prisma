@@ -36,8 +36,8 @@ model Address {
 
   country     String
   fullName    String  @map("full_name")
-  streetLine1 String  @map("street_line1")
-  streetLine2 String? @map("street_line2")
+  streetLine1 String  @map("street_line_1")
+  streetLine2 String? @map("street_line_2")
   city        String
   /// State
   province    String
