@@ -1,6 +1,7 @@
 import { OrderState } from '@prisma/client';
 
 import { OrderErrorCode } from '@/api/shared/types/gql.types';
+import { ID } from '@/persistence/types/scalars.type';
 
 import { ErrorResult } from '../shared/utils/error-result.utils';
 
@@ -24,10 +25,11 @@ export class ForbiddenOrderAction extends ErrorResult<OrderErrorCode> {
 
 /**
  * Error thrown when trying to add a variant to an order with not enough stock
+ * or when trying to add a payment to an order with not enough stock
  */
 export class NotEnoughStock extends ErrorResult<OrderErrorCode> {
-  constructor() {
-    super(OrderErrorCode.NOT_ENOUGH_STOCK, 'Not enough stock');
+  constructor(variantIds: ID[]) {
+    super(OrderErrorCode.NOT_ENOUGH_STOCK, `Not enough stock for variant(s)`, { variantIds });
   }
 }
 

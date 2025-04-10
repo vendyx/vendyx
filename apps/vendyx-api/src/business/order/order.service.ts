@@ -185,7 +185,7 @@ export class OrderService extends OrderFinders {
     const variant = await this.findVariantOrThrow(line.productVariantId);
 
     if (variant.stock < line.quantity) {
-      return new NotEnoughStock();
+      return new NotEnoughStock([variant.id]);
     }
 
     return this.createOrderWithLine(variant, line.quantity);
@@ -204,7 +204,7 @@ export class OrderService extends OrderFinders {
     const variant = await this.findVariantOrThrow(input.productVariantId);
 
     if (variant.stock < input.quantity) {
-      return new NotEnoughStock();
+      return new NotEnoughStock([variant.id]);
     }
 
     const lineWithTheVariant = order.lines.find(
@@ -219,7 +219,7 @@ export class OrderService extends OrderFinders {
       const newQuantity = input.quantity + lineWithTheVariant.quantity;
 
       if (variant.stock < newQuantity) {
-        return new NotEnoughStock();
+        return new NotEnoughStock([variant.id]);
       }
 
       const orderUpdated = await this.prisma.order.update({
@@ -305,7 +305,7 @@ export class OrderService extends OrderFinders {
     }
 
     if (productVariant.stock < input.quantity) {
-      return new NotEnoughStock();
+      return new NotEnoughStock([productVariant.id]);
     }
 
     const unitPrice = productVariant.salePrice;
@@ -514,15 +514,24 @@ export class OrderService extends OrderFinders {
       where: { id: orderId },
       include: { customer: true, shipment: true, lines: { include: { productVariant: true } } }
     });
-    const order = await this.applyDiscounts(orderToIntend, []);
 
-    if (!this.canPerformAction(order, 'add_payment')) {
-      return new ForbiddenOrderAction(order.state);
+    if (!this.canPerformAction(orderToIntend, 'add_payment')) {
+      return new ForbiddenOrderAction(orderToIntend.state);
     }
 
-    if (!(await this.validateOrderTransitionState(order, OrderState.PAYMENT_ADDED))) {
+    if (!(await this.validateOrderTransitionState(orderToIntend, OrderState.PAYMENT_ADDED))) {
       return new OrderTransitionError('Either customer or shipment is missing.');
     }
+
+    const variantsWithNotEnoughStock = orderToIntend.lines.filter(
+      line => line.productVariant.stock < line.quantity
+    );
+
+    if (variantsWithNotEnoughStock.length) {
+      return new NotEnoughStock(variantsWithNotEnoughStock.map(v => v.productVariant.id));
+    }
+
+    const order = await this.applyDiscounts(orderToIntend, []);
 
     const method = await this.prisma.paymentMethod.findUnique({
       where: { id: input.methodId, enabled: true }
@@ -548,17 +557,7 @@ export class OrderService extends OrderFinders {
     }
 
     let orderToReturn: Order = order;
-    const orderLevelDiscounts = order.activeDiscounts as unknown as ActiveDiscount[];
-    const shipmentLevelDiscounts = order.shipment?.activeDiscounts as unknown as ActiveDiscount[];
-    const orderLineLevelDiscounts = order.lines.flatMap(
-      line => line.activeDiscounts as unknown as ActiveDiscount[]
-    );
-
-    const discountIds = [
-      ...orderLevelDiscounts.map(d => d.id),
-      ...(shipmentLevelDiscounts?.map(d => d.id) ?? []),
-      ...orderLineLevelDiscounts.map(d => d.id)
-    ].filter((d, index, self) => index === self.findIndex(d2 => d2 === d));
+    const discountIds = await this.getOrderActiveDiscounts(order);
 
     if (paymentHandlerResult.status === 'created') {
       orderToReturn = await this.prisma.order.update({
@@ -709,6 +708,22 @@ export class OrderService extends OrderFinders {
       where: { id: orderId },
       data: { state: OrderState.CANCELED }
     });
+  }
+
+  private async getOrderActiveDiscounts(order: OrderForDiscount) {
+    const orderLevelDiscounts = order.activeDiscounts as unknown as ActiveDiscount[];
+    const shipmentLevelDiscounts = order.shipment?.activeDiscounts as unknown as ActiveDiscount[];
+    const orderLineLevelDiscounts = order.lines.flatMap(
+      line => line.activeDiscounts as unknown as ActiveDiscount[]
+    );
+
+    const discountIds = [
+      ...orderLevelDiscounts.map(d => d.id),
+      ...(shipmentLevelDiscounts?.map(d => d.id) ?? []),
+      ...orderLineLevelDiscounts.map(d => d.id)
+    ].filter((d, index, self) => index === self.findIndex(d2 => d2 === d));
+
+    return discountIds;
   }
 
   /**

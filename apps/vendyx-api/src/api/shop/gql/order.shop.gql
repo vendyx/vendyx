@@ -92,6 +92,10 @@ type OrderResult {
 type OrderErrorResult {
   code: OrderErrorCode!
   message: String!
+  """
+  Extra information about the error
+  """
+  metadata: JSON
 }
 
 " Utils "
