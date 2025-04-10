@@ -1,7 +1,12 @@
 import { Inject } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 
-import { CreateLocationInput, Location, LocationListInput } from '@/api/shared/types/gql.types';
+import {
+  CreateLocationInput,
+  Location,
+  LocationListInput,
+  UpdateInStorePickupPreferencesInput
+} from '@/api/shared/types/gql.types';
 import { ListResponse } from '@/api/shared/utils/list-response';
 import { LocationService } from '@/business/location/location.service';
 import { isErrorResult } from '@/business/shared/utils/error-result.utils';
@@ -54,6 +59,18 @@ export class LocationResolver {
     return isErrorResult(result)
       ? { apiErrors: [result], success: false }
       : { apiErrors: [], success: true };
+  }
+
+  @Mutation('updateInStorePickupPreferences')
+  async updateInStorePickupPreferences(
+    @Args('locationId') locationId: ID,
+    @Args('input') input: UpdateInStorePickupPreferencesInput
+  ) {
+    const result = await this.locationService.updateInStorePickupPreferences(locationId, input);
+
+    return isErrorResult(result)
+      ? { apiErrors: [result], location: result }
+      : { apiErrors: [], location: result };
   }
 
   @ResolveField('inStorePickup')

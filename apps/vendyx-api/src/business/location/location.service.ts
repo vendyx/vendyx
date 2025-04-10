@@ -1,12 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
-import { LocationIsDefault, LocationNameAlreadyExists } from './location.error';
-import { clean } from '../shared/utils/clean.utils';
-
 import {
   CreateLocationInput,
   LocationListInput,
+  UpdateInStorePickupPreferencesInput,
   UpdateLocationInput
 } from '@/api/shared/types/gql.types';
 import {
@@ -14,6 +12,9 @@ import {
   PrismaForShop
 } from '@/persistence/prisma-clients/prisma-for-shop.provider';
 import { ID } from '@/persistence/types/scalars.type';
+
+import { LocationIsDefault, LocationNameAlreadyExists } from './location.error';
+import { clean } from '../shared/utils/clean.utils';
 
 @Injectable()
 export class LocationService {
@@ -131,6 +132,22 @@ export class LocationService {
     await this.prisma.location.delete({ where: { id } });
 
     return true;
+  }
+
+  /**
+   * @description
+   * Update in-store pickup preferences for a location.
+   *
+   * @note Pickup preferences are always created when a location is created.
+   */
+  async updateInStorePickupPreferences(locationId: ID, input: UpdateInStorePickupPreferencesInput) {
+    const result = await this.prisma.inStorePickup.update({
+      where: { locationId },
+      data: { ...clean(input) },
+      select: { location: true }
+    });
+
+    return result.location;
   }
 
   private async _create(input: Prisma.LocationCreateInput) {

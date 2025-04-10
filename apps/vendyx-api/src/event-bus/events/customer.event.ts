@@ -15,9 +15,3 @@ export class CustomerRegisteredEvent extends VendyxEvent {
     super(CustomerEvent.REGISTERED);
   }
 }
-
-/**
- * TODO:
- * - Add updateInStorePickupPreferences mutation
- * - implement frontend
- */

@@ -36,6 +36,10 @@ type Mutation {
   createLocation(input: CreateLocationInput!): LocationResult!
   updateLocation(id: ID!, input: UpdateLocationInput!): LocationResult!
   removeLocation(id: ID!): RemoveLocationResult!
+  updateInStorePickupPreferences(
+    locationId: ID!
+    input: updateInStorePickupPreferencesInput!
+  ): LocationResult!
 }
 
 input CreateLocationInput {
@@ -78,6 +82,11 @@ input UpdateLocationInput {
 
   isDefault: Boolean
   isActive: Boolean
+}
+
+input updateInStorePickupPreferencesInput {
+  isAvailable: Boolean
+  instructions: String
 }
 
 type LocationResult {

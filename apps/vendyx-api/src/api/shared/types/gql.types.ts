@@ -248,6 +248,11 @@ export class UpdateLocationInput {
     isActive?: Nullable<boolean>;
 }
 
+export class UpdateInStorePickupPreferencesInput {
+    isAvailable?: Nullable<boolean>;
+    instructions?: Nullable<string>;
+}
+
 export class MetricsInput {
     startsAt: Date;
     endsAt: Date;
@@ -595,6 +600,8 @@ export abstract class IMutation {
 
     abstract removeLocation(id: string): RemoveLocationResult | Promise<RemoveLocationResult>;
 
+    abstract updateInStorePickupPreferences(locationId: string, input?: Nullable<UpdateInStorePickupPreferencesInput>): LocationResult | Promise<LocationResult>;
+
     abstract createOption(productId: string, input: CreateOptionInput): Option | Promise<Option>;
 
     abstract updateOption(id: string, input: UpdateOptionInput): Option | Promise<Option>;
@@ -604,6 +611,8 @@ export abstract class IMutation {
     abstract softRemoveOptionValues(ids: string[]): boolean | Promise<boolean>;
 
     abstract markOrderAsShipped(id: string, input: MarkOrderAsShippedInput): OrderResult | Promise<OrderResult>;
+
+    abstract markAsReadyForPickup(id: string): OrderResult | Promise<OrderResult>;
 
     abstract markOrderAsDelivered(id: string): OrderResult | Promise<OrderResult>;
 
@@ -767,7 +776,7 @@ export abstract class IQuery {
 
     abstract favorites(input?: Nullable<ProductListInput>): VariantList | Promise<VariantList>;
 
-    abstract availablePickupLocations(orderId: string, input?: Nullable<AvailablePickupLocationsInput>): Location[] | Promise<Location[]>;
+    abstract availablePickupLocations(input?: Nullable<AvailablePickupLocationsInput>): Location[] | Promise<Location[]>;
 
     abstract availableShippingMethods(orderId: string): ShippingMethod[] | Promise<ShippingMethod[]>;
 
@@ -906,6 +915,7 @@ export class OrderResult {
 export class OrderErrorResult {
     code: OrderErrorCode;
     message: string;
+    metadata?: Nullable<JSON>;
 }
 
 export class PaymentMethod implements Node {
