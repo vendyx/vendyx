@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-import { CreditCardIcon, StoreIcon, TruckIcon } from 'lucide-react';
+import { CreditCardIcon, MapPinHouseIcon, StoreIcon, TruckIcon } from 'lucide-react';
 import { useParams, usePathname } from 'next/navigation';
 
 import { LayoutSidebarItem } from '../layout-sidebar-item';
@@ -13,11 +13,12 @@ export const SettingsSidebarNav = () => {
 
   const shop = Array.isArray(params.shop) ? params.shop[0] : params.shop;
 
-  const [isInPayments, isInShipments, isInShopDetails] = useMemo(
+  const [isInShopDetails, isInPayments, isInShipments, isInLocations] = useMemo(
     () => [
+      pathname.includes('/settings/shop-details'),
       pathname.includes('/settings/payments'),
       pathname.includes('/settings/shipments'),
-      pathname.includes('/settings/shop-details')
+      pathname.includes('/settings/locations')
     ],
     [pathname]
   );
@@ -40,6 +41,12 @@ export const SettingsSidebarNav = () => {
       to: `/shops/${shop}/settings/shipments`,
       label: 'Shipments',
       isActive: isInShipments
+    },
+    {
+      icon: MapPinHouseIcon,
+      to: `/shops/${shop}/settings/locations`,
+      label: 'Locations',
+      isActive: isInLocations
     }
   ];
 
