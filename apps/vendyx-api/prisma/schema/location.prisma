@@ -18,11 +18,9 @@ model Location {
   postalCode  String  @map("postal_code")
   phoneNumber String  @map("phone_number") @db.VarChar(15) // Max length of phone number is 15
 
-  /// Weather The location is the default location for the shop
-  isDefault Boolean @default(false) @map("is_default")
   /// Weather the location is active or not
   /// This is used to show/hide location in the storefront
-  isActive  Boolean @default(true) @map("is_active")
+  isActive Boolean @default(true) @map("is_active")
 
   inStorePickup InStorePickup?
 

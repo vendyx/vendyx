@@ -32,8 +32,7 @@ export enum DiscountErrorCode {
 }
 
 export enum LocationErrorCode {
-    LOCATION_NAME_ALREADY_EXISTS = "LOCATION_NAME_ALREADY_EXISTS",
-    LOCATION_IS_DEFAULT = "LOCATION_IS_DEFAULT"
+    LOCATION_NAME_ALREADY_EXISTS = "LOCATION_NAME_ALREADY_EXISTS"
 }
 
 export enum OrderErrorCode {
@@ -600,7 +599,7 @@ export abstract class IMutation {
 
     abstract removeLocation(id: string): RemoveLocationResult | Promise<RemoveLocationResult>;
 
-    abstract updateInStorePickupPreferences(locationId: string, input?: Nullable<UpdateInStorePickupPreferencesInput>): LocationResult | Promise<LocationResult>;
+    abstract updateInStorePickupPreferences(locationId: string, input: UpdateInStorePickupPreferencesInput): LocationResult | Promise<LocationResult>;
 
     abstract createOption(productId: string, input: CreateOptionInput): Option | Promise<Option>;
 

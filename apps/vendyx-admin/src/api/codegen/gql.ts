@@ -44,6 +44,8 @@ type Documents = {
   '\n  fragment CommonLocation on Location {\n    id\n    name\n    createdAt\n    isActive\n    streetLine1\n    streetLine2\n    country\n    city\n    phoneNumber\n    postalCode\n    province\n    inStorePickup {\n      isAvailable\n    }\n  }\n': typeof types.CommonLocationFragmentDoc;
   '\n  fragment CommonInStorePickup on InStorePickup {\n    isAvailable\n    instructions\n  }\n': typeof types.CommonInStorePickupFragmentDoc;
   '\n  query GetAllLocations($input: LocationListInput) {\n    locations(input: $input) {\n      items {\n        id\n        name\n        isActive\n        streetLine1\n        country\n        city\n        province\n      }\n    }\n  }\n': typeof types.GetAllLocationsDocument;
+  '\n  query GetAllLocationsForPickupInStoreList {\n    locations {\n      items {\n        id\n        name\n        streetLine1\n        country\n        city\n        province\n        postalCode\n        inStorePickup {\n          isAvailable\n        }\n      }\n    }\n  }\n': typeof types.GetAllLocationsForPickupInStoreListDocument;
+  '\n  query GetAllLocationNames {\n    locations {\n      items {\n        id\n        name\n        inStorePickup {\n          isAvailable\n        }\n      }\n    }\n  }\n': typeof types.GetAllLocationNamesDocument;
   '\n  query GetLocationById($id: ID!) {\n    location(id: $id) {\n      ...CommonLocation\n    }\n  }\n': typeof types.GetLocationByIdDocument;
   '\n  query GetInStorePickupPreferences($locationId: ID!) {\n    location(id: $locationId) {\n      id\n      inStorePickup {\n        ...CommonInStorePickup\n      }\n    }\n  }\n': typeof types.GetInStorePickupPreferencesDocument;
   '\n  mutation CreateLocation($input: CreateLocationInput!) {\n    createLocation(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n': typeof types.CreateLocationDocument;
@@ -175,6 +177,10 @@ const documents: Documents = {
     types.CommonInStorePickupFragmentDoc,
   '\n  query GetAllLocations($input: LocationListInput) {\n    locations(input: $input) {\n      items {\n        id\n        name\n        isActive\n        streetLine1\n        country\n        city\n        province\n      }\n    }\n  }\n':
     types.GetAllLocationsDocument,
+  '\n  query GetAllLocationsForPickupInStoreList {\n    locations {\n      items {\n        id\n        name\n        streetLine1\n        country\n        city\n        province\n        postalCode\n        inStorePickup {\n          isAvailable\n        }\n      }\n    }\n  }\n':
+    types.GetAllLocationsForPickupInStoreListDocument,
+  '\n  query GetAllLocationNames {\n    locations {\n      items {\n        id\n        name\n        inStorePickup {\n          isAvailable\n        }\n      }\n    }\n  }\n':
+    types.GetAllLocationNamesDocument,
   '\n  query GetLocationById($id: ID!) {\n    location(id: $id) {\n      ...CommonLocation\n    }\n  }\n':
     types.GetLocationByIdDocument,
   '\n  query GetInStorePickupPreferences($locationId: ID!) {\n    location(id: $locationId) {\n      id\n      inStorePickup {\n        ...CommonInStorePickup\n      }\n    }\n  }\n':
@@ -494,6 +500,18 @@ export function graphql(
 export function graphql(
   source: '\n  query GetAllLocations($input: LocationListInput) {\n    locations(input: $input) {\n      items {\n        id\n        name\n        isActive\n        streetLine1\n        country\n        city\n        province\n      }\n    }\n  }\n'
 ): typeof import('./graphql').GetAllLocationsDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetAllLocationsForPickupInStoreList {\n    locations {\n      items {\n        id\n        name\n        streetLine1\n        country\n        city\n        province\n        postalCode\n        inStorePickup {\n          isAvailable\n        }\n      }\n    }\n  }\n'
+): typeof import('./graphql').GetAllLocationsForPickupInStoreListDocument;
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetAllLocationNames {\n    locations {\n      items {\n        id\n        name\n        inStorePickup {\n          isAvailable\n        }\n      }\n    }\n  }\n'
+): typeof import('./graphql').GetAllLocationNamesDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

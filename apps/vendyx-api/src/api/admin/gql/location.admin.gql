@@ -1,10 +1,5 @@
 extend type Location {
   """
-  Weather The location is the default location for the shop
-  """
-  isDefault: Boolean!
-
-  """
   Whether the location is active or not
   This is used to show/hide location in the storefront
   """
@@ -106,5 +101,4 @@ type LocationErrorResult {
 
 enum LocationErrorCode {
   LOCATION_NAME_ALREADY_EXISTS
-  LOCATION_IS_DEFAULT
 }

@@ -2195,6 +2195,41 @@ export type GetAllLocationsQuery = {
   };
 };
 
+export type GetAllLocationsForPickupInStoreListQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAllLocationsForPickupInStoreListQuery = {
+  __typename?: 'Query';
+  locations: {
+    __typename?: 'LocationList';
+    items: Array<{
+      __typename?: 'Location';
+      id: string;
+      name: string;
+      streetLine1: string;
+      country: string;
+      city: string;
+      province: string;
+      postalCode: string;
+      inStorePickup: { __typename?: 'InStorePickup'; isAvailable: boolean };
+    }>;
+  };
+};
+
+export type GetAllLocationNamesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAllLocationNamesQuery = {
+  __typename?: 'Query';
+  locations: {
+    __typename?: 'LocationList';
+    items: Array<{
+      __typename?: 'Location';
+      id: string;
+      name: string;
+      inStorePickup: { __typename?: 'InStorePickup'; isAvailable: boolean };
+    }>;
+  };
+};
+
 export type GetLocationByIdQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
@@ -4011,6 +4046,43 @@ export const GetAllLocationsDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetAllLocationsQuery, GetAllLocationsQueryVariables>;
+export const GetAllLocationsForPickupInStoreListDocument = new TypedDocumentString(`
+    query GetAllLocationsForPickupInStoreList {
+  locations {
+    items {
+      id
+      name
+      streetLine1
+      country
+      city
+      province
+      postalCode
+      inStorePickup {
+        isAvailable
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  GetAllLocationsForPickupInStoreListQuery,
+  GetAllLocationsForPickupInStoreListQueryVariables
+>;
+export const GetAllLocationNamesDocument = new TypedDocumentString(`
+    query GetAllLocationNames {
+  locations {
+    items {
+      id
+      name
+      inStorePickup {
+        isAvailable
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<
+  GetAllLocationNamesQuery,
+  GetAllLocationNamesQueryVariables
+>;
 export const GetLocationByIdDocument = new TypedDocumentString(`
     query GetLocationById($id: ID!) {
   location(id: $id) {

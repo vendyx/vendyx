@@ -42,6 +42,39 @@ export const GET_ALL_LOCATIONS_QUERY = graphql(`
   }
 `);
 
+export const GET_ALL_LOCATIONS_FOR_PICKUP_IN_STORE_LIST_QUERY = graphql(`
+  query GetAllLocationsForPickupInStoreList {
+    locations {
+      items {
+        id
+        name
+        streetLine1
+        country
+        city
+        province
+        postalCode
+        inStorePickup {
+          isAvailable
+        }
+      }
+    }
+  }
+`);
+
+export const GET_ALL_LOCATION_NAMES_QUERY = graphql(`
+  query GetAllLocationNames {
+    locations {
+      items {
+        id
+        name
+        inStorePickup {
+          isAvailable
+        }
+      }
+    }
+  }
+`);
+
 export const GET_LOCATION_BY_ID_QUERY = graphql(`
   query GetLocationById($id: ID!) {
     location(id: $id) {

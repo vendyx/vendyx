@@ -2,7 +2,14 @@ import { type FC, type PropsWithChildren, type ReactElement } from 'react';
 
 import { SettingsPageLayoutGoBack } from './settings-page-layout-go-back';
 
-export const SettingsPageLayout: FC<Props> = ({ title, subtitle, backUrl, actions, children }) => {
+export const SettingsPageLayout: FC<Props> = ({
+  title,
+  subtitle,
+  backUrl,
+  actions,
+  className,
+  children
+}) => {
   return (
     <div className="flex flex-col gap-6 max-w-3xl px-6 pb-6">
       <header className="flex items-center justify-between">
@@ -16,7 +23,7 @@ export const SettingsPageLayout: FC<Props> = ({ title, subtitle, backUrl, action
         <div className="flex gap-3">{actions}</div>
       </header>
       <hr />
-      <main>{children}</main>
+      <main className={className}>{children}</main>
     </div>
   );
 };
@@ -26,4 +33,5 @@ type Props = PropsWithChildren & {
   subtitle?: string;
   backUrl?: string;
   actions?: ReactElement;
+  className?: string;
 };

@@ -3,6 +3,8 @@ import {
   COMMON_IN_STORE_PICKUP_FRAGMENT,
   COMMON_LOCATION_FRAGMENT,
   CREATE_LOCATION_MUTATION,
+  GET_ALL_LOCATION_NAMES_QUERY,
+  GET_ALL_LOCATIONS_FOR_PICKUP_IN_STORE_LIST_QUERY,
   GET_ALL_LOCATIONS_QUERY,
   GET_IN_PICKUP_PREFERENCES_QUERY,
   GET_LOCATION_BY_ID_QUERY,
@@ -24,6 +26,8 @@ import { serviceGqlFetcher } from './service-fetchers/service-gql-fetchers';
 export class LocationService {
   static Tags = {
     locations: 'locations',
+    locationNames: 'location-names',
+    inStorePickupList: 'in-store-pickup-list',
     location: (id: string) => `location-${id}`,
     inStorePickup: (id: string) => `in-store-pickup-${id}`
   };
@@ -33,6 +37,26 @@ export class LocationService {
       GET_ALL_LOCATIONS_QUERY,
       { input },
       { tags: [LocationService.Tags.locations] }
+    );
+
+    return locations.items;
+  }
+
+  static async getAllForPickupInStoreList() {
+    const { locations } = await serviceGqlFetcher(
+      GET_ALL_LOCATIONS_FOR_PICKUP_IN_STORE_LIST_QUERY,
+      {},
+      { tags: [LocationService.Tags.locations] }
+    );
+
+    return locations.items;
+  }
+
+  static async getAllNames() {
+    const { locations } = await serviceGqlFetcher(
+      GET_ALL_LOCATION_NAMES_QUERY,
+      {},
+      { tags: [LocationService.Tags.locationNames] }
     );
 
     return locations.items;
