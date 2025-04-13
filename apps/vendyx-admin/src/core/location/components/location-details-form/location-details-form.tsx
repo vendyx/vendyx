@@ -7,6 +7,7 @@ import { Form } from '@/shared/form/form';
 import { FormInput } from '@/shared/form/form-input';
 
 import { useLocationContext } from '../../contexts/location-context';
+import { InStorePickupCard } from '../in-store-pickup-card/in-store-pickup-card';
 import { LocationAddressDialog } from '../location-address-dialog/location-address-dialog';
 import { LocationAddressForm } from '../location-address-form/location-address-form';
 import { LocationSubmitButton } from '../location-submit-button/location-submit-button';
@@ -47,6 +48,7 @@ export const LocationDetailsForm = () => {
               }
             />
             {location ? <LocationAddressDialog /> : <LocationAddressForm />}
+            {location && <InStorePickupCard />}
             {location && (
               <div className="w-full flex justify-end gap-2">
                 <ToggleActiveLocationButton />
