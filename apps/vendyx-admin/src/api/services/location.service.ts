@@ -28,7 +28,7 @@ export class LocationService {
     inStorePickup: (id: string) => `in-store-pickup-${id}`
   };
 
-  static async getAll(input: LocationListInput) {
+  static async getAll(input?: LocationListInput) {
     const { locations } = await serviceGqlFetcher(
       GET_ALL_LOCATIONS_QUERY,
       { input },

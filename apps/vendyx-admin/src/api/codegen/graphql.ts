@@ -2177,11 +2177,11 @@ export type CommonInStorePickupFragment = {
   instructions: string;
 } & { ' $fragmentName'?: 'CommonInStorePickupFragment' };
 
-export type GetAllLocationsQueryQueryVariables = Exact<{
+export type GetAllLocationsQueryVariables = Exact<{
   input?: InputMaybe<LocationListInput>;
 }>;
 
-export type GetAllLocationsQueryQuery = {
+export type GetAllLocationsQuery = {
   __typename?: 'Query';
   locations: {
     __typename?: 'LocationList';
@@ -2198,22 +2198,22 @@ export type GetAllLocationsQueryQuery = {
   };
 };
 
-export type GetLocationByIdQueryQueryVariables = Exact<{
+export type GetLocationByIdQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-export type GetLocationByIdQueryQuery = {
+export type GetLocationByIdQuery = {
   __typename?: 'Query';
   location: { __typename?: 'Location' } & {
     ' $fragmentRefs'?: { CommonLocationFragment: CommonLocationFragment };
   };
 };
 
-export type GetInStorePickupPreferencesQueryQueryVariables = Exact<{
+export type GetInStorePickupPreferencesQueryVariables = Exact<{
   locationId: Scalars['ID']['input'];
 }>;
 
-export type GetInStorePickupPreferencesQueryQuery = {
+export type GetInStorePickupPreferencesQuery = {
   __typename?: 'Query';
   location: {
     __typename?: 'Location';
@@ -2224,11 +2224,11 @@ export type GetInStorePickupPreferencesQueryQuery = {
   };
 };
 
-export type CreateLocationMutationMutationVariables = Exact<{
+export type CreateLocationMutationVariables = Exact<{
   input: CreateLocationInput;
 }>;
 
-export type CreateLocationMutationMutation = {
+export type CreateLocationMutation = {
   __typename?: 'Mutation';
   createLocation: {
     __typename?: 'LocationResult';
@@ -2241,12 +2241,12 @@ export type CreateLocationMutationMutation = {
   };
 };
 
-export type UpdateLocationMutationMutationVariables = Exact<{
+export type UpdateLocationMutationVariables = Exact<{
   id: Scalars['ID']['input'];
   input: UpdateLocationInput;
 }>;
 
-export type UpdateLocationMutationMutation = {
+export type UpdateLocationMutation = {
   __typename?: 'Mutation';
   updateLocation: {
     __typename?: 'LocationResult';
@@ -2259,11 +2259,11 @@ export type UpdateLocationMutationMutation = {
   };
 };
 
-export type RemoveLocationMutationMutationVariables = Exact<{
+export type RemoveLocationMutationVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
-export type RemoveLocationMutationMutation = {
+export type RemoveLocationMutation = {
   __typename?: 'Mutation';
   removeLocation: {
     __typename?: 'RemoveLocationResult';
@@ -2276,12 +2276,12 @@ export type RemoveLocationMutationMutation = {
   };
 };
 
-export type UpdateInStorePickupPreferencesMutationMutationVariables = Exact<{
+export type UpdateInStorePickupPreferencesMutationVariables = Exact<{
   locationId: Scalars['ID']['input'];
   input: UpdateInStorePickupPreferencesInput;
 }>;
 
-export type UpdateInStorePickupPreferencesMutationMutation = {
+export type UpdateInStorePickupPreferencesMutation = {
   __typename?: 'Mutation';
   updateInStorePickupPreferences: {
     __typename?: 'LocationResult';
@@ -3999,8 +3999,8 @@ export const RemoveDiscountDocument = new TypedDocumentString(`
   removeDiscounts(ids: $ids)
 }
     `) as unknown as TypedDocumentString<RemoveDiscountMutation, RemoveDiscountMutationVariables>;
-export const GetAllLocationsQueryDocument = new TypedDocumentString(`
-    query GetAllLocationsQuery($input: LocationListInput) {
+export const GetAllLocationsDocument = new TypedDocumentString(`
+    query GetAllLocations($input: LocationListInput) {
   locations(input: $input) {
     items {
       id
@@ -4013,12 +4013,9 @@ export const GetAllLocationsQueryDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<
-  GetAllLocationsQueryQuery,
-  GetAllLocationsQueryQueryVariables
->;
-export const GetLocationByIdQueryDocument = new TypedDocumentString(`
-    query GetLocationByIdQuery($id: ID!) {
+    `) as unknown as TypedDocumentString<GetAllLocationsQuery, GetAllLocationsQueryVariables>;
+export const GetLocationByIdDocument = new TypedDocumentString(`
+    query GetLocationById($id: ID!) {
   location(id: $id) {
     ...CommonLocation
   }
@@ -4038,12 +4035,9 @@ export const GetLocationByIdQueryDocument = new TypedDocumentString(`
   inStorePickup {
     isAvailable
   }
-}`) as unknown as TypedDocumentString<
-  GetLocationByIdQueryQuery,
-  GetLocationByIdQueryQueryVariables
->;
-export const GetInStorePickupPreferencesQueryDocument = new TypedDocumentString(`
-    query GetInStorePickupPreferencesQuery($locationId: ID!) {
+}`) as unknown as TypedDocumentString<GetLocationByIdQuery, GetLocationByIdQueryVariables>;
+export const GetInStorePickupPreferencesDocument = new TypedDocumentString(`
+    query GetInStorePickupPreferences($locationId: ID!) {
   location(id: $locationId) {
     id
     inStorePickup {
@@ -4055,11 +4049,11 @@ export const GetInStorePickupPreferencesQueryDocument = new TypedDocumentString(
   isAvailable
   instructions
 }`) as unknown as TypedDocumentString<
-  GetInStorePickupPreferencesQueryQuery,
-  GetInStorePickupPreferencesQueryQueryVariables
+  GetInStorePickupPreferencesQuery,
+  GetInStorePickupPreferencesQueryVariables
 >;
-export const CreateLocationMutationDocument = new TypedDocumentString(`
-    mutation CreateLocationMutation($input: CreateLocationInput!) {
+export const CreateLocationDocument = new TypedDocumentString(`
+    mutation CreateLocation($input: CreateLocationInput!) {
   createLocation(input: $input) {
     apiErrors {
       code
@@ -4070,12 +4064,9 @@ export const CreateLocationMutationDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<
-  CreateLocationMutationMutation,
-  CreateLocationMutationMutationVariables
->;
-export const UpdateLocationMutationDocument = new TypedDocumentString(`
-    mutation UpdateLocationMutation($id: ID!, $input: UpdateLocationInput!) {
+    `) as unknown as TypedDocumentString<CreateLocationMutation, CreateLocationMutationVariables>;
+export const UpdateLocationDocument = new TypedDocumentString(`
+    mutation UpdateLocation($id: ID!, $input: UpdateLocationInput!) {
   updateLocation(id: $id, input: $input) {
     apiErrors {
       code
@@ -4086,12 +4077,9 @@ export const UpdateLocationMutationDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<
-  UpdateLocationMutationMutation,
-  UpdateLocationMutationMutationVariables
->;
-export const RemoveLocationMutationDocument = new TypedDocumentString(`
-    mutation RemoveLocationMutation($id: ID!) {
+    `) as unknown as TypedDocumentString<UpdateLocationMutation, UpdateLocationMutationVariables>;
+export const RemoveLocationDocument = new TypedDocumentString(`
+    mutation RemoveLocation($id: ID!) {
   removeLocation(id: $id) {
     apiErrors {
       code
@@ -4100,12 +4088,9 @@ export const RemoveLocationMutationDocument = new TypedDocumentString(`
     success
   }
 }
-    `) as unknown as TypedDocumentString<
-  RemoveLocationMutationMutation,
-  RemoveLocationMutationMutationVariables
->;
-export const UpdateInStorePickupPreferencesMutationDocument = new TypedDocumentString(`
-    mutation UpdateInStorePickupPreferencesMutation($locationId: ID!, $input: updateInStorePickupPreferencesInput!) {
+    `) as unknown as TypedDocumentString<RemoveLocationMutation, RemoveLocationMutationVariables>;
+export const UpdateInStorePickupPreferencesDocument = new TypedDocumentString(`
+    mutation UpdateInStorePickupPreferences($locationId: ID!, $input: updateInStorePickupPreferencesInput!) {
   updateInStorePickupPreferences(locationId: $locationId, input: $input) {
     apiErrors {
       code
@@ -4117,8 +4102,8 @@ export const UpdateInStorePickupPreferencesMutationDocument = new TypedDocumentS
   }
 }
     `) as unknown as TypedDocumentString<
-  UpdateInStorePickupPreferencesMutationMutation,
-  UpdateInStorePickupPreferencesMutationMutationVariables
+  UpdateInStorePickupPreferencesMutation,
+  UpdateInStorePickupPreferencesMutationVariables
 >;
 export const GetTotalSalesDocument = new TypedDocumentString(`
     query GetTotalSales($input: MetricsInput!) {

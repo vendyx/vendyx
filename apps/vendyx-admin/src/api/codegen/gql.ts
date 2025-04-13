@@ -43,13 +43,13 @@ type Documents = {
   '\n  mutation RemoveDiscount($ids: [ID!]!) {\n    removeDiscounts(ids: $ids)\n  }\n': typeof types.RemoveDiscountDocument;
   '\n  fragment CommonLocation on Location {\n    id\n    name\n    isActive\n    isDefault\n    streetLine1\n    streetLine2\n    country\n    city\n    phoneNumber\n    postalCode\n    province\n    inStorePickup {\n      isAvailable\n    }\n  }\n': typeof types.CommonLocationFragmentDoc;
   '\n  fragment CommonInStorePickup on InStorePickup {\n    isAvailable\n    instructions\n  }\n': typeof types.CommonInStorePickupFragmentDoc;
-  '\n  query GetAllLocationsQuery($input: LocationListInput) {\n    locations(input: $input) {\n      items {\n        id\n        name\n        isActive\n        streetLine1\n        country\n        city\n        province\n      }\n    }\n  }\n': typeof types.GetAllLocationsQueryDocument;
-  '\n  query GetLocationByIdQuery($id: ID!) {\n    location(id: $id) {\n      ...CommonLocation\n    }\n  }\n': typeof types.GetLocationByIdQueryDocument;
-  '\n  query GetInStorePickupPreferencesQuery($locationId: ID!) {\n    location(id: $locationId) {\n      id\n      inStorePickup {\n        ...CommonInStorePickup\n      }\n    }\n  }\n': typeof types.GetInStorePickupPreferencesQueryDocument;
-  '\n  mutation CreateLocationMutation($input: CreateLocationInput!) {\n    createLocation(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n': typeof types.CreateLocationMutationDocument;
-  '\n  mutation UpdateLocationMutation($id: ID!, $input: UpdateLocationInput!) {\n    updateLocation(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n': typeof types.UpdateLocationMutationDocument;
-  '\n  mutation RemoveLocationMutation($id: ID!) {\n    removeLocation(id: $id) {\n      apiErrors {\n        code\n        message\n      }\n      success\n    }\n  }\n': typeof types.RemoveLocationMutationDocument;
-  '\n  mutation UpdateInStorePickupPreferencesMutation(\n    $locationId: ID!\n    $input: updateInStorePickupPreferencesInput!\n  ) {\n    updateInStorePickupPreferences(locationId: $locationId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n': typeof types.UpdateInStorePickupPreferencesMutationDocument;
+  '\n  query GetAllLocations($input: LocationListInput) {\n    locations(input: $input) {\n      items {\n        id\n        name\n        isActive\n        streetLine1\n        country\n        city\n        province\n      }\n    }\n  }\n': typeof types.GetAllLocationsDocument;
+  '\n  query GetLocationById($id: ID!) {\n    location(id: $id) {\n      ...CommonLocation\n    }\n  }\n': typeof types.GetLocationByIdDocument;
+  '\n  query GetInStorePickupPreferences($locationId: ID!) {\n    location(id: $locationId) {\n      id\n      inStorePickup {\n        ...CommonInStorePickup\n      }\n    }\n  }\n': typeof types.GetInStorePickupPreferencesDocument;
+  '\n  mutation CreateLocation($input: CreateLocationInput!) {\n    createLocation(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n': typeof types.CreateLocationDocument;
+  '\n  mutation UpdateLocation($id: ID!, $input: UpdateLocationInput!) {\n    updateLocation(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n': typeof types.UpdateLocationDocument;
+  '\n  mutation RemoveLocation($id: ID!) {\n    removeLocation(id: $id) {\n      apiErrors {\n        code\n        message\n      }\n      success\n    }\n  }\n': typeof types.RemoveLocationDocument;
+  '\n  mutation UpdateInStorePickupPreferences(\n    $locationId: ID!\n    $input: updateInStorePickupPreferencesInput!\n  ) {\n    updateInStorePickupPreferences(locationId: $locationId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n': typeof types.UpdateInStorePickupPreferencesDocument;
   '\n  fragment CommonMetricsResult on MetricsResult {\n    metrics {\n      key\n      value\n    }\n    total\n  }\n': typeof types.CommonMetricsResultFragmentDoc;
   '\n  query GetTotalSales($input: MetricsInput!) {\n    totalSales(input: $input) {\n      ...CommonMetricsResult\n    }\n  }\n': typeof types.GetTotalSalesDocument;
   '\n  query GetTotalOrders($input: MetricsInput!) {\n    totalOrders(input: $input) {\n      ...CommonMetricsResult\n    }\n  }\n': typeof types.GetTotalOrdersDocument;
@@ -173,20 +173,20 @@ const documents: Documents = {
     types.CommonLocationFragmentDoc,
   '\n  fragment CommonInStorePickup on InStorePickup {\n    isAvailable\n    instructions\n  }\n':
     types.CommonInStorePickupFragmentDoc,
-  '\n  query GetAllLocationsQuery($input: LocationListInput) {\n    locations(input: $input) {\n      items {\n        id\n        name\n        isActive\n        streetLine1\n        country\n        city\n        province\n      }\n    }\n  }\n':
-    types.GetAllLocationsQueryDocument,
-  '\n  query GetLocationByIdQuery($id: ID!) {\n    location(id: $id) {\n      ...CommonLocation\n    }\n  }\n':
-    types.GetLocationByIdQueryDocument,
-  '\n  query GetInStorePickupPreferencesQuery($locationId: ID!) {\n    location(id: $locationId) {\n      id\n      inStorePickup {\n        ...CommonInStorePickup\n      }\n    }\n  }\n':
-    types.GetInStorePickupPreferencesQueryDocument,
-  '\n  mutation CreateLocationMutation($input: CreateLocationInput!) {\n    createLocation(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n':
-    types.CreateLocationMutationDocument,
-  '\n  mutation UpdateLocationMutation($id: ID!, $input: UpdateLocationInput!) {\n    updateLocation(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n':
-    types.UpdateLocationMutationDocument,
-  '\n  mutation RemoveLocationMutation($id: ID!) {\n    removeLocation(id: $id) {\n      apiErrors {\n        code\n        message\n      }\n      success\n    }\n  }\n':
-    types.RemoveLocationMutationDocument,
-  '\n  mutation UpdateInStorePickupPreferencesMutation(\n    $locationId: ID!\n    $input: updateInStorePickupPreferencesInput!\n  ) {\n    updateInStorePickupPreferences(locationId: $locationId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n':
-    types.UpdateInStorePickupPreferencesMutationDocument,
+  '\n  query GetAllLocations($input: LocationListInput) {\n    locations(input: $input) {\n      items {\n        id\n        name\n        isActive\n        streetLine1\n        country\n        city\n        province\n      }\n    }\n  }\n':
+    types.GetAllLocationsDocument,
+  '\n  query GetLocationById($id: ID!) {\n    location(id: $id) {\n      ...CommonLocation\n    }\n  }\n':
+    types.GetLocationByIdDocument,
+  '\n  query GetInStorePickupPreferences($locationId: ID!) {\n    location(id: $locationId) {\n      id\n      inStorePickup {\n        ...CommonInStorePickup\n      }\n    }\n  }\n':
+    types.GetInStorePickupPreferencesDocument,
+  '\n  mutation CreateLocation($input: CreateLocationInput!) {\n    createLocation(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n':
+    types.CreateLocationDocument,
+  '\n  mutation UpdateLocation($id: ID!, $input: UpdateLocationInput!) {\n    updateLocation(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n':
+    types.UpdateLocationDocument,
+  '\n  mutation RemoveLocation($id: ID!) {\n    removeLocation(id: $id) {\n      apiErrors {\n        code\n        message\n      }\n      success\n    }\n  }\n':
+    types.RemoveLocationDocument,
+  '\n  mutation UpdateInStorePickupPreferences(\n    $locationId: ID!\n    $input: updateInStorePickupPreferencesInput!\n  ) {\n    updateInStorePickupPreferences(locationId: $locationId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n':
+    types.UpdateInStorePickupPreferencesDocument,
   '\n  fragment CommonMetricsResult on MetricsResult {\n    metrics {\n      key\n      value\n    }\n    total\n  }\n':
     types.CommonMetricsResultFragmentDoc,
   '\n  query GetTotalSales($input: MetricsInput!) {\n    totalSales(input: $input) {\n      ...CommonMetricsResult\n    }\n  }\n':
@@ -492,44 +492,44 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query GetAllLocationsQuery($input: LocationListInput) {\n    locations(input: $input) {\n      items {\n        id\n        name\n        isActive\n        streetLine1\n        country\n        city\n        province\n      }\n    }\n  }\n'
-): typeof import('./graphql').GetAllLocationsQueryDocument;
+  source: '\n  query GetAllLocations($input: LocationListInput) {\n    locations(input: $input) {\n      items {\n        id\n        name\n        isActive\n        streetLine1\n        country\n        city\n        province\n      }\n    }\n  }\n'
+): typeof import('./graphql').GetAllLocationsDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query GetLocationByIdQuery($id: ID!) {\n    location(id: $id) {\n      ...CommonLocation\n    }\n  }\n'
-): typeof import('./graphql').GetLocationByIdQueryDocument;
+  source: '\n  query GetLocationById($id: ID!) {\n    location(id: $id) {\n      ...CommonLocation\n    }\n  }\n'
+): typeof import('./graphql').GetLocationByIdDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query GetInStorePickupPreferencesQuery($locationId: ID!) {\n    location(id: $locationId) {\n      id\n      inStorePickup {\n        ...CommonInStorePickup\n      }\n    }\n  }\n'
-): typeof import('./graphql').GetInStorePickupPreferencesQueryDocument;
+  source: '\n  query GetInStorePickupPreferences($locationId: ID!) {\n    location(id: $locationId) {\n      id\n      inStorePickup {\n        ...CommonInStorePickup\n      }\n    }\n  }\n'
+): typeof import('./graphql').GetInStorePickupPreferencesDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation CreateLocationMutation($input: CreateLocationInput!) {\n    createLocation(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n'
-): typeof import('./graphql').CreateLocationMutationDocument;
+  source: '\n  mutation CreateLocation($input: CreateLocationInput!) {\n    createLocation(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n'
+): typeof import('./graphql').CreateLocationDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation UpdateLocationMutation($id: ID!, $input: UpdateLocationInput!) {\n    updateLocation(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n'
-): typeof import('./graphql').UpdateLocationMutationDocument;
+  source: '\n  mutation UpdateLocation($id: ID!, $input: UpdateLocationInput!) {\n    updateLocation(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n'
+): typeof import('./graphql').UpdateLocationDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation RemoveLocationMutation($id: ID!) {\n    removeLocation(id: $id) {\n      apiErrors {\n        code\n        message\n      }\n      success\n    }\n  }\n'
-): typeof import('./graphql').RemoveLocationMutationDocument;
+  source: '\n  mutation RemoveLocation($id: ID!) {\n    removeLocation(id: $id) {\n      apiErrors {\n        code\n        message\n      }\n      success\n    }\n  }\n'
+): typeof import('./graphql').RemoveLocationDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  mutation UpdateInStorePickupPreferencesMutation(\n    $locationId: ID!\n    $input: updateInStorePickupPreferencesInput!\n  ) {\n    updateInStorePickupPreferences(locationId: $locationId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n'
-): typeof import('./graphql').UpdateInStorePickupPreferencesMutationDocument;
+  source: '\n  mutation UpdateInStorePickupPreferences(\n    $locationId: ID!\n    $input: updateInStorePickupPreferencesInput!\n  ) {\n    updateInStorePickupPreferences(locationId: $locationId, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      location {\n        id\n      }\n    }\n  }\n'
+): typeof import('./graphql').UpdateInStorePickupPreferencesDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

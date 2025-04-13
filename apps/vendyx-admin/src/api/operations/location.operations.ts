@@ -27,7 +27,7 @@ export const COMMON_IN_STORE_PICKUP_FRAGMENT = graphql(`
 `);
 
 export const GET_ALL_LOCATIONS_QUERY = graphql(`
-  query GetAllLocationsQuery($input: LocationListInput) {
+  query GetAllLocations($input: LocationListInput) {
     locations(input: $input) {
       items {
         id
@@ -43,7 +43,7 @@ export const GET_ALL_LOCATIONS_QUERY = graphql(`
 `);
 
 export const GET_LOCATION_BY_ID_QUERY = graphql(`
-  query GetLocationByIdQuery($id: ID!) {
+  query GetLocationById($id: ID!) {
     location(id: $id) {
       ...CommonLocation
     }
@@ -51,7 +51,7 @@ export const GET_LOCATION_BY_ID_QUERY = graphql(`
 `);
 
 export const GET_IN_PICKUP_PREFERENCES_QUERY = graphql(`
-  query GetInStorePickupPreferencesQuery($locationId: ID!) {
+  query GetInStorePickupPreferences($locationId: ID!) {
     location(id: $locationId) {
       id
       inStorePickup {
@@ -62,7 +62,7 @@ export const GET_IN_PICKUP_PREFERENCES_QUERY = graphql(`
 `);
 
 export const CREATE_LOCATION_MUTATION = graphql(`
-  mutation CreateLocationMutation($input: CreateLocationInput!) {
+  mutation CreateLocation($input: CreateLocationInput!) {
     createLocation(input: $input) {
       apiErrors {
         code
@@ -76,7 +76,7 @@ export const CREATE_LOCATION_MUTATION = graphql(`
 `);
 
 export const UPDATE_LOCATION_MUTATION = graphql(`
-  mutation UpdateLocationMutation($id: ID!, $input: UpdateLocationInput!) {
+  mutation UpdateLocation($id: ID!, $input: UpdateLocationInput!) {
     updateLocation(id: $id, input: $input) {
       apiErrors {
         code
@@ -90,7 +90,7 @@ export const UPDATE_LOCATION_MUTATION = graphql(`
 `);
 
 export const REMOVE_LOCATION_MUTATION = graphql(`
-  mutation RemoveLocationMutation($id: ID!) {
+  mutation RemoveLocation($id: ID!) {
     removeLocation(id: $id) {
       apiErrors {
         code
@@ -102,7 +102,7 @@ export const REMOVE_LOCATION_MUTATION = graphql(`
 `);
 
 export const UPDATE_IN_STORE_PICKUP_PREFERENCE_MUTATION = graphql(`
-  mutation UpdateInStorePickupPreferencesMutation(
+  mutation UpdateInStorePickupPreferences(
     $locationId: ID!
     $input: updateInStorePickupPreferencesInput!
   ) {
