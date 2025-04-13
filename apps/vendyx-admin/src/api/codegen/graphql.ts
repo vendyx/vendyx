@@ -2159,6 +2159,7 @@ export type CommonLocationFragment = {
   __typename?: 'Location';
   id: string;
   name: string;
+  createdAt: any;
   isActive: boolean;
   isDefault: boolean;
   streetLine1: string;
@@ -3311,6 +3312,7 @@ export const CommonLocationFragmentDoc = new TypedDocumentString(
     fragment CommonLocation on Location {
   id
   name
+  createdAt
   isActive
   isDefault
   streetLine1
@@ -4023,6 +4025,7 @@ export const GetLocationByIdDocument = new TypedDocumentString(`
     fragment CommonLocation on Location {
   id
   name
+  createdAt
   isActive
   isDefault
   streetLine1

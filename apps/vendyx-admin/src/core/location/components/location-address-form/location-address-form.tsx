@@ -28,7 +28,7 @@ export const LocationAddressForm = () => {
       <FormInput control={control} name="streetLine2" label="Apartment, suit, etc." />
       <div className="flex items-center gap-4">
         <FormInput control={control} name="city" label="City" placeholder="Dallas" />
-        <FormInput control={control} name="pc" label="Postal code" placeholder="75247" />
+        <FormInput control={control} name="postalCode" label="Postal code" placeholder="75247" />
       </div>
       <LocationProvinceSelect />
     </div>

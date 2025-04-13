@@ -1,4 +1,4 @@
-import { type FC, type PropsWithChildren } from 'react';
+import { type FC, type PropsWithChildren, type ReactNode } from 'react';
 
 import { InfoIcon } from 'lucide-react';
 
@@ -16,7 +16,7 @@ export const InfoTooltip: FC<Props> = ({ message, size = 16, children }) => {
 };
 
 type Props = PropsWithChildren & {
-  message: string;
+  message: ReactNode;
   /**
    * @default 16
    */

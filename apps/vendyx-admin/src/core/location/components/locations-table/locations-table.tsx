@@ -1,10 +1,10 @@
 import { type FC } from 'react';
 
 import { PlusIcon } from 'lucide-react';
+import Link from 'next/link';
 
 import { type GetAllLocationsQuery } from '@/api/types';
 import { RawTableEmptyState } from '@/shared/components/empty-states/raw-table-empty-state';
-import { Link } from '@/shared/components/link/link';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {

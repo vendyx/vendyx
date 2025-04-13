@@ -41,7 +41,7 @@ type Documents = {
   '\n  mutation CreateDiscount($input: CreateDiscountInput!) {\n    createDiscount(input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      discount {\n        id\n      }\n    }\n  }\n': typeof types.CreateDiscountDocument;
   '\n  mutation UpdateDiscount($id: ID!, $input: UpdateDiscountInput!) {\n    updateDiscount(id: $id, input: $input) {\n      apiErrors {\n        code\n        message\n      }\n      discount {\n        id\n      }\n    }\n  }\n': typeof types.UpdateDiscountDocument;
   '\n  mutation RemoveDiscount($ids: [ID!]!) {\n    removeDiscounts(ids: $ids)\n  }\n': typeof types.RemoveDiscountDocument;
-  '\n  fragment CommonLocation on Location {\n    id\n    name\n    isActive\n    isDefault\n    streetLine1\n    streetLine2\n    country\n    city\n    phoneNumber\n    postalCode\n    province\n    inStorePickup {\n      isAvailable\n    }\n  }\n': typeof types.CommonLocationFragmentDoc;
+  '\n  fragment CommonLocation on Location {\n    id\n    name\n    createdAt\n    isActive\n    isDefault\n    streetLine1\n    streetLine2\n    country\n    city\n    phoneNumber\n    postalCode\n    province\n    inStorePickup {\n      isAvailable\n    }\n  }\n': typeof types.CommonLocationFragmentDoc;
   '\n  fragment CommonInStorePickup on InStorePickup {\n    isAvailable\n    instructions\n  }\n': typeof types.CommonInStorePickupFragmentDoc;
   '\n  query GetAllLocations($input: LocationListInput) {\n    locations(input: $input) {\n      items {\n        id\n        name\n        isActive\n        streetLine1\n        country\n        city\n        province\n      }\n    }\n  }\n': typeof types.GetAllLocationsDocument;
   '\n  query GetLocationById($id: ID!) {\n    location(id: $id) {\n      ...CommonLocation\n    }\n  }\n': typeof types.GetLocationByIdDocument;
@@ -169,7 +169,7 @@ const documents: Documents = {
     types.UpdateDiscountDocument,
   '\n  mutation RemoveDiscount($ids: [ID!]!) {\n    removeDiscounts(ids: $ids)\n  }\n':
     types.RemoveDiscountDocument,
-  '\n  fragment CommonLocation on Location {\n    id\n    name\n    isActive\n    isDefault\n    streetLine1\n    streetLine2\n    country\n    city\n    phoneNumber\n    postalCode\n    province\n    inStorePickup {\n      isAvailable\n    }\n  }\n':
+  '\n  fragment CommonLocation on Location {\n    id\n    name\n    createdAt\n    isActive\n    isDefault\n    streetLine1\n    streetLine2\n    country\n    city\n    phoneNumber\n    postalCode\n    province\n    inStorePickup {\n      isAvailable\n    }\n  }\n':
     types.CommonLocationFragmentDoc,
   '\n  fragment CommonInStorePickup on InStorePickup {\n    isAvailable\n    instructions\n  }\n':
     types.CommonInStorePickupFragmentDoc,
@@ -480,7 +480,7 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  fragment CommonLocation on Location {\n    id\n    name\n    isActive\n    isDefault\n    streetLine1\n    streetLine2\n    country\n    city\n    phoneNumber\n    postalCode\n    province\n    inStorePickup {\n      isAvailable\n    }\n  }\n'
+  source: '\n  fragment CommonLocation on Location {\n    id\n    name\n    createdAt\n    isActive\n    isDefault\n    streetLine1\n    streetLine2\n    country\n    city\n    phoneNumber\n    postalCode\n    province\n    inStorePickup {\n      isAvailable\n    }\n  }\n'
 ): typeof import('./graphql').CommonLocationFragmentDoc;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.

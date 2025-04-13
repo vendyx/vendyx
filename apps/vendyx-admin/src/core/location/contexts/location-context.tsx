@@ -1,10 +1,12 @@
 import { type PropsWithChildren } from 'react';
 
-import { type CommonCountryFragment } from '@/api/types';
+import { type CommonCountryFragment, type CommonLocationFragment } from '@/api/types';
 import { EntityProvider, useEntityContext } from '@/shared/contexts/entity-context';
 
 export type LocationContext = {
   countries: CommonCountryFragment[];
+  location?: CommonLocationFragment;
+  isCreating: boolean;
 };
 
 export const useLocationContext = () => {

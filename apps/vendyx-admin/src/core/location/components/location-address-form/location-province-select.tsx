@@ -7,7 +7,7 @@ import { useLocationDetailsFormContext } from '../location-details-form/use-loca
 
 export const LocationProvinceSelect = () => {
   const { countries } = useLocationContext();
-  const { control, watch, setValue } = useLocationDetailsFormContext();
+  const { control, watch, setValue, getValues } = useLocationDetailsFormContext();
 
   const selectedCountry = watch('country');
 
@@ -17,8 +17,14 @@ export const LocationProvinceSelect = () => {
   }, [selectedCountry]);
 
   useEffect(() => {
+    const defaultProvince = getValues('province');
+
+    const country = countries.find(c => c.id === selectedCountry);
+
+    if (country?.states.find(s => s.id === defaultProvince)) return;
+
     setValue('province', states[0]?.id);
-  }, [states]);
+  }, [selectedCountry]);
 
   return (
     <FormSelect

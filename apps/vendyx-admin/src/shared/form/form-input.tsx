@@ -70,5 +70,5 @@ type Props<
   isPassword?: boolean;
   rightElement?: ReactNode;
   className?: string;
-  tooltip?: string;
+  tooltip?: ReactNode;
 };

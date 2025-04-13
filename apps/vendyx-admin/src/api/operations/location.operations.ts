@@ -4,6 +4,7 @@ export const COMMON_LOCATION_FRAGMENT = graphql(`
   fragment CommonLocation on Location {
     id
     name
+    createdAt
     isActive
     isDefault
     streetLine1
