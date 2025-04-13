@@ -2165,7 +2165,7 @@ export type CommonLocationFragment = {
   phoneNumber: string;
   postalCode: string;
   province: string;
-  inStorePickup: { __typename?: 'InStorePickup'; isAvailable: boolean };
+  inStorePickup: { __typename?: 'InStorePickup'; isAvailable: boolean; instructions: string };
 } & { ' $fragmentName'?: 'CommonLocationFragment' };
 
 export type CommonInStorePickupFragment = {
@@ -2250,6 +2250,7 @@ export type GetInStorePickupPreferencesQuery = {
   location: {
     __typename?: 'Location';
     id: string;
+    name: string;
     inStorePickup: { __typename?: 'InStorePickup' } & {
       ' $fragmentRefs'?: { CommonInStorePickupFragment: CommonInStorePickupFragment };
     };
@@ -3354,6 +3355,7 @@ export const CommonLocationFragmentDoc = new TypedDocumentString(
   province
   inStorePickup {
     isAvailable
+    instructions
   }
 }
     `,
@@ -4103,12 +4105,14 @@ export const GetLocationByIdDocument = new TypedDocumentString(`
   province
   inStorePickup {
     isAvailable
+    instructions
   }
 }`) as unknown as TypedDocumentString<GetLocationByIdQuery, GetLocationByIdQueryVariables>;
 export const GetInStorePickupPreferencesDocument = new TypedDocumentString(`
     query GetInStorePickupPreferences($locationId: ID!) {
   location(id: $locationId) {
     id
+    name
     inStorePickup {
       ...CommonInStorePickup
     }

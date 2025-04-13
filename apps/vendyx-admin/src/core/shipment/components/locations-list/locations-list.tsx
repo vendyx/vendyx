@@ -1,13 +1,15 @@
 'use client';
 
-import { GetAllLocationsForPickupInStoreListQuery } from '@/api/types';
+import { type FC } from 'react';
+
+import { ChevronRightIcon, MapPinIcon } from 'lucide-react';
+import Link from 'next/link';
+
+import { type GetAllLocationsForPickupInStoreListQuery } from '@/api/types';
 import { Badge } from '@/shared/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import { Card, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { useBase } from '@/shared/hooks/use-base';
 import { add3dots } from '@/shared/utils/formatters';
-import { ChevronRight, ChevronRightIcon, MapPinIcon } from 'lucide-react';
-import Link from 'next/link';
-import { FC } from 'react';
 
 export const LocationsList: FC<Props> = ({ locations }) => {
   const base = useBase();
@@ -16,7 +18,10 @@ export const LocationsList: FC<Props> = ({ locations }) => {
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Your locations</CardTitle>
-        <Link href={`${base}/settings/locations`} className="text-distinct text-sm">
+        <Link
+          href={`${base}/settings/locations`}
+          className="text-distinct text-sm hover:opacity-80 transition-opacity"
+        >
           Manage
         </Link>
       </CardHeader>

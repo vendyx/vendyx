@@ -14,7 +14,7 @@ export const InStorePickupCard = () => {
   if (!location) return null;
 
   return (
-    <Link href={`${base}/settings/shipments/${location.id}/in-store-pickup`}>
+    <Link href={`${base}/settings/shipments/pickup-in-store/${location.id}`}>
       <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
         <CardHeader className="flex flex-row items-center justify-between p-4">
           <div className="flex items-center gap-3">

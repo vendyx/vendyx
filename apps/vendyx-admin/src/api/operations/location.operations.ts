@@ -15,6 +15,7 @@ export const COMMON_LOCATION_FRAGMENT = graphql(`
     province
     inStorePickup {
       isAvailable
+      instructions
     }
   }
 `);
@@ -87,6 +88,7 @@ export const GET_IN_PICKUP_PREFERENCES_QUERY = graphql(`
   query GetInStorePickupPreferences($locationId: ID!) {
     location(id: $locationId) {
       id
+      name
       inStorePickup {
         ...CommonInStorePickup
       }

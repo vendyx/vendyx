@@ -26,7 +26,7 @@ export const PickupInStoreCard: FC<Props> = ({ locations }) => {
           href="shipments/pickup-in-store"
           className="text-distinct flex items-center gap-2 hover:opacity-80 transition-opacity"
         >
-          <span className="-mt-1 text-sm">{anyIsAvailable ? 'Manage' : 'Setup'}</span>
+          <span className="-mt-[1px] text-sm">{anyIsAvailable ? 'Manage' : 'Setup'}</span>
           <ChevronRightIcon size={16} />
         </Link>
       </CardHeader>

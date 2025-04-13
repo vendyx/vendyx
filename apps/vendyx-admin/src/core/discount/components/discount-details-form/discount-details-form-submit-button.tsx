@@ -51,11 +51,6 @@ const valuesHasChanged = (
     perCustomerLimit: formInput.perCustomerLimit ? Number(formInput.perCustomerLimit) : null
   };
 
-  console.log({
-    form,
-    discount
-  });
-
   const baseValuesHasChanged = Object.keys(form).some(key => {
     return ((discount as any)[key] ?? '') !== ((form as any)[key] ?? '');
   });

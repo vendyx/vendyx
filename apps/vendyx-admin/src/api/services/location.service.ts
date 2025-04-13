@@ -78,7 +78,7 @@ export class LocationService {
     const result = await serviceGqlFetcher(
       GET_IN_PICKUP_PREFERENCES_QUERY,
       { locationId },
-      { tags: [LocationService.Tags.location(locationId)] }
+      { tags: [LocationService.Tags.inStorePickup(locationId)] }
     );
 
     const inStorePickup = getFragmentData(
@@ -86,7 +86,10 @@ export class LocationService {
       result.location.inStorePickup
     );
 
-    return inStorePickup;
+    return {
+      ...result.location,
+      inStorePickup
+    };
   }
 
   static async create(input: CreateLocationInput): Promise<Result> {
@@ -134,7 +137,7 @@ export class LocationService {
   static async updateInStorePickupPreferences(
     locationId: ID,
     input: UpdateInStorePickupPreferencesInput
-  ) {
+  ): Promise<Result> {
     const {
       updateInStorePickupPreferences: { apiErrors, location }
     } = await serviceGqlFetcher(UPDATE_IN_STORE_PICKUP_PREFERENCE_MUTATION, {

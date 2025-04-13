@@ -21,11 +21,6 @@ export const useLocationDetailsForm = () => {
   const defaultProvince =
     defaultCountry.states.find(s => s.name === location?.province) ?? defaultCountry.states[0];
 
-  console.log({
-    defaultCountry,
-    defaultProvince
-  });
-
   useEffect(() => {
     if (isSuccess && !isLoading) {
       notification.success('Location updated successfully');
@@ -46,8 +41,6 @@ export const useLocationDetailsForm = () => {
     }
   });
 
-  console.log(form.getValues());
-
   async function onSubmit(values: LocationDetailsFormInput) {
     startTransition(async () => {
       const country = countries.find(c => c.id === values.country);
@@ -66,11 +59,6 @@ export const useLocationDetailsForm = () => {
       let result;
 
       if (location?.id) {
-        console.log({
-          ...values,
-          country: country.name,
-          province: state.name
-        });
         result = await updateLocation(location.id, {
           ...values,
           country: country.name,
