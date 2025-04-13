@@ -114,7 +114,7 @@ export const useDiscountDetailsForm = (type: DiscountType, discount?: CommonDisc
         endsAt: input.endsAt,
         orderRequirementType: input.orderRequirementType,
         orderRequirementValue: input.orderRequirementValue,
-        perCustomerLimit: input.perCustomerLimit,
+        perCustomerLimit: input.perCustomerLimit ?? null,
         type,
         availableCombinations: []
       };

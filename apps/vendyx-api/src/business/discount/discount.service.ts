@@ -111,6 +111,7 @@ export class DiscountService {
       where: { id },
       data: {
         ...clean(input),
+        perCustomerLimit: input.perCustomerLimit,
         orderRequirementType: input.orderRequirementType,
         orderRequirementValue: input.orderRequirementType !== null ? orderRequirementValue : null,
         discountValue
