@@ -6,8 +6,4 @@ export const getLocationError = (error: LocationErrorResult | undefined) => {
   if (error.code === LocationErrorCode.LocationNameAlreadyExists) {
     return 'Location name already exists';
   }
-
-  if (error.code === LocationErrorCode.LocationIsDefault) {
-    return 'Location is default';
-  }
 };
