@@ -25,6 +25,8 @@ export const COMMON_CUSTOMER_ORDER_FRAGMENT = graphql(`
     total
     shipment {
       method
+      type
+      metadata
     }
   }
 `);

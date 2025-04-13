@@ -14,8 +14,14 @@ export const PickupInStoreSubmitButton: FC<Props> = ({ preferences }) => {
     formValues.instructions !== preferences.instructions ||
     formValues.isAvailable !== preferences.isAvailable;
 
+  const withRequiredFields = !!formValues.instructions?.length;
+
   return (
-    <Button type="submit" isLoading={form.isLoading} disabled={!hasChanged || form.isLoading}>
+    <Button
+      type="submit"
+      isLoading={form.isLoading}
+      disabled={!hasChanged || form.isLoading || !withRequiredFields}
+    >
       Save
     </Button>
   );

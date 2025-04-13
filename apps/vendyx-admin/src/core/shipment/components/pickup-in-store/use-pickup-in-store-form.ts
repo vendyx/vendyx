@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import { type ID } from '@/api/scalars/scalars.type';
 import { type CommonInStorePickupFragment } from '@/api/types';
+import { FormMessages } from '@/shared/form/form-messages';
 import { notification } from '@/shared/notifications/notifications';
 
 import { updateInStorePickupPreferences } from '../../actions/update-in-store-pickup-preferences';
@@ -51,7 +52,7 @@ export const usePickupInStoreForm = (locationId: ID, preferences: CommonInStoreP
 
 const schema = z.object({
   isAvailable: z.boolean(),
-  instructions: z.string().optional()
+  instructions: z.string().min(1, FormMessages.required).max(255, FormMessages.max(255))
 });
 
 export type FormInput = z.infer<typeof schema>;

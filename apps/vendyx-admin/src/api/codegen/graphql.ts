@@ -1975,7 +1975,12 @@ export type CommonCustomerOrderFragment = {
   placedAt?: any | null;
   state: OrderState;
   total: number;
-  shipment?: { __typename?: 'Shipment'; method: string } | null;
+  shipment?: {
+    __typename?: 'Shipment';
+    method: string;
+    type: ShipmentType;
+    metadata?: any | null;
+  } | null;
 } & { ' $fragmentName'?: 'CommonCustomerOrderFragment' };
 
 export type GetAllCustomersQueryQueryVariables = Exact<{
@@ -3312,6 +3317,8 @@ export const CommonCustomerOrderFragmentDoc = new TypedDocumentString(
   total
   shipment {
     method
+    type
+    metadata
   }
 }
     `,
@@ -3914,6 +3921,8 @@ export const GetAllCustomerOrdersQueryDocument = new TypedDocumentString(`
   total
   shipment {
     method
+    type
+    metadata
   }
 }`) as unknown as TypedDocumentString<
   GetAllCustomerOrdersQueryQuery,
