@@ -1,5 +1,7 @@
 'use client';
 
+import { formatDate } from 'date-fns';
+
 import { SettingsPageLayout } from '@/shared/components/layout/settings-page-layout/settings-page-layout';
 import { Form } from '@/shared/form/form';
 import { FormInput } from '@/shared/form/form-input';
@@ -9,6 +11,7 @@ import { LocationAddressDialog } from '../location-address-dialog/location-addre
 import { LocationAddressForm } from '../location-address-form/location-address-form';
 import { LocationSubmitButton } from '../location-submit-button/location-submit-button';
 import { RemoveLocationButton } from '../remove-location/remove-location-button';
+import { ToggleActiveLocationButton } from '../toggle-active-location/toggle-active-location-button';
 import { useLocationDetailsForm } from './use-location-details-form';
 
 export const LocationDetailsForm = () => {
@@ -22,7 +25,7 @@ export const LocationDetailsForm = () => {
           title={location ? location.name : 'Add location'}
           subtitle={
             location
-              ? 'Edit location'
+              ? formatDate(location.createdAt, 'dd MMM yyyy')
               : 'Add a location to your store to start receiving in-store pickup orders.'
           }
           backUrl="/settings/locations"
@@ -44,9 +47,12 @@ export const LocationDetailsForm = () => {
               }
             />
             {location ? <LocationAddressDialog /> : <LocationAddressForm />}
-            <div className="w-full flex justify-end">
-              <RemoveLocationButton />
-            </div>
+            {location && (
+              <div className="w-full flex justify-end gap-2">
+                <ToggleActiveLocationButton />
+                <RemoveLocationButton />
+              </div>
+            )}
           </div>
         </SettingsPageLayout>
       </form>

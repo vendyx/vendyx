@@ -12,7 +12,7 @@ export const RemoveLocationButton = () => {
   return (
     <RemoveEntityButton
       title={`Remove location ${location.name}`}
-      description="By removing this location you will not be able to receive in-store pickup orders for this location."
+      description="By removing this location you will not be able to receive in-store pickup orders for this location. This action cannot be undone."
       isLoading={isLoading}
       onRemove={async () => await removeLocation(location.id)}
     />

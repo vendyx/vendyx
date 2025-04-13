@@ -6,7 +6,6 @@ export const COMMON_LOCATION_FRAGMENT = graphql(`
     name
     createdAt
     isActive
-    isDefault
     streetLine1
     streetLine2
     country

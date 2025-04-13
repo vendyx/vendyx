@@ -521,8 +521,6 @@ export type Location = Node & {
    * This is used to show/hide location in the storefront
    */
   isActive: Scalars['Boolean']['output'];
-  /** Weather The location is the default location for the shop */
-  isDefault: Scalars['Boolean']['output'];
   /** Identifiable name of the location */
   name: Scalars['String']['output'];
   phoneNumber: Scalars['String']['output'];
@@ -535,7 +533,6 @@ export type Location = Node & {
 };
 
 export enum LocationErrorCode {
-  LocationIsDefault = 'LOCATION_IS_DEFAULT',
   LocationNameAlreadyExists = 'LOCATION_NAME_ALREADY_EXISTS'
 }
 
@@ -2161,7 +2158,6 @@ export type CommonLocationFragment = {
   name: string;
   createdAt: any;
   isActive: boolean;
-  isDefault: boolean;
   streetLine1: string;
   streetLine2?: string | null;
   country: string;
@@ -3314,7 +3310,6 @@ export const CommonLocationFragmentDoc = new TypedDocumentString(
   name
   createdAt
   isActive
-  isDefault
   streetLine1
   streetLine2
   country
@@ -4027,7 +4022,6 @@ export const GetLocationByIdDocument = new TypedDocumentString(`
   name
   createdAt
   isActive
-  isDefault
   streetLine1
   streetLine2
   country

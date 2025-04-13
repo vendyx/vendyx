@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 
+import { Button } from '@/shared/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -41,6 +43,11 @@ export const LocationAddressDialog = () => {
         <form className="flex flex-col gap-4" onSubmit={e => e.preventDefault()}>
           <LocationAddressForm />
           <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Cancel
+              </Button>
+            </DialogClose>
             <LocationSubmitButton />
           </DialogFooter>
         </form>
