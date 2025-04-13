@@ -183,7 +183,10 @@ const schema = z.object({
     val => (val ? Number(val) : undefined),
     z.number().min(0).optional()
   ),
-  perCustomerLimit: z.number().min(0).optional(),
+  perCustomerLimit: z.preprocess(
+    val => (val ? Number(val) : undefined),
+    z.number().min(0).optional()
+  ),
   metadata: z.record(z.any(), z.any()),
   availableCombinations: z
     .array(

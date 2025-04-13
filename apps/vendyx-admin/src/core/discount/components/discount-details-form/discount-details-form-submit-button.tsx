@@ -46,7 +46,9 @@ const valuesHasChanged = (
     startsAt: formInput.startsAt,
     endsAt: formInput.endsAt,
     discountValueType: formInput.discountValueType,
-    orderRequirementType: formInput.orderRequirementType
+    orderRequirementType:
+      (formInput.orderRequirementType as any) === 'None' ? null : formInput.orderRequirementType,
+    perCustomerLimit: Number(formInput.perCustomerLimit)
   };
 
   const baseValuesHasChanged = Object.keys(form).some(key => {
