@@ -24,6 +24,7 @@ export const PhoneInput = forwardRef<
       ref={ref}
       className={cn('flex w-full rounded-lg shadow-sm shadow-black/5', className)}
       international
+      defaultCountry="MX"
       flagComponent={FlagComponent}
       countrySelectComponent={CountrySelect}
       inputComponent={RootPhoneInput}

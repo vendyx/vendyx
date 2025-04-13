@@ -43,7 +43,7 @@ export const DiscountGeneralCard = () => {
             type="number"
             name="perCustomerLimit"
             label="Per customer limit"
-            className="w-full h-fit"
+            className="w-fit h-fit"
           />
         </div>
         <DiscountValue />

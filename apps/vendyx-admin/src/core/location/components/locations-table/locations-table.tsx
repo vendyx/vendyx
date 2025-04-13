@@ -45,7 +45,7 @@ export const LocationsTable: FC<Props> = ({ locations }) => {
           <CardDescription>Locations are used to show in store pickup shipping.</CardDescription>
         </div>
         <div>
-          <Link href="shipments/new">
+          <Link href="locations/new">
             <Button variant="secondary" size="sm" className="gap-2">
               <PlusIcon size={16} />
               Add Location
