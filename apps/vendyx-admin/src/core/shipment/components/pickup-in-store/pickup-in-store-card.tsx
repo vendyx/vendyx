@@ -18,7 +18,7 @@ export const PickupInStoreCard: FC<Props> = ({ locations }) => {
           <StoreIcon size={20} />
           <div className="flex flex-col gap-1">
             <CardTitle>Pickup in store</CardTitle>
-            <CardDescription>{add3dots(description, 50)}</CardDescription>
+            {description && <CardDescription>{add3dots(description, 50)}</CardDescription>}
           </div>
         </div>
 
