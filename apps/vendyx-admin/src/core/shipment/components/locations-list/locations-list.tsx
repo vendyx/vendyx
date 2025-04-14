@@ -6,6 +6,7 @@ import { ChevronRightIcon, MapPinIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import { type GetAllLocationsForPickupInStoreListQuery } from '@/api/types';
+import { RawTableEmptyState } from '@/shared/components/empty-states/raw-table-empty-state';
 import { Badge } from '@/shared/components/ui/badge';
 import { Card, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { useBase } from '@/shared/hooks/use-base';
@@ -13,6 +14,19 @@ import { add3dots } from '@/shared/utils/formatters';
 
 export const LocationsList: FC<Props> = ({ locations }) => {
   const base = useBase();
+
+  if (!locations.length) {
+    return (
+      <RawTableEmptyState
+        illustration={<div></div>}
+        description="You haven't created any location yet. Locations are use it to show in store pickup shipping."
+        action={{
+          label: 'Add Location',
+          href: '/settings/locations/new'
+        }}
+      />
+    );
+  }
 
   return (
     <Card className="overflow-hidden">
